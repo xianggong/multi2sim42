@@ -488,6 +488,8 @@ void si_disasm_buffer(struct elf_buffer_t *buffer, FILE *f);
 void si_disasm(char* path);
 int si_inst_decode(void *buf, struct si_inst_t *inst, unsigned int offset);
 
+void si_fusion_helper(void *inst_buf, int inst_buf_size, int *is_fusion, int *pc_start);
+
 /* Functions to dump individual instruction lines for decoded instructions. */
 #define MAX_INST_STR_SIZE 200
 

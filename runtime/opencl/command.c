@@ -117,7 +117,7 @@ static void opencl_command_run_unmap_buffer(struct opencl_command_t *command)
 
 	/* If the CL_MAP_WRITE flag was set, copy buffer from host to device */
 	assert(mem->host_ptr);
-	if (mem->map_flags & 2)
+	if (mem->map_flags & (CL_MAP_WRITE | CL_MAP_WRITE_INVALIDATE_REGION))
 	{
 		device->arch_device_mem_write_func(
 				device->arch_device,

@@ -707,6 +707,42 @@ int si_inst_decode(void *buf, struct si_inst_t *inst, unsigned int offset)
 }
 
 
+void si_fusion_helper(void *inst_buf, int inst_buf_size, int *is_fusion, int *pc_start)
+{
+	int rel_addr;
+
+	while (inst_buf)
+	{
+		struct si_inst_t inst;
+		int inst_size;
+
+		/* Zero-out instruction structure */
+		memset(&inst, 0, sizeof(struct si_inst_t));
+
+		/* Decode instruction */
+		inst_size = si_inst_decode(inst_buf, &inst, rel_addr);
+
+		if (inst.info->fmt == SI_FMT_SOPP && 
+			inst.micro_inst.sopp.op == 1)
+		{
+			// printf("%d %d\n", rel_addr, inst_buf_size);
+			if (rel_addr + inst_size < inst_buf_size)
+			{
+				*is_fusion = 1;
+				*pc_start = rel_addr + inst_size;
+				//printf("%d %d\n", *is_fusion, *pc_start);
+			}
+			else
+			{
+				break;
+			}
+		}
+	
+		inst_buf += inst_size;
+		rel_addr += inst_size;
+
+	}
+}
 
 void si_disasm_buffer(struct elf_buffer_t *buffer, FILE *f)
 {

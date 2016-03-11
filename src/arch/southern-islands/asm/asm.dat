@@ -1661,6 +1661,14 @@ DEFINST(DS_READ_U16,
 	0
 )
 
+DEFINST(DS_READ_B64,
+	" ds_read_b64   %DS_VDST, %ADDR",
+	DS,
+	118,
+	8,
+	0
+)
+
 /*
  * MUBUF
  */

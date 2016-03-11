@@ -21,6 +21,7 @@
 #include <lib/mhandle/mhandle.h>
 #include <lib/util/debug.h>
 #include <mem-system/memory.h>
+#include <arch/southern-islands/asm/asm.h>
 
 #include "isa.h"
 #include "ndrange.h"
@@ -185,7 +186,22 @@ struct si_work_group_t *si_work_group_create(unsigned int work_group_id,
 		wavefront = work_group->wavefronts[wavefront_id];
 
 		/* Set PC */
-		wavefront->pc = 0;
+		int is_fusion = 0;
+		int fusion_pc = 0;
+		si_fusion_helper(work_group->ndrange->inst_buffer, 
+				 work_group->ndrange->inst_buffer_size,
+				 &is_fusion, &fusion_pc);
+		//printf("%d %d\n", is_fusion, fusion_pc);
+		if(is_fusion != 0)
+		{
+			if(work_group->id % 2)
+				wavefront->pc = 0;
+			else
+				wavefront->pc = fusion_pc;
+		}
+		else
+			wavefront->pc = 0;
+		//printf("wf pc = %d\n", wavefront->pc);
 
 		/* Save work-group IDs in scalar registers */
 		wavefront->sreg[ndrange->wg_id_sgpr].as_int =

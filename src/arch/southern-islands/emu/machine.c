@@ -3677,14 +3677,14 @@ void si_isa_V_CMP_GE_F32_impl(struct si_work_item_t *work_item,
 
 	/* Compare the operands. */
 	result.as_uint = (s0.as_float >= s1.as_float);
-
+			 
 	/* Write the results. */
 	si_isa_bitmask_sreg(work_item, SI_VCC, result.as_uint);
 
 	/* Print isa debug information. */
 	if (debug_status(si_isa_debug_category))
 	{
-		si_isa_debug("t%d: vcc<=(%u) ",
+		si_isa_debug("t%d: vcc<=(%u)",
 			work_item->id_in_wavefront, result.as_uint);
 	}
 }
@@ -4182,7 +4182,7 @@ void si_isa_V_CMP_GE_U32_impl(struct si_work_item_t *work_item,
 	s1.as_uint = si_isa_read_vreg(work_item,INST.vsrc1);
 
 	/* Compare the operands. */
-	result.as_uint = (s0.as_uint > s1.as_uint);
+	result.as_uint = (s0.as_uint >= s1.as_uint);
 
 	/* Write the results. */
 	si_isa_bitmask_sreg(work_item, SI_VCC, result.as_uint);
@@ -6672,6 +6672,15 @@ void si_isa_DS_READ_B32_impl(struct si_work_item_t *work_item,
 			INST.vdst, addr.as_uint, data.as_uint, data.as_float);
 	}
 
+}
+#undef INST
+
+/* R = DS[A]; Dword read. */
+#define INST SI_INST_DS
+void si_isa_DS_READ_B64_impl(struct si_work_item_t *work_item,
+	struct si_inst_t *inst)
+{
+	NOT_IMPL();
 }
 #undef INST
 
