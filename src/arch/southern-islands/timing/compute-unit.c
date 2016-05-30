@@ -909,7 +909,7 @@ void si_compute_unit_issue_oldest(struct si_compute_unit_t *compute_unit,
 			continue;
 		}
 
-		si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld stg=\"s\"\n", 
+		si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld stg=\"s_cu_fe_rdy\"\n", 
 			uop->id_in_compute_unit, compute_unit->id, 
 			uop->wavefront->id, uop->id_in_wavefront);
 	}
@@ -935,7 +935,7 @@ void si_compute_unit_update_fetch_visualization(
 			continue;
 		}
 
-		si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld stg=\"s\"\n", 
+		si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld stg=\"s_cu_fe_rdy\"\n", 
 			uop->id_in_compute_unit, compute_unit->id, 
 			uop->wavefront->id, uop->id_in_wavefront);
 	}
@@ -976,7 +976,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 		if (total_insts_issued == si_gpu_fe_issue_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_cu_iss_wth\"\n", uop->id_in_compute_unit, 
 				compute_unit->id, uop->wavefront->id,
 				uop->id_in_wavefront);
 			list_index++;
@@ -1004,7 +1004,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 					si_gpu_fe_max_inst_issued_per_type)
 				{
 					si_trace("si.inst id=%lld cu=%d wf=%d "
-						"uop_id=%lld stg=\"s\"\n", 
+						"uop_id=%lld stg=\"s_br_iss_max\"\n", 
 						uop->id_in_compute_unit, 
 						compute_unit->id, 
 						uop->wavefront->id, 
@@ -1019,7 +1019,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 					si_gpu_branch_unit_issue_buffer_size)
 				{
 					si_trace("si.inst id=%lld cu=%d wf=%d "
-						"uop_id=%lld stg=\"s\"\n", 
+						"uop_id=%lld stg=\"s_br_iss_buf\"\n", 
 						uop->id_in_compute_unit, 
 						compute_unit->id, 
 						uop->wavefront->id, 
@@ -1049,7 +1049,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 					si_gpu_fe_max_inst_issued_per_type)
 				{
 					si_trace("si.inst id=%lld cu=%d wf=%d "
-						"uop_id=%lld stg=\"s\"\n", 
+						"uop_id=%lld stg=\"s_sl_iss_max\"\n", 
 						uop->id_in_compute_unit, 
 						compute_unit->id, 
 						uop->wavefront->id, 
@@ -1064,7 +1064,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 					si_gpu_scalar_unit_issue_buffer_size)
 				{
 					si_trace("si.inst id=%lld cu=%d wf=%d "
-						"uop_id=%lld stg=\"s\"\n", 
+						"uop_id=%lld stg=\"s_sl_iss_buf\"\n", 
 						uop->id_in_compute_unit, 
 						compute_unit->id, 
 						uop->wavefront->id, 
@@ -1099,7 +1099,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 				si_gpu_fe_max_inst_issued_per_type)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n",
+					"uop_id=%lld stg=\"s_sl_iss_max\"\n",
 					uop->id_in_compute_unit, 
 					compute_unit->id, 
 					uop->wavefront->id, 
@@ -1113,7 +1113,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 				== si_gpu_scalar_unit_issue_buffer_size)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n",
+					"uop_id=%lld stg=\"s_sl_iss_buf\"\n",
 					uop->id_in_compute_unit, 
 					compute_unit->id, 
 					uop->wavefront->id, 
@@ -1145,7 +1145,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 				si_gpu_fe_max_inst_issued_per_type)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n",
+					"uop_id=%lld stg=\"s_sl_iss_max\"\n",
 					uop->id_in_compute_unit, 
 					compute_unit->id, 
 					uop->wavefront->id, 
@@ -1159,7 +1159,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 				== si_gpu_scalar_unit_issue_buffer_size)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n",
+					"uop_id=%lld stg=\"s_sl_iss_buf\"\n",
 					uop->id_in_compute_unit, 
 					compute_unit->id, 
 					uop->wavefront->id, 
@@ -1198,7 +1198,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 				si_gpu_fe_max_inst_issued_per_type)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n",
+					"uop_id=%lld stg=\"s_vc_iss_max\"\n",
 					uop->id_in_compute_unit, 
 					compute_unit->id, 
 					uop->wavefront->id, 
@@ -1212,7 +1212,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 				issue_buffer) == si_gpu_simd_issue_buffer_size)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n",
+					"uop_id=%lld stg=\"s_vc_iss_buf\"\n",
 					uop->id_in_compute_unit, 
 					compute_unit->id, 
 					uop->wavefront->id, 
@@ -1245,7 +1245,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 				si_gpu_fe_max_inst_issued_per_type)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n",
+					"uop_id=%lld stg=\"s_vc_iss_max\"\n",
 					uop->id_in_compute_unit, 
 					compute_unit->id, 
 					uop->wavefront->id, 
@@ -1260,7 +1260,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 				si_gpu_vector_mem_issue_buffer_size)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n",
+					"uop_id=%lld stg=\"s_vc_iss_buf\"\n",
 					uop->id_in_compute_unit, 
 					compute_unit->id, 
 					uop->wavefront->id, 
@@ -1295,7 +1295,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 				si_gpu_fe_max_inst_issued_per_type)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n",
+					"uop_id=%lld stg=\"s_lds_iss_max\"\n",
 					uop->id_in_compute_unit, 
 					compute_unit->id, 
 					uop->wavefront->id, 
@@ -1309,7 +1309,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 				si_gpu_lds_issue_buffer_size)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n", 
+					"uop_id=%lld stg=\"s_lds_iss_buf\"\n", 
 					uop->id_in_compute_unit, 
 					compute_unit->id, 
 					uop->wavefront->id, 

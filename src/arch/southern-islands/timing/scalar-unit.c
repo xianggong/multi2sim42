@@ -65,7 +65,7 @@ void si_scalar_unit_complete(struct si_scalar_unit_t *scalar_unit)
 			 uop->wavefront_pool_entry->exp_cnt)) 
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_sl_wait_mem\"\n", uop->id_in_compute_unit, 
 				scalar_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 
@@ -214,7 +214,7 @@ void si_scalar_unit_write(struct si_scalar_unit_t *scalar_unit)
 			if (instructions_processed > si_gpu_scalar_unit_width)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n", 
+					"uop_id=%lld stg=\"s_sl_wr_wth\"\n", 
 					uop->id_in_compute_unit, 
 					scalar_unit->compute_unit->id, 
 					uop->wavefront->id, 
@@ -232,7 +232,7 @@ void si_scalar_unit_write(struct si_scalar_unit_t *scalar_unit)
 				si_gpu_scalar_unit_write_buffer_size)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n", 
+					"uop_id=%lld stg=\"s_sl_wr_buf\"\n", 
 					uop->id_in_compute_unit, 
 					scalar_unit->compute_unit->id, 
 					uop->wavefront->id, 
@@ -265,7 +265,7 @@ void si_scalar_unit_write(struct si_scalar_unit_t *scalar_unit)
 			if (instructions_processed > si_gpu_scalar_unit_width)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n", 
+					"uop_id=%lld stg=\"s_sl_alu_wth\"\n", 
 					uop->id_in_compute_unit, 
 					scalar_unit->compute_unit->id, 
 					uop->wavefront->id, 
@@ -283,7 +283,7 @@ void si_scalar_unit_write(struct si_scalar_unit_t *scalar_unit)
 				si_gpu_scalar_unit_write_buffer_size)
 			{
 				si_trace("si.inst id=%lld cu=%d wf=%d "
-					"uop_id=%lld stg=\"s\"\n", 
+					"uop_id=%lld stg=\"s_sl_alu_buf\"\n", 
 					uop->id_in_compute_unit, 
 					scalar_unit->compute_unit->id, 
 					uop->wavefront->id, 
@@ -337,7 +337,7 @@ void si_scalar_unit_execute(struct si_scalar_unit_t *scalar_unit)
 		if (instructions_processed > si_gpu_scalar_unit_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_sl_exe_wth\"\n", uop->id_in_compute_unit, 
 				scalar_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -353,7 +353,7 @@ void si_scalar_unit_execute(struct si_scalar_unit_t *scalar_unit)
 			si_gpu_scalar_unit_exec_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_sl_exe_buf\"\n", uop->id_in_compute_unit, 
 				scalar_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -433,7 +433,7 @@ void si_scalar_unit_read(struct si_scalar_unit_t *scalar_unit)
 		if (instructions_processed > si_gpu_scalar_unit_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_sl_rd_wth\"\n", uop->id_in_compute_unit, 
 				scalar_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -448,7 +448,7 @@ void si_scalar_unit_read(struct si_scalar_unit_t *scalar_unit)
 			si_gpu_scalar_unit_read_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_sl_rd_buf\"\n", uop->id_in_compute_unit, 
 				scalar_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -499,7 +499,7 @@ void si_scalar_unit_decode(struct si_scalar_unit_t *scalar_unit)
 		if (instructions_processed > si_gpu_scalar_unit_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_sl_dec_wth\"\n", uop->id_in_compute_unit, 
 				scalar_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -514,7 +514,7 @@ void si_scalar_unit_decode(struct si_scalar_unit_t *scalar_unit)
 				si_gpu_scalar_unit_decode_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_sl_dec_buf\"\n", uop->id_in_compute_unit, 
 				scalar_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;

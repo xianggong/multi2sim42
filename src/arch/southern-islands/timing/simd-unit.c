@@ -98,7 +98,7 @@ void si_simd_execute(struct si_simd_t *simd)
 		if (instructions_processed > si_gpu_simd_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_simd_exe_wth\"\n", uop->id_in_compute_unit, 
 				simd->compute_unit->id, uop->wavefront->id, 
 				uop->id_in_wavefront);
 			list_index++;
@@ -114,7 +114,7 @@ void si_simd_execute(struct si_simd_t *simd)
 			si_gpu_simd_exec_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_simd_exe_buf\"\n", uop->id_in_compute_unit, 
 				simd->compute_unit->id, uop->wavefront->id, 
 				uop->id_in_wavefront);
 			list_index++;
@@ -170,7 +170,7 @@ void si_simd_decode(struct si_simd_t *simd)
 		if (instructions_processed > si_gpu_simd_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_simd_dec_wth\"\n", uop->id_in_compute_unit, 
 				simd->compute_unit->id, uop->wavefront->id, 
 				uop->id_in_wavefront);
 			list_index++;
@@ -186,7 +186,7 @@ void si_simd_decode(struct si_simd_t *simd)
 			si_gpu_simd_decode_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_simd_dec_buf\"\n", uop->id_in_compute_unit, 
 				simd->compute_unit->id, uop->wavefront->id, 
 				uop->id_in_wavefront);
 			list_index++;

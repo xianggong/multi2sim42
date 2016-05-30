@@ -101,7 +101,7 @@ void si_branch_unit_write(struct si_branch_unit_t *branch_unit)
 		if (instructions_processed > si_gpu_branch_unit_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_br_wrt_wth\"\n", uop->id_in_compute_unit, 
 				branch_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -117,7 +117,7 @@ void si_branch_unit_write(struct si_branch_unit_t *branch_unit)
 			si_gpu_branch_unit_write_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_br_wrt_buf\"\n", uop->id_in_compute_unit, 
 				branch_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -167,7 +167,7 @@ void si_branch_unit_execute(struct si_branch_unit_t *branch_unit)
 		if (instructions_processed > si_gpu_branch_unit_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_br_exe_wth\"\n", uop->id_in_compute_unit, 
 				branch_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -183,7 +183,7 @@ void si_branch_unit_execute(struct si_branch_unit_t *branch_unit)
 				si_gpu_branch_unit_exec_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_br_exe_buf\"\n", uop->id_in_compute_unit, 
 				branch_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -236,7 +236,7 @@ void si_branch_unit_read(struct si_branch_unit_t *branch_unit)
 		if (instructions_processed > si_gpu_branch_unit_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_br_rd_wth\"\n", uop->id_in_compute_unit, 
 				branch_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -252,7 +252,7 @@ void si_branch_unit_read(struct si_branch_unit_t *branch_unit)
 			si_gpu_branch_unit_read_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_br_rd_buf\"\n", uop->id_in_compute_unit, 
 				branch_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -303,7 +303,7 @@ void si_branch_unit_decode(struct si_branch_unit_t *branch_unit)
 		if (instructions_processed > si_gpu_branch_unit_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_br_dec_wth\"\n", uop->id_in_compute_unit, 
 				branch_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -319,7 +319,7 @@ void si_branch_unit_decode(struct si_branch_unit_t *branch_unit)
 			si_gpu_branch_unit_decode_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_br_dec_buf\"\n", uop->id_in_compute_unit, 
 				branch_unit->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;

@@ -105,7 +105,7 @@ void si_vector_mem_write(struct si_vector_mem_unit_t *vector_mem)
 		if (instructions_processed > si_gpu_vector_mem_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_vc_mem_wrt_wth\"\n", uop->id_in_compute_unit, 
 				vector_mem->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -121,7 +121,7 @@ void si_vector_mem_write(struct si_vector_mem_unit_t *vector_mem)
 				si_gpu_vector_mem_write_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_vc_mem_wrt_buf\"\n", uop->id_in_compute_unit, 
 				vector_mem->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -198,7 +198,7 @@ void si_vector_mem_mem(struct si_vector_mem_unit_t *vector_mem)
 		if (instructions_processed > si_gpu_vector_mem_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_vc_mem_mem_wth\"\n", uop->id_in_compute_unit, 
 				vector_mem->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -214,7 +214,7 @@ void si_vector_mem_mem(struct si_vector_mem_unit_t *vector_mem)
 			si_gpu_vector_mem_max_inflight_mem_accesses)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_vc_mem_mem_buf\"\n", uop->id_in_compute_unit, 
 				vector_mem->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -308,7 +308,7 @@ void si_vector_mem_read(struct si_vector_mem_unit_t *vector_mem)
 		if (instructions_processed > si_gpu_vector_mem_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_vc_mem_rd_wth\"\n", uop->id_in_compute_unit, 
 				vector_mem->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -324,7 +324,7 @@ void si_vector_mem_read(struct si_vector_mem_unit_t *vector_mem)
 			si_gpu_vector_mem_read_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_vc_mem_rd_buf\"\n", uop->id_in_compute_unit, 
 				vector_mem->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -375,7 +375,7 @@ void si_vector_mem_decode(struct si_vector_mem_unit_t *vector_mem)
 		if (instructions_processed > si_gpu_vector_mem_width)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_vec_mem_dec_wth\"\n", uop->id_in_compute_unit, 
 				vector_mem->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
@@ -391,7 +391,7 @@ void si_vector_mem_decode(struct si_vector_mem_unit_t *vector_mem)
 			si_gpu_vector_mem_decode_buffer_size)
 		{
 			si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-				"stg=\"s\"\n", uop->id_in_compute_unit, 
+				"stg=\"s_vc_mem_dec_buf\"\n", uop->id_in_compute_unit, 
 				vector_mem->compute_unit->id, 
 				uop->wavefront->id, uop->id_in_wavefront);
 			list_index++;
