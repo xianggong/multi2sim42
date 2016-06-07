@@ -707,43 +707,6 @@ int si_inst_decode(void *buf, struct si_inst_t *inst, unsigned int offset)
 }
 
 
-void si_fusion_helper(void *inst_buf, int inst_buf_size, int *is_fusion, int *pc_start)
-{
-	int rel_addr;
-
-	while (inst_buf)
-	{
-		struct si_inst_t inst;
-		int inst_size;
-
-		/* Zero-out instruction structure */
-		memset(&inst, 0, sizeof(struct si_inst_t));
-
-		/* Decode instruction */
-		inst_size = si_inst_decode(inst_buf, &inst, rel_addr);
-
-		if (inst.info->fmt == SI_FMT_SOPP && 
-			inst.micro_inst.sopp.op == 1)
-		{
-			// printf("%d %d\n", rel_addr, inst_buf_size);
-			if (rel_addr + inst_size < inst_buf_size)
-			{
-				*is_fusion = 1;
-				*pc_start = rel_addr + inst_size;
-				//printf("%d %d\n", *is_fusion, *pc_start);
-			}
-			else
-			{
-				break;
-			}
-		}
-	
-		inst_buf += inst_size;
-		rel_addr += inst_size;
-
-	}
-}
-
 void si_disasm_buffer(struct elf_buffer_t *buffer, FILE *f)
 {
 	void *inst_buf = buffer->ptr;
@@ -755,6 +718,7 @@ void si_disasm_buffer(struct elf_buffer_t *buffer, FILE *f)
 	int *next_label = &label_addr[0];	/* The next label to dump. */
 	int *end_label = &label_addr[0];	/* The address after the last label. */
 
+	int endpgm_count = 0;
 
 	/* Read through instructions to find labels. */
 	while (inst_buf)
@@ -771,9 +735,10 @@ void si_disasm_buffer(struct elf_buffer_t *buffer, FILE *f)
 		/* If ENDPGM, break. */
 		if (inst.info->fmt == SI_FMT_SOPP && 
 			inst.micro_inst.sopp.op == 1)
-		{
+			endpgm_count++;
+		if (endpgm_count == 2)
 			break;
-		}
+
 		/* If the instruction branches, insert the label into 
 		 * the sorted list. */
 		if (inst.info->fmt == SI_FMT_SOPP &&
@@ -817,6 +782,7 @@ void si_disasm_buffer(struct elf_buffer_t *buffer, FILE *f)
 	/* Reset to disassemble. */
 	inst_buf = buffer->ptr;
 	rel_addr = 0;
+	endpgm_count = 0;
 
 	/* Disassemble */
 	while (inst_buf)
@@ -845,14 +811,13 @@ void si_disasm_buffer(struct elf_buffer_t *buffer, FILE *f)
 			line_size);
 		fprintf(f, " %s", line);
 
-
 		/* Break at end of program. */
 		if (inst.info->fmt == SI_FMT_SOPP && 
 			inst.micro_inst.sopp.op == 1)
-		{
-			break;
-		}
-
+			endpgm_count++;
+			if (endpgm_count == 2)
+				break;
+		
 		/* Increment instruction pointer */
 		inst_buf += inst_size;
 		rel_addr += inst_size;

@@ -137,4 +137,7 @@ void si_ndrange_insert_buffer_into_const_buf_table(struct si_ndrange_t *ndrange,
 void si_ndrange_insert_image_into_uav_table(struct si_ndrange_t *ndrange,
         struct si_image_desc_t *image_desc, unsigned int uav);
 
+/* Get second PC is kernel is fused */
+unsigned si_ndrange_get_second_pc(struct si_ndrange_t *ndrange);
+
 #endif

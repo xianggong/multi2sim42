@@ -288,3 +288,30 @@ void si_ndrange_const_buf_read(struct si_ndrange_t *ndrange, int const_buf_num, 
 	/* Read */
 	mem_read(si_emu->global_mem, addr, size, pvalue);
 }
+
+unsigned si_ndrange_get_second_pc(struct si_ndrange_t *ndrange)
+{
+	char *buffer = ndrange->inst_buffer;
+	unsigned rel_addr = 0;
+	struct si_inst_t inst;
+	int inst_size;
+
+	while (buffer < (char *)(ndrange->inst_buffer + ndrange->inst_buffer_size))
+	{
+		// Decode instruction
+		inst_size = si_inst_decode(buffer, &inst, rel_addr);
+
+		// Check if S_ENDPGM is the last instruction
+		if (inst.info->fmt == SI_FMT_SOPP && inst.micro_inst.sopp.op == 1)
+		 
+		 // Second PC starts right after S_ENDPGM
+		 if (rel_addr + inst_size < ndrange->inst_buffer_size)
+		   return rel_addr + inst_size;
+
+		buffer += inst_size;
+		rel_addr += inst_size;
+	}
+
+	// No second PC, return 0
+	return 0;
+}
