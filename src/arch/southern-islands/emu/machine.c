@@ -1800,6 +1800,14 @@ void si_isa_S_CMP_LE_U32_impl(struct si_work_item_t *work_item,
  * SOPP
  */
 
+/* Do nothing */
+void si_isa_S_NOP_impl(struct si_work_item_t *work_item,
+	struct si_inst_t *inst)
+{
+	return;
+}
+
+
 /* End the program. */
 void si_isa_S_ENDPGM_impl(struct si_work_item_t *work_item,
 	struct si_inst_t *inst)

@@ -331,6 +331,15 @@ DEFINST(S_CMP_LE_U32,
  * SOPP
  */
 
+DEFINST(S_NOP,
+	" s_nop",
+	SOPP,
+	0,
+	4,
+	0
+)
+
+
 DEFINST(S_ENDPGM,
 	" s_endpgm",
 	SOPP,
