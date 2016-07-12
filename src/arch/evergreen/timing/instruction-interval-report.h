@@ -35,4 +35,3 @@ struct evg_uop_t;
 void evg_periodic_report_new_inst(struct evg_uop_t *uop);
 
 #endif
-

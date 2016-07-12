@@ -17,7 +17,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #include <lib/esim/trace.h>
 #include <lib/util/list.h>
 
@@ -27,62 +26,47 @@
 #include "uop-queue.h"
 #include "thread.h"
 
-
 int x86_uop_queue_size;
 
-
-void X86ThreadInitUopQueue(X86Thread *self)
-{
-	self->uop_queue = list_create_with_size(x86_uop_queue_size);
+void X86ThreadInitUopQueue(X86Thread *self) {
+  self->uop_queue = list_create_with_size(x86_uop_queue_size);
 }
 
+void X86ThreadFreeUopQueue(X86Thread *self) {
+  struct list_t *uop_queue;
+  struct x86_uop_t *uop;
 
-void X86ThreadFreeUopQueue(X86Thread *self)
-{
-	struct list_t *uop_queue;
-	struct x86_uop_t *uop;
-
-	uop_queue = self->uop_queue;
-	while (list_count(uop_queue))
-	{
-		uop = list_remove_at(uop_queue, 0);
-		uop->in_uop_queue = 0;
-		x86_uop_free_if_not_queued(uop);
-	}
-	list_free(uop_queue);
+  uop_queue = self->uop_queue;
+  while (list_count(uop_queue)) {
+    uop = list_remove_at(uop_queue, 0);
+    uop->in_uop_queue = 0;
+    x86_uop_free_if_not_queued(uop);
+  }
+  list_free(uop_queue);
 }
 
+void X86ThreadRecoverUopQueue(X86Thread *self) {
+  X86Core *core = self->core;
+  X86Cpu *cpu = self->cpu;
 
-void X86ThreadRecoverUopQueue(X86Thread *self)
-{
-	X86Core *core = self->core;
-	X86Cpu *cpu = self->cpu;
+  struct list_t *uop_queue = self->uop_queue;
+  struct x86_uop_t *uop;
 
-	struct list_t *uop_queue = self->uop_queue;
-	struct x86_uop_t *uop;
+  while (list_count(uop_queue)) {
+    uop = list_get(uop_queue, list_count(uop_queue) - 1);
+    assert(uop->thread == self);
+    if (!uop->specmode) break;
+    list_remove_at(uop_queue, list_count(uop_queue) - 1);
+    uop->in_uop_queue = 0;
 
-	while (list_count(uop_queue))
-	{
-		uop = list_get(uop_queue, list_count(uop_queue) - 1);
-		assert(uop->thread == self);
-		if (!uop->specmode)
-			break;
-		list_remove_at(uop_queue, list_count(uop_queue) - 1);
-		uop->in_uop_queue = 0;
+    /* Trace */
+    if (x86_tracing()) {
+      x86_trace("x86.inst id=%lld core=%d stg=\"sq\"\n", uop->id_in_core,
+                core->id);
+      X86CpuAddToTraceList(cpu, uop);
+    }
 
-		/* Trace */
-		if (x86_tracing())
-		{
-			x86_trace("x86.inst id=%lld core=%d stg=\"sq\"\n",
-				uop->id_in_core, core->id);
-			X86CpuAddToTraceList(cpu, uop);
-		}
-
-		/* Free */
-		x86_uop_free_if_not_queued(uop);
-	}
+    /* Free */
+    x86_uop_free_if_not_queued(uop);
+  }
 }
-
-
-
-

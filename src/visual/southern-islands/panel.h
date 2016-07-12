@@ -22,7 +22,6 @@
 
 #include <gtk/gtk.h>
 
-
 struct vi_si_panel_t;
 
 struct vi_si_panel_t *vi_si_panel_create(void);
@@ -32,6 +31,4 @@ void vi_si_panel_refresh(struct vi_si_panel_t *panel);
 
 GtkWidget *vi_si_panel_get_widget(struct vi_si_panel_t *panel);
 
-
 #endif
-

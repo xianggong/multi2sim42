@@ -25,8 +25,8 @@ struct config_t;
 
 /* Functions for class 'FrmGpu' */
 void FrmGpuMemConfigDefault(Timing *self, struct config_t *config);
-void FrmGpuMemConfigParseEntry(Timing *self, struct config_t *config, char *section);
+void FrmGpuMemConfigParseEntry(Timing *self, struct config_t *config,
+                               char *section);
 void FrmGpuMemConfigCheck(Timing *self, struct config_t *config);
-
 
 #endif

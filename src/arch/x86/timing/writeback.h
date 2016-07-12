@@ -22,14 +22,11 @@
 
 #include <lib/util/class.h>
 
-
 /*
  * Class 'X86Core'
  */
 
 void X86CoreWriteback(X86Core *self);
-
-
 
 /*
  * Class 'X86Cpu'
@@ -37,6 +34,4 @@ void X86CoreWriteback(X86Core *self);
 
 void X86CpuWriteback(X86Cpu *self);
 
-
 #endif
-

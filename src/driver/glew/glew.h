@@ -39,6 +39,4 @@ void glew_done(void);
 
 int glew_abi_call(X86Context *ctx);
 
-
 #endif
-

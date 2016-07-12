@@ -20,18 +20,16 @@
 #ifndef DRIVER_CUDA_MEMORY_H
 #define DRIVER_CUDA_MEMORY_H
 
-struct cuda_memory_t
-{
-	unsigned int id;
-	int ref_count;
+struct cuda_memory_t {
+  unsigned int id;
+  int ref_count;
 
-	unsigned int size;
-	unsigned int host_ptr;
-	unsigned int device_ptr;
+  unsigned int size;
+  unsigned int host_ptr;
+  unsigned int device_ptr;
 };
 
 struct cuda_memory_t *cuda_memory_create(void);
 void cuda_memory_free(struct cuda_memory_t *mem);
 
 #endif
-

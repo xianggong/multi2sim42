@@ -20,19 +20,18 @@
 #ifndef ARCH_SOUTHERN_ISLANDS_TIMING_SCALAR_UNIT_H
 #define ARCH_SOUTHERN_ISLANDS_TIMING_SCALAR_UNIT_H
 
-struct si_scalar_unit_t
-{
-	struct list_t *issue_buffer;  /* Issued instructions */
-	struct list_t *decode_buffer; /* Decoded instructions */
-	struct list_t *read_buffer;   /* Register reads */
-	struct list_t *exec_buffer;   /* Execution */
-	struct list_t *write_buffer;  /* Register writes */
-	struct list_t *inflight_buffer; /* Pending memory accesses */
+struct si_scalar_unit_t {
+  struct list_t *issue_buffer;    /* Issued instructions */
+  struct list_t *decode_buffer;   /* Decoded instructions */
+  struct list_t *read_buffer;     /* Register reads */
+  struct list_t *exec_buffer;     /* Execution */
+  struct list_t *write_buffer;    /* Register writes */
+  struct list_t *inflight_buffer; /* Pending memory accesses */
 
-	struct si_compute_unit_t *compute_unit;
+  struct si_compute_unit_t *compute_unit;
 
-	/* Statistics */
-	long long inst_count;
+  /* Statistics */
+  long long inst_count;
 };
 
 #endif

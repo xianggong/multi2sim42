@@ -25,8 +25,6 @@
  */
 extern int x86_uop_queue_size;
 
-
-
 /*
  * Class 'X86Thread'
  */
@@ -36,4 +34,3 @@ void X86ThreadFreeUopQueue(X86Thread *self);
 void X86ThreadRecoverUopQueue(X86Thread *self);
 
 #endif
-

@@ -17,32 +17,25 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #include <lib/mhandle/mhandle.h>
 
 #include "work-item.h"
-
-
 
 /*
  * Public Functions
  */
 
-struct si_work_item_t *si_work_item_create()
-{
-	struct si_work_item_t *work_item;
+struct si_work_item_t *si_work_item_create() {
+  struct si_work_item_t *work_item;
 
-	/* Initialize */
-	work_item = xcalloc(1, sizeof(struct si_work_item_t));
+  /* Initialize */
+  work_item = xcalloc(1, sizeof(struct si_work_item_t));
 
-	/* Return */
-	return work_item;
+  /* Return */
+  return work_item;
 }
 
-
-void si_work_item_free(struct si_work_item_t *work_item)
-{
-	/* Free work_item */
-	free(work_item);
+void si_work_item_free(struct si_work_item_t *work_item) {
+  /* Free work_item */
+  free(work_item);
 }
-

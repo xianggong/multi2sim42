@@ -22,19 +22,16 @@
 
 #include "uop.h"
 
-
 /*
  * Public
  */
 
 extern char *x86_iq_kind_map[];
-extern enum x86_iq_kind_t
-{
-	x86_iq_kind_shared = 0,
-	x86_iq_kind_private
+extern enum x86_iq_kind_t {
+  x86_iq_kind_shared = 0,
+  x86_iq_kind_private
 } x86_iq_kind;
 extern int x86_iq_size;
-
 
 /*
  * Class 'X86Thread'
@@ -48,6 +45,4 @@ void X86ThreadInsertInIQ(X86Thread *self, struct x86_uop_t *uop);
 void X86ThreadRemoveFromIQ(X86Thread *self);
 void X86ThreadRecoverIQ(X86Thread *self);
 
-
 #endif
-

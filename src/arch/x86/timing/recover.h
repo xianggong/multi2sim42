@@ -29,4 +29,3 @@
 void X86ThreadRecover(X86Thread *self);
 
 #endif
-

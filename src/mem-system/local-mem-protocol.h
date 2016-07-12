@@ -19,7 +19,6 @@
 #ifndef MEM_SYSTEM_LOCAL_MEM_PROTOCOL_H
 #define MEM_SYSTEM_LOCAL_MEM_PROTOCOL_H
 
-
 extern int EV_MOD_LOCAL_MEM_LOAD;
 extern int EV_MOD_LOCAL_MEM_LOAD_LOCK;
 extern int EV_MOD_LOCAL_MEM_LOAD_FINISH;
@@ -33,11 +32,8 @@ extern int EV_MOD_LOCAL_MEM_FIND_AND_LOCK_PORT;
 extern int EV_MOD_LOCAL_MEM_FIND_AND_LOCK_ACTION;
 extern int EV_MOD_LOCAL_MEM_FIND_AND_LOCK_FINISH;
 
-
 void mod_handler_local_mem_load(int event, void *data);
 void mod_handler_local_mem_store(int event, void *data);
 void mod_handler_local_mem_find_and_lock(int event, void *data);
 
-
 #endif
-

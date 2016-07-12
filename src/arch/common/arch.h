@@ -24,22 +24,19 @@
 
 #include <lib/util/class.h>
 
-
 /*
  * Architecture Object
  */
-
 
 struct config_t;
 struct arch_t;
 
 extern struct str_map_t arch_sim_kind_map;
 
-enum arch_sim_kind_t
-{
-	arch_sim_kind_invalid = 0,
-	arch_sim_kind_functional,
-	arch_sim_kind_detailed
+enum arch_sim_kind_t {
+  arch_sim_kind_invalid = 0,
+  arch_sim_kind_functional,
+  arch_sim_kind_detailed
 };
 
 typedef void (*arch_callback_func_t)(struct arch_t *arch, void *user_data);
@@ -51,53 +48,50 @@ typedef void (*arch_timing_read_config_func_t)(void);
 typedef void (*arch_timing_init_func_t)(void);
 typedef void (*arch_timing_done_func_t)(void);
 
+struct arch_t {
+  /* Name of architecture (x86, ARM, etc.) */
+  char *name;
 
-struct arch_t
-{
-	/* Name of architecture (x86, ARM, etc.) */
-	char *name;
+  /* Prefix used in command-line options and in code variables and functions.
+   * E.g., 'evg' for Evergreen, or 'si' for Southern Islands. */
+  char *prefix;
 
-	/* Prefix used in command-line options and in code variables and functions.
-	 * E.g., 'evg' for Evergreen, or 'si' for Southern Islands. */
-	char *prefix;
+  /* Simulation kind - must be assigned externally */
+  enum arch_sim_kind_t sim_kind;
 
-	/* Simulation kind - must be assigned externally */
-	enum arch_sim_kind_t sim_kind;
+  /* Flag indicating whether a simulation loop for this architecture
+   * performed a useful work. This flag is updated with the return value
+   * of functions 'emu_run_func' and 'timing_run_func'. */
+  int active;
 
-	/* Flag indicating whether a simulation loop for this architecture
-	 * performed a useful work. This flag is updated with the return value
-	 * of functions 'emu_run_func' and 'timing_run_func'. */
-	int active;
+  /* Cycle in the local frequency domain when last timing simulation
+   * iteration was performed. If the main loop intends to run a new
+   * iteration, but the current cycle has not changed yet for this
+   * frequency domain, the iteration will be skipped. */
+  long long last_timing_cycle;
 
-	/* Cycle in the local frequency domain when last timing simulation
-	 * iteration was performed. If the main loop intends to run a new
-	 * iteration, but the current cycle has not changed yet for this
-	 * frequency domain, the iteration will be skipped. */
-	long long last_timing_cycle;
+  /* Call-back functions for emulator */
+  arch_emu_init_func_t emu_init_func;
+  arch_emu_done_func_t emu_done_func;
 
-	/* Call-back functions for emulator */
-	arch_emu_init_func_t emu_init_func;
-	arch_emu_done_func_t emu_done_func;
+  /* Call-back functions for timing simulator */
+  arch_timing_read_config_func_t timing_read_config_func;
+  arch_timing_init_func_t timing_init_func;
+  arch_timing_done_func_t timing_done_func;
 
-	/* Call-back functions for timing simulator */
-	arch_timing_read_config_func_t timing_read_config_func;
-	arch_timing_init_func_t timing_init_func;
-	arch_timing_done_func_t timing_done_func;
+  /* Disassembler */
+  Asm *as;
 
-	/* Disassembler */
-	Asm *as;
+  /* Emulator */
+  Emu *emu;
 
-	/* Emulator */
-	Emu *emu;
+  /* Timing simulator */
+  Timing *timing;
 
-	/* Timing simulator */
-	Timing *timing;
-
-	/* List of entry modules to the memory hierarchy. Each element of this list
-	 * is of type 'mod_t'. */
-	struct linked_list_t *mem_entry_mod_list;
+  /* List of entry modules to the memory hierarchy. Each element of this list
+   * is of type 'mod_t'. */
+  struct linked_list_t *mem_entry_mod_list;
 };
-
 
 struct arch_t *arch_create(char *name, char *prefix);
 void arch_free(struct arch_t *arch);
@@ -108,8 +102,6 @@ void arch_set_emu(struct arch_t *arch, Emu *emu);
 void arch_set_timing(struct arch_t *arch, Timing *timing);
 
 void arch_dump_summary(struct arch_t *arch, FILE *f);
-
-
 
 /*
  * Global Variables
@@ -122,9 +114,6 @@ extern struct arch_t *arch_mips;
 extern struct arch_t *arch_southern_islands;
 extern struct arch_t *arch_x86;
 
-
-
-
 /*
  * Public Functions
  */
@@ -132,13 +121,12 @@ extern struct arch_t *arch_x86;
 void arch_init(void);
 void arch_done(void);
 
-struct arch_t *arch_register(char *name, char *prefix,
-		enum arch_sim_kind_t sim_kind,
-		arch_emu_init_func_t emu_init_func,
-		arch_emu_done_func_t emu_done_func,
-		arch_timing_read_config_func_t timing_read_config_func,
-		arch_timing_init_func_t timing_init_func,
-		arch_timing_done_func_t timing_done_func);
+struct arch_t *arch_register(
+    char *name, char *prefix, enum arch_sim_kind_t sim_kind,
+    arch_emu_init_func_t emu_init_func, arch_emu_done_func_t emu_done_func,
+    arch_timing_read_config_func_t timing_read_config_func,
+    arch_timing_init_func_t timing_init_func,
+    arch_timing_done_func_t timing_done_func);
 
 void arch_for_each(arch_callback_func_t callback_func, void *user_data);
 

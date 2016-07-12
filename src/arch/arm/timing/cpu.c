@@ -21,49 +21,32 @@
 
 #include "cpu.h"
 
-
 /*
  * Class 'ARMCpu'
  */
 
 CLASS_IMPLEMENTATION(ARMCpu);
 
-void ARMCpuCreate(ARMCpu *self)
-{
-	/* Parent */
-	TimingCreate(asTiming(self));
+void ARMCpuCreate(ARMCpu *self) {
+  /* Parent */
+  TimingCreate(asTiming(self));
 
-	/* Virtual functions */
-	asObject(self)->Dump = ARMCpuDump;
-	asTiming(self)->DumpSummary = ARMCpuDumpSummary;
-	asTiming(self)->Run = ARMCpuRun;
+  /* Virtual functions */
+  asObject(self)->Dump = ARMCpuDump;
+  asTiming(self)->DumpSummary = ARMCpuDumpSummary;
+  asTiming(self)->Run = ARMCpuRun;
 }
 
+void ARMCpuDestroy(ARMCpu *self) {}
 
-void ARMCpuDestroy(ARMCpu *self)
-{
+void ARMCpuDump(Object *self, FILE *f) {}
+
+void ARMCpuDumpSummary(Timing *self, FILE *f) {
+  /* Call parent */
+  TimingDumpSummary(asTiming(self), f);
 }
 
-
-void ARMCpuDump(Object *self, FILE *f)
-{
-}
-
-
-void ARMCpuDumpSummary(Timing *self, FILE *f)
-{
-	/* Call parent */
-	TimingDumpSummary(asTiming(self), f);
-}
-
-
-int ARMCpuRun(Timing *self)
-{
-	return FALSE;
-}
-
-
-
+int ARMCpuRun(Timing *self) { return FALSE; }
 
 /*
  * Non-Class Public Stuff
@@ -71,24 +54,17 @@ int ARMCpuRun(Timing *self)
 
 ARMCpu *arm_cpu;
 
+void arm_cpu_read_config(void) {}
 
-void arm_cpu_read_config(void)
-{
+void arm_cpu_init(void) {
+  /* Classes */
+  CLASS_REGISTER(ARMCpu);
+
+  /* Create CPU */
+  arm_cpu = new (ARMCpu);
 }
 
-
-void arm_cpu_init(void)
-{
-	/* Classes */
-	CLASS_REGISTER(ARMCpu);
-
-	/* Create CPU */
-	arm_cpu = new(ARMCpu);
-}
-
-
-void arm_cpu_done(void)
-{
-	/* Free CPU */
-	delete(arm_cpu);
+void arm_cpu_done(void) {
+  /* Free CPU */
+  delete (arm_cpu);
 }

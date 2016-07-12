@@ -24,80 +24,77 @@
 
 #include <arch/common/emu.h>
 
-
 /*
  * Class 'MIPSEmu'
  */
 
-enum mips_emu_list_kind_t
-{
-	mips_emu_list_context = 0,
-	mips_emu_list_running,
-	mips_emu_list_suspended,
-	mips_emu_list_zombie,
-	mips_emu_list_finished,
-	mips_emu_list_alloc
+enum mips_emu_list_kind_t {
+  mips_emu_list_context = 0,
+  mips_emu_list_running,
+  mips_emu_list_suspended,
+  mips_emu_list_zombie,
+  mips_emu_list_finished,
+  mips_emu_list_alloc
 };
 
 CLASS_BEGIN(MIPSEmu, Emu)
 
-	/* PID counter */
-	int current_pid;
+/* PID counter */
+int current_pid;
 
-	/* Schedule next call to 'x86_emu_process_events()'.
-	 * The call will only be effective if 'process_events_force' is set.
-	 * This flag should be accessed thread-safely locking 'process_events_mutex'. */
-	pthread_mutex_t process_events_mutex;
-	int process_events_force;
+/* Schedule next call to 'x86_emu_process_events()'.
+ * The call will only be effective if 'process_events_force' is set.
+ * This flag should be accessed thread-safely locking 'process_events_mutex'. */
+pthread_mutex_t process_events_mutex;
+int process_events_force;
 
-	/* Counter of times that a context has been suspended in a
-	 * futex. Used for FIFO wakeups. */
-	long long futex_sleep_count;
+/* Counter of times that a context has been suspended in a
+ * futex. Used for FIFO wakeups. */
+long long futex_sleep_count;
 
-	/* Flag set when any context changes any status other than 'specmode' */
-	int context_reschedule;
+/* Flag set when any context changes any status other than 'specmode' */
+int context_reschedule;
 
-	/* List of contexts */
-	struct mips_ctx_t *context_list_head;
-	struct mips_ctx_t *context_list_tail;
-	int context_list_count;
-	int context_list_max;
+/* List of contexts */
+struct mips_ctx_t *context_list_head;
+struct mips_ctx_t *context_list_tail;
+int context_list_count;
+int context_list_max;
 
-	/* List of running contexts */
-	struct mips_ctx_t *running_list_head;
-	struct mips_ctx_t *running_list_tail;
-	int running_list_count;
-	int running_list_max;
+/* List of running contexts */
+struct mips_ctx_t *running_list_head;
+struct mips_ctx_t *running_list_tail;
+int running_list_count;
+int running_list_max;
 
-	/* List of suspended contexts */
-	struct mips_ctx_t *suspended_list_head;
-	struct mips_ctx_t *suspended_list_tail;
-	int suspended_list_count;
-	int suspended_list_max;
+/* List of suspended contexts */
+struct mips_ctx_t *suspended_list_head;
+struct mips_ctx_t *suspended_list_tail;
+int suspended_list_count;
+int suspended_list_max;
 
-	/* List of zombie contexts */
-	struct mips_ctx_t *zombie_list_head;
-	struct mips_ctx_t *zombie_list_tail;
-	int zombie_list_count;
-	int zombie_list_max;
+/* List of zombie contexts */
+struct mips_ctx_t *zombie_list_head;
+struct mips_ctx_t *zombie_list_tail;
+int zombie_list_count;
+int zombie_list_max;
 
-	/* List of finished contexts */
-	struct mips_ctx_t *finished_list_head;
-	struct mips_ctx_t *finished_list_tail;
-	int finished_list_count;
-	int finished_list_max;
+/* List of finished contexts */
+struct mips_ctx_t *finished_list_head;
+struct mips_ctx_t *finished_list_tail;
+int finished_list_count;
+int finished_list_max;
 
-	/* List of allocated contexts */
-	struct mips_ctx_t *alloc_list_head;
-	struct mips_ctx_t *alloc_list_tail;
-	int alloc_list_count;
-	int alloc_list_max;
+/* List of allocated contexts */
+struct mips_ctx_t *alloc_list_head;
+struct mips_ctx_t *alloc_list_tail;
+int alloc_list_count;
+int alloc_list_max;
 
-	/* Stats */
-	long long inst_count;  /* Number of emulated instructions */
+/* Stats */
+long long inst_count; /* Number of emulated instructions */
 
 CLASS_END(MIPSEmu)
-
 
 void MIPSEmuCreate(MIPSEmu *self);
 void MIPSEmuDestroy(MIPSEmu *self);
@@ -110,19 +107,15 @@ int MIPSEmuRun(Emu *emu);
 
 void MIPSEmuProcessEventsSchedule(MIPSEmu *self);
 
-
 /* FIXME - Functions below should be removed */
 int MIPSEmuListMember(MIPSEmu *self, enum mips_emu_list_kind_t list,
-		struct mips_ctx_t *ctx);
+                      struct mips_ctx_t *ctx);
 void MIPSEmuListRemove(MIPSEmu *self, enum mips_emu_list_kind_t list,
-		struct mips_ctx_t *ctx);
+                       struct mips_ctx_t *ctx);
 void MIPSEmuListInsertTail(MIPSEmu *self, enum mips_emu_list_kind_t list,
-		struct mips_ctx_t *ctx);
+                           struct mips_ctx_t *ctx);
 void MIPSEmuListInsertHead(MIPSEmu *self, enum mips_emu_list_kind_t list,
-		struct mips_ctx_t *ctx);
-
-
-
+                           struct mips_ctx_t *ctx);
 
 /*
  * Non-Class Functions
@@ -139,6 +132,5 @@ extern long long mips_emu_max_time;
 
 void mips_emu_init(void);
 void mips_emu_done(void);
-
 
 #endif

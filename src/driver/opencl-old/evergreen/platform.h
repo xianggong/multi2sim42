@@ -22,23 +22,20 @@
 
 #include <lib/util/class.h>
 
-
 /*
  * Object 'evg_opencl_platform_t'
  */
 
-struct evg_opencl_platform_t
-{
-	unsigned int id;
-	EvgEmu *emu;
+struct evg_opencl_platform_t {
+  unsigned int id;
+  EvgEmu *emu;
 };
 
 struct evg_opencl_platform_t *evg_opencl_platform_create(EvgEmu *emu);
 void evg_opencl_platform_free(struct evg_opencl_platform_t *platform);
 
-unsigned int evg_opencl_platform_get_info(struct evg_opencl_platform_t *platform,
-	unsigned int name, struct mem_t *mem, unsigned int addr, unsigned int size);
-
+unsigned int evg_opencl_platform_get_info(
+    struct evg_opencl_platform_t *platform, unsigned int name,
+    struct mem_t *mem, unsigned int addr, unsigned int size);
 
 #endif
-

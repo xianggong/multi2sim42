@@ -1,4 +1,4 @@
-/* 
+/*
  *  Multi2Sim
  *  Copyright (C) 2012  Rafael Ubal (ubal@ece.neu.edu)
  *
@@ -33,7 +33,6 @@ extern char *net_err_can_send;
 extern char *net_err_cycle;
 extern char *net_err_route_step;
 
-
 /* Debug */
 #define net_debug(...) debug(net_debug_category, __VA_ARGS__)
 extern int net_debug_category;
@@ -65,6 +64,5 @@ struct net_t *net_find_first(void);
 struct net_t *net_find_next(void);
 
 void net_sim(char *debug_file_name);
-
 
 #endif

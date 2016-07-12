@@ -20,50 +20,50 @@
 #ifndef ARCH_FERMI_TIMING_SIMD_UNIT_H
 #define ARCH_FERMI_TIMING_SIMD_UNIT_H
 
-struct frm_subwarp_inst_queue_t
-{
-	struct frm_uop_t *uop;
-	unsigned int num_subwarps_executed;
+struct frm_subwarp_inst_queue_t {
+  struct frm_uop_t *uop;
+  unsigned int num_subwarps_executed;
 };
 
 /* Utilization Coefficient */
-struct frm_util_t
-{
-	long long cycles_utilized;
-	long long cycles_considered;
+struct frm_util_t {
+  long long cycles_utilized;
+  long long cycles_considered;
 };
 
-struct frm_simd_t
-{
-	int id_in_sm;
+struct frm_simd_t {
+  int id_in_sm;
 
-	struct list_t *issue_buffer;  /* Issued instructions */
-	struct list_t *decode_buffer; /* Decoded instructions */
-	struct list_t *exec_buffer;   /* Execution */
+  struct list_t *issue_buffer;  /* Issued instructions */
+  struct list_t *decode_buffer; /* Decoded instructions */
+  struct list_t *exec_buffer;   /* Execution */
 
-	struct frm_subwarp_inst_queue_t *subwarp_inst_queue;  
-	struct frm_warp_inst_queue_t *warp_inst_queue;
+  struct frm_subwarp_inst_queue_t *subwarp_inst_queue;
+  struct frm_warp_inst_queue_t *warp_inst_queue;
 
-	struct frm_sm_t *sm;
+  struct frm_sm_t *sm;
 
-	/* Statistics */
-	long long inst_count;
+  /* Statistics */
+  long long inst_count;
 
-	/* In order of highest to lowest precedence (scope). All utilized 
-	 * functional units are considered for each level of scope. If a 
-	 * functional unit is not utilized in a cycle, the specialized metric 
-	 * of the highest precedence whose characteristics are met is the only 
-	 * specialized metric considered. The total utilization metric is 
-	 * always considered for all functional units. */
-	struct frm_util_t *wkg_util; /* Work group mapped to compute unit. */
-	struct frm_util_t *wvf_util; /* Wavefront mapped to instruction buffer. */
-	struct frm_util_t *rdy_util; /* Wavefront with appropriate next instruction 
-								 * (vector ALU) is on its way to execute. */
-	struct frm_util_t *occ_util; /* Wavefront exists in the in the previous 
-								 * buffer ready to be executed. */
-	struct frm_util_t *wki_util; /* Work item mapped to stream core. */
-	struct frm_util_t *act_util; /* Work item mapped to stream core is active. */
-	struct frm_util_t *tot_util; /* Total SIMD utilization. */
+  /* In order of highest to lowest precedence (scope). All utilized
+   * functional units are considered for each level of scope. If a
+   * functional unit is not utilized in a cycle, the specialized metric
+   * of the highest precedence whose characteristics are met is the only
+   * specialized metric considered. The total utilization metric is
+   * always considered for all functional units. */
+  struct frm_util_t *wkg_util; /* Work group mapped to compute unit. */
+  struct frm_util_t *wvf_util; /* Wavefront mapped to instruction buffer. */
+  struct frm_util_t *
+      rdy_util; /* Wavefront with appropriate next instruction
+                                            * (vector ALU) is on its way to
+                 * execute. */
+  struct frm_util_t *
+      occ_util;                /* Wavefront exists in the in the previous
+                                                           * buffer ready to be executed. */
+  struct frm_util_t *wki_util; /* Work item mapped to stream core. */
+  struct frm_util_t *act_util; /* Work item mapped to stream core is active. */
+  struct frm_util_t *tot_util; /* Total SIMD utilization. */
 };
 
 #endif

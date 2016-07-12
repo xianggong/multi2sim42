@@ -30,56 +30,55 @@
 //#define MIPS_MODE_ABT 0x17
 
 /* register file */
-#define GPR_COUNT	32
-#define FPR_COUNT	32
+#define GPR_COUNT 32
+#define FPR_COUNT 32
 
 /* Register File access */
-#define MIPS_COP0_GET(X) 		ctx->regs->regs_cop0[X]
+#define MIPS_COP0_GET(X) ctx->regs->regs_cop0[X]
 
-#define MIPS_FPR_S_GET(X)		ctx->regs->regs_F.s[X]
-#define MIPS_FPR_S_SET(X, V)	ctx->regs->regs_F.s[X] = (V)
+#define MIPS_FPR_S_GET(X) ctx->regs->regs_F.s[X]
+#define MIPS_FPR_S_SET(X, V) ctx->regs->regs_F.s[X] = (V)
 
-#define MIPS_FPR_D_GET(X)		ctx->regs->regs_F.d[X]
-#define MIPS_FPR_D_SET(X, V)	ctx->regs->regs_F.d[X] = (V)
+#define MIPS_FPR_D_GET(X) ctx->regs->regs_F.d[X]
+#define MIPS_FPR_D_SET(X, V) ctx->regs->regs_F.d[X] = (V)
 
-#define MIPS_REG_HI 			ctx->regs->regs_HI
-#define MIPS_REG_LO 			ctx->regs->regs_LO
-#define MIPS_REG_C_FPC_FCSR 	ctx->regs->regs_C.FCSR
-#define MIPS_REG_C_FPC_FIR 		ctx->regs->regs_C.FIR
+#define MIPS_REG_HI ctx->regs->regs_HI
+#define MIPS_REG_LO ctx->regs->regs_LO
+#define MIPS_REG_C_FPC_FCSR ctx->regs->regs_C.FCSR
+#define MIPS_REG_C_FPC_FIR ctx->regs->regs_C.FIR
 
 /* Instruction fields */
-#define RS 					ctx->inst.dword.standard.rs
-#define RD 					ctx->inst.dword.standard.rd
-#define SA 					ctx->inst.dword.standard.sa
-#define OFFSET 				ctx->inst.dword.offset_imm.offset
-#define RT					ctx->inst.dword.standard.rt
-#define IMM					ctx->inst.dword.offset_imm.offset
-#define	FT					ctx->inst.dword.standard.rt
-#define	FS					ctx->inst.dword.standard.rd
-#define	FD					ctx->inst.dword.standard.sa
-#define	TARGET				ctx->inst.dword.target.target
+#define RS ctx->inst.dword.standard.rs
+#define RD ctx->inst.dword.standard.rd
+#define SA ctx->inst.dword.standard.sa
+#define OFFSET ctx->inst.dword.offset_imm.offset
+#define RT ctx->inst.dword.standard.rt
+#define IMM ctx->inst.dword.offset_imm.offset
+#define FT ctx->inst.dword.standard.rt
+#define FS ctx->inst.dword.standard.rd
+#define FD ctx->inst.dword.standard.sa
+#define TARGET ctx->inst.dword.target.target
 
 extern char *gpr_name[];
 extern char *fpr_name[];
 
-struct mips_regs_t
-{
-	unsigned int regs_R[GPR_COUNT]; /* General Purpose registers */
+struct mips_regs_t {
+  unsigned int regs_R[GPR_COUNT]; /* General Purpose registers */
 
-	union {
-		float	s[FPR_COUNT];		/* single precision fp regs */
-		double	d[FPR_COUNT / 2];	/* double precision fp regs */
-		} regs_F;
+  union {
+    float s[FPR_COUNT];      /* single precision fp regs */
+    double d[FPR_COUNT / 2]; /* double precision fp regs */
+  } regs_F;
 
-	struct {
-			unsigned int FIR;
-			unsigned int FCSR;
-		}regs_C;
+  struct {
+    unsigned int FIR;
+    unsigned int FCSR;
+  } regs_C;
 
-	unsigned int regs_cop0[GPR_COUNT]; /* Coprocessor 0 registers */
-	unsigned int pc;
-	unsigned int regs_HI;
-	unsigned int regs_LO;
+  unsigned int regs_cop0[GPR_COUNT]; /* Coprocessor 0 registers */
+  unsigned int pc;
+  unsigned int regs_HI;
+  unsigned int regs_LO;
 
 } __attribute__((packed));
 
@@ -88,4 +87,3 @@ void mips_regs_free(struct mips_regs_t *regs);
 void mips_regs_copy(struct mips_regs_t *dst, struct mips_regs_t *src);
 
 #endif
-

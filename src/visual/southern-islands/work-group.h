@@ -17,34 +17,35 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #ifndef VISUAL_SOUTHERN_ISLANDS_WORK_GROUP_H
 #define VISUAL_SOUTHERN_ISLANDS_WORK_GROUP_H
 
+struct vi_si_work_group_t {
+  char *name;
 
-struct vi_si_work_group_t
-{
-	char *name;
+  int id;
 
-	int id;
+  int work_item_id_first;
+  int work_item_count;
 
-	int work_item_id_first;
-	int work_item_count;
-
-	int wavefront_id_first;
-	int wavefront_count;
+  int wavefront_id_first;
+  int wavefront_count;
 };
 
-struct vi_si_work_group_t *vi_si_work_group_create(char *name, int id, int work_item_id_first,
-	int work_item_count, int wavefront_id_first, int wavefront_count);
+struct vi_si_work_group_t *vi_si_work_group_create(char *name, int id,
+                                                   int work_item_id_first,
+                                                   int work_item_count,
+                                                   int wavefront_id_first,
+                                                   int wavefront_count);
 void vi_si_work_group_free(struct vi_si_work_group_t *work_group);
 
-void vi_si_work_group_get_name_short(char *work_group_name, char *buf, int size);
+void vi_si_work_group_get_name_short(char *work_group_name, char *buf,
+                                     int size);
 void vi_si_work_group_get_desc(char *work_group_name, char *buf, int size);
 
-void vi_si_work_group_read_checkpoint(struct vi_si_work_group_t *work_group, FILE *f);
-void vi_si_work_group_write_checkpoint(struct vi_si_work_group_t *work_group, FILE *f);
-
+void vi_si_work_group_read_checkpoint(struct vi_si_work_group_t *work_group,
+                                      FILE *f);
+void vi_si_work_group_write_checkpoint(struct vi_si_work_group_t *work_group,
+                                       FILE *f);
 
 #endif
-

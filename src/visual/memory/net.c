@@ -27,107 +27,88 @@
 
 #include "net.h"
 
-
 /*
  * Network Node
  */
 
-struct vi_net_node_t
-{
-	struct vi_mod_t *mod;
+struct vi_net_node_t {
+  struct vi_mod_t *mod;
 };
 
+struct vi_net_node_t *vi_net_node_create(void) {
+  struct vi_net_node_t *node;
 
-struct vi_net_node_t *vi_net_node_create(void)
-{
-	struct vi_net_node_t *node;
-
-	/* Return */
-	node = xcalloc(1, sizeof(struct vi_net_node_t));
-	return node;
+  /* Return */
+  node = xcalloc(1, sizeof(struct vi_net_node_t));
+  return node;
 }
 
-
-void vi_net_node_free(struct vi_net_node_t *node)
-{
-	free(node);
-}
-
-
-
+void vi_net_node_free(struct vi_net_node_t *node) { free(node); }
 
 /*
  * Network
  */
 
-struct vi_net_t *vi_net_create(struct vi_trace_line_t *trace_line)
-{
-	struct vi_net_t *net;
+struct vi_net_t *vi_net_create(struct vi_trace_line_t *trace_line) {
+  struct vi_net_t *net;
 
-	int num_nodes;
-	int i;
+  int num_nodes;
+  int i;
 
-	char *name;
+  char *name;
 
-	/* Initialize */
-	net = xcalloc(1, sizeof(struct vi_net_t));
+  /* Initialize */
+  net = xcalloc(1, sizeof(struct vi_net_t));
 
-	/* Name */
-	name = vi_trace_line_get_symbol(trace_line, "name");
-	net->name = xstrdup(name);
+  /* Name */
+  name = vi_trace_line_get_symbol(trace_line, "name");
+  net->name = xstrdup(name);
 
-	/* Node list */
-	num_nodes = vi_trace_line_get_symbol_int(trace_line, "num_nodes");
-	net->node_list = list_create();
-	for (i = 0; i < num_nodes; i++)
-		list_add(net->node_list, vi_net_node_create());
+  /* Node list */
+  num_nodes = vi_trace_line_get_symbol_int(trace_line, "num_nodes");
+  net->node_list = list_create();
+  for (i = 0; i < num_nodes; i++)
+    list_add(net->node_list, vi_net_node_create());
 
-
-	/* Return */
-	return net;
+  /* Return */
+  return net;
 }
 
+void vi_net_free(struct vi_net_t *net) {
+  int i;
 
-void vi_net_free(struct vi_net_t *net)
-{
-	int i;
+  /* Free nodes */
+  LIST_FOR_EACH(net->node_list, i)
+  vi_net_node_free(list_get(net->node_list, i));
+  list_free(net->node_list);
 
-	/* Free nodes */
-	LIST_FOR_EACH(net->node_list, i)
-		vi_net_node_free(list_get(net->node_list, i));
-	list_free(net->node_list);
-
-	/* Free network */
-	free(net->name);
-	free(net);
+  /* Free network */
+  free(net->name);
+  free(net);
 }
 
+void vi_net_attach_mod(struct vi_net_t *net, struct vi_mod_t *mod,
+                       int node_index) {
+  struct vi_net_node_t *node;
 
-void vi_net_attach_mod(struct vi_net_t *net,
-	struct vi_mod_t *mod, int node_index)
-{
-	struct vi_net_node_t *node;
+  /* Check bounds */
+  if (!IN_RANGE(node_index, 0, net->node_list->count - 1))
+    panic("%s: node index out of bounds", __FUNCTION__);
 
-	/* Check bounds */
-	if (!IN_RANGE(node_index, 0, net->node_list->count - 1))
-		panic("%s: node index out of bounds", __FUNCTION__);
-
-	/* Attach */
-	node = list_get(net->node_list, node_index);
-	assert(node);
-	node->mod = mod;
+  /* Attach */
+  node = list_get(net->node_list, node_index);
+  assert(node);
+  node->mod = mod;
 }
 
+struct vi_mod_t *vi_net_get_mod(struct vi_net_t *net, int node_index) {
+  struct vi_net_node_t *node;
 
-struct vi_mod_t *vi_net_get_mod(struct vi_net_t *net, int node_index)
-{
-	struct vi_net_node_t *node;
+  /* Check bounds */
+  if (!IN_RANGE(node_index, 0, net->node_list->count - 1))
+    panic("%s: node index out of bounds", __FUNCTION__);
 
-	/* Check bounds */
-	if (!IN_RANGE(node_index, 0, net->node_list->count - 1))
-		panic("%s: node index out of bounds", __FUNCTION__);
-
-	/* Return */
-	node = list_get(net->node_list, node_index);
-	return node->mod;
+  /* Return */
+  node = list_get(net->node_list, node_index);
+  return node->mod;
 }

@@ -20,34 +20,29 @@
 #ifndef ARCH_ARM_EMU_SIGNAL_H
 #define ARCH_ARM_EMU_SIGNAL_H
 
-
 /* Every context (parent and children) has its own masks */
-struct arm_signal_mask_table_t
-{
-	unsigned long long pending;  /* Mask of pending signals */
-	unsigned long long blocked;  /* Mask of blocked signals */
-	unsigned long long backup;  /* Backup of blocked signals while suspended */
-	struct arm_regs_t *regs;  /* Backup of regs while executing handler */
-	unsigned int pretcode;  /* Base address of a memory page allocated for retcode execution */
+struct arm_signal_mask_table_t {
+  unsigned long long pending; /* Mask of pending signals */
+  unsigned long long blocked; /* Mask of blocked signals */
+  unsigned long long backup;  /* Backup of blocked signals while suspended */
+  struct arm_regs_t *regs;    /* Backup of regs while executing handler */
+  unsigned int pretcode; /* Base address of a memory page allocated for retcode
+                            execution */
 };
 
-struct arm_signal_handler_table_t
-{
-	/* Number of extra contexts sharing the table */
-	int num_links;
+struct arm_signal_handler_table_t {
+  /* Number of extra contexts sharing the table */
+  int num_links;
 
-	/* Signal handlers */
-	struct arm_sim_sigaction
-	{
-		unsigned int handler;
-		unsigned int flags;
-		unsigned int restorer;
-		unsigned long long mask;
-	} sigaction[64];
+  /* Signal handlers */
+  struct arm_sim_sigaction {
+    unsigned int handler;
+    unsigned int flags;
+    unsigned int restorer;
+    unsigned long long mask;
+  } sigaction[64];
 };
 
 void arm_signal_handler_return(struct arm_ctx_t *ctx);
 
-
 #endif
-

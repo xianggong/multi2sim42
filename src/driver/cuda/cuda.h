@@ -22,12 +22,10 @@
 
 #include <lib/util/class.h>
 
-
 /* Version */
-struct cuda_version_t
-{
-	int major;
-	int minor;
+struct cuda_version_t {
+  int major;
+  int minor;
 };
 #define CUDA_VERSION_MAJOR 1
 #define CUDA_VERSION_MINOR 950
@@ -40,13 +38,12 @@ extern int cuda_debug_category;
 extern char *cuda_err_code;
 
 /* List of CUDA driver calls */
-enum cuda_call_t
-{
-	cuda_call_invalid = 0,
+enum cuda_call_t {
+  cuda_call_invalid = 0,
 #define CUDA_DEFINE_CALL(name) cuda_call_##name,
 #include "cuda.dat"
 #undef CUDA_DEFINE_CALL
-	cuda_call_count
+  cuda_call_count
 };
 
 /* Prototype of CUDA driver functions */
@@ -55,21 +52,18 @@ typedef int (*cuda_func_t)(X86Context *ctx);
 /* Functions */
 int cuda_abi_call(X86Context *ctx);
 
-#define CUDA_DEFINE_CALL(name) \
-	int cuda_func_##name(X86Context *ctx);
+#define CUDA_DEFINE_CALL(name) int cuda_func_##name(X86Context *ctx);
 #include "cuda.dat"
 #undef CUDA_DEFINE_CALL
 
 /* For CUDA launch */
-struct cuda_abi_frm_kernel_launch_info_t
-{
-	struct cuda_function_t *function;
-	struct frm_grid_t *grid;
-	int finished;
+struct cuda_abi_frm_kernel_launch_info_t {
+  struct cuda_function_t *function;
+  struct frm_grid_t *grid;
+  int finished;
 };
 
 void cuda_init(void);
 void cuda_done(void);
 
 #endif
-

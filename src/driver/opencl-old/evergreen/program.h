@@ -22,32 +22,30 @@
 
 #include <lib/util/elf-format.h>
 
+struct evg_opencl_program_t {
+  unsigned int id;
+  int ref_count;
 
-struct evg_opencl_program_t
-{
-	unsigned int id;
-	int ref_count;
+  unsigned int device_id; /* Only one device allowed */
+  unsigned int context_id;
 
-	unsigned int device_id;  /* Only one device allowed */
-	unsigned int context_id;
+  /* ELF binary */
+  struct elf_file_t *elf_file;
 
-	/* ELF binary */
-	struct elf_file_t *elf_file;
-
-	/* Constant buffers are shared by all kernels compiled in the
-	 * same binary. This list is comprised of elf_buffers. */
-	struct list_t *constant_buffer_list;
+  /* Constant buffers are shared by all kernels compiled in the
+   * same binary. This list is comprised of elf_buffers. */
+  struct list_t *constant_buffer_list;
 };
 
 struct evg_opencl_program_t *evg_opencl_program_create(void);
 void evg_opencl_program_free(struct evg_opencl_program_t *program);
 
 void evg_opencl_program_build(struct evg_opencl_program_t *program);
-void evg_opencl_program_initialize_constant_buffers(struct evg_opencl_program_t *program);
+void evg_opencl_program_initialize_constant_buffers(
+    struct evg_opencl_program_t *program);
 
-void evg_opencl_program_read_symbol(struct evg_opencl_program_t *program, char *symbol_name,
-	struct elf_buffer_t *buffer);
-
+void evg_opencl_program_read_symbol(struct evg_opencl_program_t *program,
+                                    char *symbol_name,
+                                    struct elf_buffer_t *buffer);
 
 #endif
-

@@ -20,21 +20,16 @@
 #ifndef VISUAL_EVERGREEN_GPU_H
 #define VISUAL_EVERGREEN_GPU_H
 
+struct vi_evg_gpu_t {
+  struct list_t *compute_unit_list;
 
-struct vi_evg_gpu_t
-{
-	struct list_t *compute_unit_list;
-
-	/* True if the trace contains the Evergreen GPU */
-	int active;
+  /* True if the trace contains the Evergreen GPU */
+  int active;
 };
-
 
 extern struct vi_evg_gpu_t *vi_evg_gpu;
 
 void vi_evg_gpu_init(void);
 void vi_evg_gpu_done(void);
 
-
 #endif
-

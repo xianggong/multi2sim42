@@ -24,8 +24,6 @@
 
 #include <lib/util/class.h>
 
-
-
 /*
  * Class 'X86Context'
  * Additional functions
@@ -33,20 +31,15 @@
 
 void X86ContextSyscall(X86Context *self);
 
-
-
-
 /*
  * Public
  */
- 
+
 #define x86_sys_debug(...) debug(x86_sys_debug_category, __VA_ARGS__)
-#define x86_sys_debug_buffer(...) debug_buffer(x86_sys_debug_category, __VA_ARGS__)
+#define x86_sys_debug_buffer(...) \
+  debug_buffer(x86_sys_debug_category, __VA_ARGS__)
 extern int x86_sys_debug_category;
 
 void x86_sys_dump_stats(FILE *f);
 
-
-
 #endif
-

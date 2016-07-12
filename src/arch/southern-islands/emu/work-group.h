@@ -20,46 +20,45 @@
 #ifndef ARCH_SOUTHERN_ISLANDS_EMU_WORK_GROUP_H
 #define ARCH_SOUTHERN_ISLANDS_EMU_WORK_GROUP_H
 
-struct si_work_group_t
-{
-	/* ID */
-	int id;  /* Group ID */
-	int id_3d[3];  /* 3-dimensional Group ID */
+struct si_work_group_t {
+  /* ID */
+  int id;       /* Group ID */
+  int id_3d[3]; /* 3-dimensional Group ID */
 
-	/* Status */
-	int wavefronts_at_barrier;
-	int wavefronts_completed_emu;
-	int wavefronts_completed_timing;
-	int finished_emu;
-	int finished_timing;
+  /* Status */
+  int wavefronts_at_barrier;
+  int wavefronts_completed_emu;
+  int wavefronts_completed_timing;
+  int finished_emu;
+  int finished_timing;
 
-	/* ND-Range metadata */
-	struct si_ndrange_t *ndrange;
+  /* ND-Range metadata */
+  struct si_ndrange_t *ndrange;
 
-	/* Pointers to wavefronts and work-items */
-	int work_item_count;
-	int wavefront_count;
-	struct si_work_item_t **work_items;  /* Pointer to first work_item in 
-						'kernel->work_items' */
-	struct si_wavefront_t **wavefronts;  /* Pointer to first wavefront in 
-						'kernel->wavefronts' */
-	struct si_wavefront_pool_t *wavefront_pool;
+  /* Pointers to wavefronts and work-items */
+  int work_item_count;
+  int wavefront_count;
+  struct si_work_item_t **work_items; /* Pointer to first work_item in
+                                         'kernel->work_items' */
+  struct si_wavefront_t **wavefronts; /* Pointer to first wavefront in
+                                         'kernel->wavefronts' */
+  struct si_wavefront_pool_t *wavefront_pool;
 
-	/* Fields introduced for architectural simulation */
-	int id_in_compute_unit;
+  /* Fields introduced for architectural simulation */
+  int id_in_compute_unit;
 
-	/* LDS */
-	struct mem_t *lds_module;
+  /* LDS */
+  struct mem_t *lds_module;
 
-	/* Statistics */
-	long long int sreg_read_count;
-	long long int sreg_write_count;
-	long long int vreg_read_count;
-	long long int vreg_write_count;
+  /* Statistics */
+  long long int sreg_read_count;
+  long long int sreg_write_count;
+  long long int vreg_read_count;
+  long long int vreg_write_count;
 };
 
-struct si_work_group_t *si_work_group_create(unsigned int work_group_id, 
-	struct si_ndrange_t *ndrange);
+struct si_work_group_t *si_work_group_create(unsigned int work_group_id,
+                                             struct si_ndrange_t *ndrange);
 void si_work_group_free(struct si_work_group_t *work_group);
 void si_work_group_dump(struct si_work_group_t *work_group, FILE *f);
 

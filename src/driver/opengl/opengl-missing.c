@@ -22,45 +22,28 @@
 
 #include "opengl.h"
 
-
 static char *opengl_err_missing =
-	"\tMulti2Sim has been compiled without support for OpenGL applicationn.\n"
-	"\tThe OpenGL headers and OpenGL Utility Toolkit (GLUT) is required in\n"
-	"\tyour system to allow for simulation of guest OpenGL programs.\n"
-	"\t  1) Install the development packages for GLUT. Under Debian-based\n"
-	"\t     Linux distributions, this package is listed as 'freeglut3-dev'.\n"
-	"\t  2) Re-run the './configure' script\n"
-	"\t  3) Recompile the simulator: make clean && make\n";
+    "\tMulti2Sim has been compiled without support for OpenGL applicationn.\n"
+    "\tThe OpenGL headers and OpenGL Utility Toolkit (GLUT) is required in\n"
+    "\tyour system to allow for simulation of guest OpenGL programs.\n"
+    "\t  1) Install the development packages for GLUT. Under Debian-based\n"
+    "\t     Linux distributions, this package is listed as 'freeglut3-dev'.\n"
+    "\t  2) Re-run the './configure' script\n"
+    "\t  3) Recompile the simulator: make clean && make\n";
 
-
-#define __OPENGL_MISSING__  opengl_missing();
-static void opengl_missing(void)
-{
-	fatal("support for OpenGL not available.\n%s",
-		opengl_err_missing);
+#define __OPENGL_MISSING__ opengl_missing();
+static void opengl_missing(void) {
+  fatal("support for OpenGL not available.\n%s", opengl_err_missing);
 }
-
-
 
 /* Satisfy external reference to debug category */
 int opengl_debug_category;
 
+void opengl_init(void) { /* Silent missing feature */ }
 
-void opengl_init(void)
-{
-	/* Silent missing feature */
+void opengl_done(void) { /* Silent missing feature */ }
+
+int opengl_abi_call(X86Context *context) {
+  __OPENGL_MISSING__
+  return 0;
 }
-
-
-void opengl_done(void)
-{
-	/* Silent missing feature */
-}
-
-
-int opengl_abi_call(X86Context *context)
-{
-	__OPENGL_MISSING__
-	return 0;
-}
-

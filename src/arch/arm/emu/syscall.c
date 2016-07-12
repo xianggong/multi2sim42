@@ -37,1186 +37,1041 @@
 #include "regs.h"
 #include "syscall.h"
 
-
 /*
  * Public Variables
  */
 
-
 int arm_sys_debug_category;
-
-
-
 
 /*
  * Private Variables
  */
 
-
 static char *err_arm_sys_note =
-	"\tThe system calls performed by the executed application are intercepted by\n"
-	"\tMulti2Sim and emulated in file 'syscall.c'. The most common system calls are\n"
-	"\tcurrently supported, but your application might perform specific unsupported\n"
-	"\tsystem calls or combinations of parameters. To request support for a given\n"
-	"\tsystem call, please email 'development@multi2sim.org'.\n";
-
+    "\tThe system calls performed by the executed application are intercepted "
+    "by\n"
+    "\tMulti2Sim and emulated in file 'syscall.c'. The most common system "
+    "calls are\n"
+    "\tcurrently supported, but your application might perform specific "
+    "unsupported\n"
+    "\tsystem calls or combinations of parameters. To request support for a "
+    "given\n"
+    "\tsystem call, please email 'development@multi2sim.org'.\n";
 
 /* System call names */
-static char *arm_sys_call_name[] =
-{
+static char *arm_sys_call_name[] = {
 #define DEFSYSCALL(name, code) #name,
 #include "syscall.dat"
 #undef DEFSYSCALL
-	""
-};
-
+    ""};
 
 /* System call codes */
-enum
-{
+enum {
 #define DEFSYSCALL(name, code) arm_sys_code_##name = code,
 #include "syscall.dat"
 #undef DEFSYSCALL
-arm_sys_code_count
+  arm_sys_code_count
 };
-
 
 /* Forward declarations of system calls */
 #define DEFSYSCALL(name, code) \
-	static int arm_sys_##name##_impl(struct arm_ctx_t *ctx);
+  static int arm_sys_##name##_impl(struct arm_ctx_t *ctx);
 #include "syscall.dat"
 #undef DEFSYSCALL
 
-
 /* System call functions */
-static int (*arm_sys_call_func[arm_sys_code_count + 1])(struct arm_ctx_t *ctx) =
-{
+static int (*arm_sys_call_func[arm_sys_code_count + 1])(
+    struct arm_ctx_t *ctx) = {
 #define DEFSYSCALL(name, code) arm_sys_##name##_impl,
 #include "syscall.dat"
 #undef DEFSYSCALL
-	NULL
-};
-
+    NULL};
 
 /* Statistics */
 static int arm_sys_call_freq[arm_sys_code_count + 1];
-
-
-
 
 /*
  * System call error codes
  */
 
-#define SIM_EPERM		1
-#define SIM_ENOENT		2
-#define SIM_ESRCH		3
-#define SIM_EINTR		4
-#define SIM_EIO			5
-#define SIM_ENXIO		6
-#define SIM_E2BIG		7
-#define SIM_ENOEXEC		8
-#define SIM_EBADF		9
-#define SIM_ECHILD		10
-#define SIM_EAGAIN		11
-#define SIM_ENOMEM		12
-#define SIM_EACCES		13
-#define SIM_EFAULT		14
-#define SIM_ENOTBLK		15
-#define SIM_EBUSY		16
-#define SIM_EEXIST		17
-#define SIM_EXDEV		18
-#define SIM_ENODEV		19
-#define SIM_ENOTDIR		20
-#define SIM_EISDIR		21
-#define SIM_EINVAL		22
-#define SIM_ENFILE		23
-#define SIM_EMFILE		24
-#define SIM_ENOTTY		25
-#define SIM_ETXTBSY		26
-#define SIM_EFBIG		27
-#define SIM_ENOSPC		28
-#define SIM_ESPIPE		29
-#define SIM_EROFS		30
-#define SIM_EMLINK		31
-#define SIM_EPIPE		32
-#define SIM_EDOM		33
-#define SIM_ERANGE		34
+#define SIM_EPERM 1
+#define SIM_ENOENT 2
+#define SIM_ESRCH 3
+#define SIM_EINTR 4
+#define SIM_EIO 5
+#define SIM_ENXIO 6
+#define SIM_E2BIG 7
+#define SIM_ENOEXEC 8
+#define SIM_EBADF 9
+#define SIM_ECHILD 10
+#define SIM_EAGAIN 11
+#define SIM_ENOMEM 12
+#define SIM_EACCES 13
+#define SIM_EFAULT 14
+#define SIM_ENOTBLK 15
+#define SIM_EBUSY 16
+#define SIM_EEXIST 17
+#define SIM_EXDEV 18
+#define SIM_ENODEV 19
+#define SIM_ENOTDIR 20
+#define SIM_EISDIR 21
+#define SIM_EINVAL 22
+#define SIM_ENFILE 23
+#define SIM_EMFILE 24
+#define SIM_ENOTTY 25
+#define SIM_ETXTBSY 26
+#define SIM_EFBIG 27
+#define SIM_ENOSPC 28
+#define SIM_ESPIPE 29
+#define SIM_EROFS 30
+#define SIM_EMLINK 31
+#define SIM_EPIPE 32
+#define SIM_EDOM 33
+#define SIM_ERANGE 34
 
-#define SIM_ERRNO_MAX		34
+#define SIM_ERRNO_MAX 34
 
+static struct str_map_t arm_sys_error_code_map = {34,
+                                                  {{"EPERM", 1},
+                                                   {"ENOENT", 2},
+                                                   {"ESRCH", 3},
+                                                   {"EINTR", 4},
+                                                   {"EIO", 5},
+                                                   {"ENXIO", 6},
+                                                   {"E2BIG", 7},
+                                                   {"ENOEXEC", 8},
+                                                   {"EBADF", 9},
+                                                   {"ECHILD", 10},
+                                                   {"EAGAIN", 11},
+                                                   {"ENOMEM", 12},
+                                                   {"EACCES", 13},
+                                                   {"EFAULT", 14},
+                                                   {"ENOTBLK", 15},
+                                                   {"EBUSY", 16},
+                                                   {"EEXIST", 17},
+                                                   {"EXDEV", 18},
+                                                   {"ENODEV", 19},
+                                                   {"ENOTDIR", 20},
+                                                   {"EISDIR", 21},
+                                                   {"EINVAL", 22},
+                                                   {"ENFILE", 23},
+                                                   {"EMFILE", 24},
+                                                   {"ENOTTY", 25},
+                                                   {"ETXTBSY", 26},
+                                                   {"EFBIG", 27},
+                                                   {"ENOSPC", 28},
+                                                   {"ESPIPE", 29},
+                                                   {"EROFS", 30},
+                                                   {"EMLINK", 31},
+                                                   {"EPIPE", 32},
+                                                   {"EDOM", 33},
+                                                   {"ERANGE", 34}}};
 
-static struct str_map_t arm_sys_error_code_map =
-{
-	34,
-	{
-		{ "EPERM", 1 },
-		{ "ENOENT", 2 },
-		{ "ESRCH", 3 },
-		{ "EINTR", 4 },
-		{ "EIO", 5 },
-		{ "ENXIO", 6 },
-		{ "E2BIG", 7 },
-		{ "ENOEXEC", 8 },
-		{ "EBADF", 9 },
-		{ "ECHILD", 10 },
-		{ "EAGAIN", 11 },
-		{ "ENOMEM", 12 },
-		{ "EACCES", 13 },
-		{ "EFAULT", 14 },
-		{ "ENOTBLK", 15 },
-		{ "EBUSY", 16 },
-		{ "EEXIST", 17 },
-		{ "EXDEV", 18 },
-		{ "ENODEV", 19 },
-		{ "ENOTDIR", 20 },
-		{ "EISDIR", 21 },
-		{ "EINVAL", 22 },
-		{ "ENFILE", 23 },
-		{ "EMFILE", 24 },
-		{ "ENOTTY", 25 },
-		{ "ETXTBSY", 26 },
-		{ "EFBIG", 27 },
-		{ "ENOSPC", 28 },
-		{ "ESPIPE", 29 },
-		{ "EROFS", 30 },
-		{ "EMLINK", 31 },
-		{ "EPIPE", 32 },
-		{ "EDOM", 33 },
-		{ "ERANGE", 34 }
-	}
-};
-
-
-void arm_sys_init(void)
-{
-	/* Host constants for 'errno' must match */
-	M2S_HOST_GUEST_MATCH(EPERM, SIM_EPERM);
-	M2S_HOST_GUEST_MATCH(ENOENT, SIM_ENOENT);
-	M2S_HOST_GUEST_MATCH(ESRCH, SIM_ESRCH);
-	M2S_HOST_GUEST_MATCH(EINTR, SIM_EINTR);
-	M2S_HOST_GUEST_MATCH(EIO, SIM_EIO);
-	M2S_HOST_GUEST_MATCH(ENXIO, SIM_ENXIO);
-	M2S_HOST_GUEST_MATCH(E2BIG, SIM_E2BIG);
-	M2S_HOST_GUEST_MATCH(ENOEXEC, SIM_ENOEXEC);
-	M2S_HOST_GUEST_MATCH(EBADF, SIM_EBADF);
-	M2S_HOST_GUEST_MATCH(ECHILD, SIM_ECHILD);
-	M2S_HOST_GUEST_MATCH(EAGAIN, SIM_EAGAIN);
-	M2S_HOST_GUEST_MATCH(ENOMEM, SIM_ENOMEM);
-	M2S_HOST_GUEST_MATCH(EACCES, SIM_EACCES);
-	M2S_HOST_GUEST_MATCH(EFAULT, SIM_EFAULT);
-	M2S_HOST_GUEST_MATCH(ENOTBLK, SIM_ENOTBLK);
-	M2S_HOST_GUEST_MATCH(EBUSY, SIM_EBUSY);
-	M2S_HOST_GUEST_MATCH(EEXIST, SIM_EEXIST);
-	M2S_HOST_GUEST_MATCH(EXDEV, SIM_EXDEV);
-	M2S_HOST_GUEST_MATCH(ENODEV, SIM_ENODEV);
-	M2S_HOST_GUEST_MATCH(ENOTDIR, SIM_ENOTDIR);
-	M2S_HOST_GUEST_MATCH(EISDIR, SIM_EISDIR);
-	M2S_HOST_GUEST_MATCH(EINVAL, SIM_EINVAL);
-	M2S_HOST_GUEST_MATCH(ENFILE, SIM_ENFILE);
-	M2S_HOST_GUEST_MATCH(EMFILE, SIM_EMFILE);
-	M2S_HOST_GUEST_MATCH(ENOTTY, SIM_ENOTTY);
-	M2S_HOST_GUEST_MATCH(ETXTBSY, SIM_ETXTBSY);
-	M2S_HOST_GUEST_MATCH(EFBIG, SIM_EFBIG);
-	M2S_HOST_GUEST_MATCH(ENOSPC, SIM_ENOSPC);
-	M2S_HOST_GUEST_MATCH(ESPIPE, SIM_ESPIPE);
-	M2S_HOST_GUEST_MATCH(EROFS, SIM_EROFS);
-	M2S_HOST_GUEST_MATCH(EMLINK, SIM_EMLINK);
-	M2S_HOST_GUEST_MATCH(EPIPE, SIM_EPIPE);
-	M2S_HOST_GUEST_MATCH(EDOM, SIM_EDOM);
-	M2S_HOST_GUEST_MATCH(ERANGE, SIM_ERANGE);
+void arm_sys_init(void) {
+  /* Host constants for 'errno' must match */
+  M2S_HOST_GUEST_MATCH(EPERM, SIM_EPERM);
+  M2S_HOST_GUEST_MATCH(ENOENT, SIM_ENOENT);
+  M2S_HOST_GUEST_MATCH(ESRCH, SIM_ESRCH);
+  M2S_HOST_GUEST_MATCH(EINTR, SIM_EINTR);
+  M2S_HOST_GUEST_MATCH(EIO, SIM_EIO);
+  M2S_HOST_GUEST_MATCH(ENXIO, SIM_ENXIO);
+  M2S_HOST_GUEST_MATCH(E2BIG, SIM_E2BIG);
+  M2S_HOST_GUEST_MATCH(ENOEXEC, SIM_ENOEXEC);
+  M2S_HOST_GUEST_MATCH(EBADF, SIM_EBADF);
+  M2S_HOST_GUEST_MATCH(ECHILD, SIM_ECHILD);
+  M2S_HOST_GUEST_MATCH(EAGAIN, SIM_EAGAIN);
+  M2S_HOST_GUEST_MATCH(ENOMEM, SIM_ENOMEM);
+  M2S_HOST_GUEST_MATCH(EACCES, SIM_EACCES);
+  M2S_HOST_GUEST_MATCH(EFAULT, SIM_EFAULT);
+  M2S_HOST_GUEST_MATCH(ENOTBLK, SIM_ENOTBLK);
+  M2S_HOST_GUEST_MATCH(EBUSY, SIM_EBUSY);
+  M2S_HOST_GUEST_MATCH(EEXIST, SIM_EEXIST);
+  M2S_HOST_GUEST_MATCH(EXDEV, SIM_EXDEV);
+  M2S_HOST_GUEST_MATCH(ENODEV, SIM_ENODEV);
+  M2S_HOST_GUEST_MATCH(ENOTDIR, SIM_ENOTDIR);
+  M2S_HOST_GUEST_MATCH(EISDIR, SIM_EISDIR);
+  M2S_HOST_GUEST_MATCH(EINVAL, SIM_EINVAL);
+  M2S_HOST_GUEST_MATCH(ENFILE, SIM_ENFILE);
+  M2S_HOST_GUEST_MATCH(EMFILE, SIM_EMFILE);
+  M2S_HOST_GUEST_MATCH(ENOTTY, SIM_ENOTTY);
+  M2S_HOST_GUEST_MATCH(ETXTBSY, SIM_ETXTBSY);
+  M2S_HOST_GUEST_MATCH(EFBIG, SIM_EFBIG);
+  M2S_HOST_GUEST_MATCH(ENOSPC, SIM_ENOSPC);
+  M2S_HOST_GUEST_MATCH(ESPIPE, SIM_ESPIPE);
+  M2S_HOST_GUEST_MATCH(EROFS, SIM_EROFS);
+  M2S_HOST_GUEST_MATCH(EMLINK, SIM_EMLINK);
+  M2S_HOST_GUEST_MATCH(EPIPE, SIM_EPIPE);
+  M2S_HOST_GUEST_MATCH(EDOM, SIM_EDOM);
+  M2S_HOST_GUEST_MATCH(ERANGE, SIM_ERANGE);
 }
 
-void arm_sys_done(void)
-{
-	/* Print summary
+void arm_sys_done(void) {
+        /* Print summary
 	if (debug_status(arm_sys_debug_category))
 		arm_sys_dump(debug_file(arm_sys_debug_category));
 	 */}
 
-void arm_sys_call(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
+void arm_sys_call(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
 
-	int code;
-	int err;
+  int code;
+  int err;
 
-	/* System call code */
-	code = regs->r7;
-	if (code < 1 || code >= arm_sys_code_count)
-		fatal("%s: invalid system call code (%d)", __FUNCTION__, code);
+  /* System call code */
+  code = regs->r7;
+  if (code < 1 || code >= arm_sys_code_count)
+    fatal("%s: invalid system call code (%d)", __FUNCTION__, code);
 
-	/* Statistics */
-	arm_sys_call_freq[code]++;
+  /* Statistics */
+  arm_sys_call_freq[code]++;
 
-	/* Debug */
-	arm_sys_debug("system call '%s' (code %d, inst %lld, pid %d)\n",
-		arm_sys_call_name[code], code, asEmu(arm_emu)->instructions, ctx->pid);
-	arm_isa_call_debug("system call '%s' (code %d, inst %lld, pid %d)\n",
-		arm_sys_call_name[code], code, asEmu(arm_emu)->instructions, ctx->pid);
+  /* Debug */
+  arm_sys_debug("system call '%s' (code %d, inst %lld, pid %d)\n",
+                arm_sys_call_name[code], code, asEmu(arm_emu)->instructions,
+                ctx->pid);
+  arm_isa_call_debug("system call '%s' (code %d, inst %lld, pid %d)\n",
+                     arm_sys_call_name[code], code,
+                     asEmu(arm_emu)->instructions, ctx->pid);
 
-	/* Perform system call */
-	err = arm_sys_call_func[code](ctx);
+  /* Perform system call */
+  err = arm_sys_call_func[code](ctx);
 
-	/* Set return value in 'eax', except for 'sigreturn' system call. Also, if the
-	 * context got suspended, the wake up routine will set the return value. */
-	if (code != arm_sys_code_sigreturn && !arm_ctx_get_status(ctx, arm_ctx_suspended))
-		regs->r0 = err;
+  /* Set return value in 'eax', except for 'sigreturn' system call. Also, if the
+   * context got suspended, the wake up routine will set the return value. */
+  if (code != arm_sys_code_sigreturn &&
+      !arm_ctx_get_status(ctx, arm_ctx_suspended))
+    regs->r0 = err;
 
-	/* Debug */
-	arm_sys_debug("  ret=(%d, 0x%x)", err, err);
-	if (err < 0 && err >= -SIM_ERRNO_MAX)
-		arm_sys_debug(", errno=%s)", str_map_value(&arm_sys_error_code_map, -err));
-	arm_sys_debug("\n");
+  /* Debug */
+  arm_sys_debug("  ret=(%d, 0x%x)", err, err);
+  if (err < 0 && err >= -SIM_ERRNO_MAX)
+    arm_sys_debug(", errno=%s)", str_map_value(&arm_sys_error_code_map, -err));
+  arm_sys_debug("\n");
 }
-
-
-
 
 /*
  * System call 'close' (code 2)
  */
 
-static int arm_sys_close_impl(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
-	struct arm_file_desc_t *fd;
+static int arm_sys_close_impl(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
+  struct arm_file_desc_t *fd;
 
-	int guest_fd;
-	int host_fd;
+  int guest_fd;
+  int host_fd;
 
-	/* Arguments */
-	guest_fd = regs->r0;
-	arm_sys_debug("  guest_fd=%d\n", guest_fd);
-	host_fd = arm_file_desc_table_get_host_fd(ctx->file_desc_table, guest_fd);
-	arm_sys_debug("  host_fd=%d\n", host_fd);
+  /* Arguments */
+  guest_fd = regs->r0;
+  arm_sys_debug("  guest_fd=%d\n", guest_fd);
+  host_fd = arm_file_desc_table_get_host_fd(ctx->file_desc_table, guest_fd);
+  arm_sys_debug("  host_fd=%d\n", host_fd);
 
-	/* Get file descriptor table entry. */
-	fd = arm_file_desc_table_entry_get(ctx->file_desc_table, guest_fd);
-	if (!fd)
-		return -EBADF;
+  /* Get file descriptor table entry. */
+  fd = arm_file_desc_table_entry_get(ctx->file_desc_table, guest_fd);
+  if (!fd) return -EBADF;
 
-	/* Close host file descriptor only if it is valid and not stdin/stdout/stderr. */
-	if (host_fd > 2)
-		close(host_fd);
+  /* Close host file descriptor only if it is valid and not stdin/stdout/stderr.
+   */
+  if (host_fd > 2) close(host_fd);
 
-	/* Free guest file descriptor. This will delete the host file if it's a virtual file. */
-	if (fd->kind == arm_file_desc_virtual)
-		arm_sys_debug("    host file '%s': temporary file deleted\n", fd->path);
-	arm_file_desc_table_entry_free(ctx->file_desc_table, fd->guest_fd);
+  /* Free guest file descriptor. This will delete the host file if it's a
+   * virtual file. */
+  if (fd->kind == arm_file_desc_virtual)
+    arm_sys_debug("    host file '%s': temporary file deleted\n", fd->path);
+  arm_file_desc_table_entry_free(ctx->file_desc_table, fd->guest_fd);
 
-	/* Success */
-	return 0;
+  /* Success */
+  return 0;
 }
-
-
-
 
 /*
  * System call 'read' (code 3)
  */
 
-static int arm_sys_read_impl(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
-	struct mem_t *mem = ctx->mem;
+static int arm_sys_read_impl(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
+  struct mem_t *mem = ctx->mem;
 
-	unsigned int buf_ptr;
-	unsigned int count;
+  unsigned int buf_ptr;
+  unsigned int count;
 
-	int guest_fd;
-	int host_fd;
-	int err;
+  int guest_fd;
+  int host_fd;
+  int err;
 
-	void *buf;
+  void *buf;
 
-	struct arm_file_desc_t *fd;
-	struct pollfd fds;
+  struct arm_file_desc_t *fd;
+  struct pollfd fds;
 
-	/* Arguments */
-	guest_fd = regs->r0;
-	buf_ptr = regs->r1;
-	count = regs->r2;
-	arm_sys_debug("  guest_fd=%d, buf_ptr=0x%x, count=0x%x\n",
-		guest_fd, buf_ptr, count);
+  /* Arguments */
+  guest_fd = regs->r0;
+  buf_ptr = regs->r1;
+  count = regs->r2;
+  arm_sys_debug("  guest_fd=%d, buf_ptr=0x%x, count=0x%x\n", guest_fd, buf_ptr,
+                count);
 
-	/* Get file descriptor */
-	fd = arm_file_desc_table_entry_get(ctx->file_desc_table, guest_fd);
-	if (!fd)
-		return -EBADF;
-	host_fd = fd->host_fd;
-	arm_sys_debug("  host_fd=%d\n", host_fd);
+  /* Get file descriptor */
+  fd = arm_file_desc_table_entry_get(ctx->file_desc_table, guest_fd);
+  if (!fd) return -EBADF;
+  host_fd = fd->host_fd;
+  arm_sys_debug("  host_fd=%d\n", host_fd);
 
-	/* Poll the file descriptor to check if read is blocking */
-	buf = xcalloc(1, count);
-	fds.fd = host_fd;
-	fds.events = POLLIN;
-	err = poll(&fds, 1, 0);
-	if (err < 0)
-		fatal("%s: error executing 'poll'", __FUNCTION__);
+  /* Poll the file descriptor to check if read is blocking */
+  buf = xcalloc(1, count);
+  fds.fd = host_fd;
+  fds.events = POLLIN;
+  err = poll(&fds, 1, 0);
+  if (err < 0) fatal("%s: error executing 'poll'", __FUNCTION__);
 
-	/* Non-blocking read */
-	if (fds.revents || (fd->flags & O_NONBLOCK))
-	{
-		/* Host system call */
-		err = read(host_fd, buf, count);
-		if (err == -1)
-		{
-			free(buf);
-			return -errno;
-		}
+  /* Non-blocking read */
+  if (fds.revents || (fd->flags & O_NONBLOCK)) {
+    /* Host system call */
+    err = read(host_fd, buf, count);
+    if (err == -1) {
+      free(buf);
+      return -errno;
+    }
 
-		/* Write in guest memory */
-		if (err > 0)
-		{
-			mem_write(mem, buf_ptr, err, buf);
-			arm_sys_debug_buffer("  buf", buf, err);
-		}
+    /* Write in guest memory */
+    if (err > 0) {
+      mem_write(mem, buf_ptr, err, buf);
+      arm_sys_debug_buffer("  buf", buf, err);
+    }
 
-		/* Return number of read bytes */
-		free(buf);
-		return err;
-	}
+    /* Return number of read bytes */
+    free(buf);
+    return err;
+  }
 
-	/* Blocking read - suspend thread */
-	arm_sys_debug("  blocking read - process suspended\n");
-	ctx->wakeup_fd = guest_fd;
-	ctx->wakeup_events = 1;  /* POLLIN */
-	arm_ctx_set_status(ctx, arm_ctx_suspended | arm_ctx_read);
-	ARMEmuProcessEventsSchedule(arm_emu);
+  /* Blocking read - suspend thread */
+  arm_sys_debug("  blocking read - process suspended\n");
+  ctx->wakeup_fd = guest_fd;
+  ctx->wakeup_events = 1; /* POLLIN */
+  arm_ctx_set_status(ctx, arm_ctx_suspended | arm_ctx_read);
+  ARMEmuProcessEventsSchedule(arm_emu);
 
-	/* Free allocated buffer. Return value doesn't matter,
-	 * it will be overwritten when context wakes up from blocking call. */
-	free(buf);
-	return 0;
+  /* Free allocated buffer. Return value doesn't matter,
+   * it will be overwritten when context wakes up from blocking call. */
+  free(buf);
+  return 0;
 }
-
-
-
 
 /*
  * System call 'write' (code 4)
  */
 
-static int arm_sys_write_impl(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
-	struct mem_t *mem = ctx->mem;
+static int arm_sys_write_impl(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
+  struct mem_t *mem = ctx->mem;
 
-	unsigned int buf_ptr;
-	unsigned int count;
+  unsigned int buf_ptr;
+  unsigned int count;
 
-	int guest_fd;
-	int host_fd;
-	int err;
+  int guest_fd;
+  int host_fd;
+  int err;
 
-	struct arm_file_desc_t *desc;
-	void *buf;
+  struct arm_file_desc_t *desc;
+  void *buf;
 
-	struct pollfd fds;
+  struct pollfd fds;
 
-	/* Arguments */
-	guest_fd = regs->r0;
-	buf_ptr = regs->r1;
-	count = regs->r2;
-	arm_sys_debug("  guest_fd=%d, buf_ptr=0x%x, count=0x%x\n",
-		guest_fd, buf_ptr, count);
+  /* Arguments */
+  guest_fd = regs->r0;
+  buf_ptr = regs->r1;
+  count = regs->r2;
+  arm_sys_debug("  guest_fd=%d, buf_ptr=0x%x, count=0x%x\n", guest_fd, buf_ptr,
+                count);
 
-	/* Get file descriptor */
-	desc = arm_file_desc_table_entry_get(ctx->file_desc_table, guest_fd);
-	if (!desc)
-		return -EBADF;
-	host_fd = desc->host_fd;
-	arm_sys_debug("  host_fd=%d\n", host_fd);
+  /* Get file descriptor */
+  desc = arm_file_desc_table_entry_get(ctx->file_desc_table, guest_fd);
+  if (!desc) return -EBADF;
+  host_fd = desc->host_fd;
+  arm_sys_debug("  host_fd=%d\n", host_fd);
 
-	/* Read buffer from memory */
-	buf = xcalloc(1, count);
-	mem_read(mem, buf_ptr, count, buf);
-	arm_sys_debug_buffer("  buf", buf, count);
+  /* Read buffer from memory */
+  buf = xcalloc(1, count);
+  mem_read(mem, buf_ptr, count, buf);
+  arm_sys_debug_buffer("  buf", buf, count);
 
-	/* Poll the file descriptor to check if write is blocking */
-	fds.fd = host_fd;
-	fds.events = POLLOUT;
-	poll(&fds, 1, 0);
+  /* Poll the file descriptor to check if write is blocking */
+  fds.fd = host_fd;
+  fds.events = POLLOUT;
+  poll(&fds, 1, 0);
 
-	/* Non-blocking write */
-	if (fds.revents)
-	{
-		/* Host write */
-		err = write(host_fd, buf, count);
-		if (err == -1)
-			err = -errno;
+  /* Non-blocking write */
+  if (fds.revents) {
+    /* Host write */
+    err = write(host_fd, buf, count);
+    if (err == -1) err = -errno;
 
-		/* Return written bytes */
-		free(buf);
-		return err;
-	}
+    /* Return written bytes */
+    free(buf);
+    return err;
+  }
 
-	/* Blocking write - suspend thread */
-	arm_sys_debug("  blocking write - process suspended\n");
-	ctx->wakeup_fd = guest_fd;
-	arm_ctx_set_status(ctx, arm_ctx_suspended | arm_ctx_write);
-	ARMEmuProcessEventsSchedule(arm_emu);
+  /* Blocking write - suspend thread */
+  arm_sys_debug("  blocking write - process suspended\n");
+  ctx->wakeup_fd = guest_fd;
+  arm_ctx_set_status(ctx, arm_ctx_suspended | arm_ctx_write);
+  ARMEmuProcessEventsSchedule(arm_emu);
 
-	/* Return value doesn't matter here. It will be overwritten when the
-	 * context wakes up after blocking call. */
-	free(buf);
-	return 0;
+  /* Return value doesn't matter here. It will be overwritten when the
+   * context wakes up after blocking call. */
+  free(buf);
+  return 0;
 }
-
-
-
 
 /*
  * System call 'open' (code 5)
  */
 
-static struct str_map_t arm_sys_open_flags_map =
-{
-	16, {
-		{ "O_RDONLY",        00000000 },
-		{ "O_WRONLY",        00000001 },
-		{ "O_RDWR",          00000002 },
-		{ "O_CREAT",         00000100 },
-		{ "O_EXCL",          00000200 },
-		{ "O_NOCTTY",        00000400 },
-		{ "O_TRUNC",         00001000 },
-		{ "O_APPEND",        00002000 },
-		{ "O_NONBLOCK",      00004000 },
-		{ "O_SYNC",          00010000 },
-		{ "FASYNC",          00020000 },
-		{ "O_DIRECT",        00040000 },
-		{ "O_LARGEFILE",     00100000 },
-		{ "O_DIRECTORY",     00200000 },
-		{ "O_NOFOLLOW",      00400000 },
-		{ "O_NOATIME",       01000000 }
-	}
-};
+static struct str_map_t arm_sys_open_flags_map = {16,
+                                                  {{"O_RDONLY", 00000000},
+                                                   {"O_WRONLY", 00000001},
+                                                   {"O_RDWR", 00000002},
+                                                   {"O_CREAT", 00000100},
+                                                   {"O_EXCL", 00000200},
+                                                   {"O_NOCTTY", 00000400},
+                                                   {"O_TRUNC", 00001000},
+                                                   {"O_APPEND", 00002000},
+                                                   {"O_NONBLOCK", 00004000},
+                                                   {"O_SYNC", 00010000},
+                                                   {"FASYNC", 00020000},
+                                                   {"O_DIRECT", 00040000},
+                                                   {"O_LARGEFILE", 00100000},
+                                                   {"O_DIRECTORY", 00200000},
+                                                   {"O_NOFOLLOW", 00400000},
+                                                   {"O_NOATIME", 01000000}}};
 
-static int arm_sys_open_impl(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
-	struct mem_t *mem = ctx->mem;
+static int arm_sys_open_impl(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
+  struct mem_t *mem = ctx->mem;
 
-	struct arm_file_desc_t *desc;
+  struct arm_file_desc_t *desc;
 
-	unsigned int file_name_ptr;
+  unsigned int file_name_ptr;
 
-	int flags;
-	int mode;
-	int length;
+  int flags;
+  int mode;
+  int length;
 
-	char file_name[MAX_PATH_SIZE];
-	char full_path[MAX_PATH_SIZE];
-	char temp_path[MAX_PATH_SIZE];
-	char flags_str[MAX_STRING_SIZE];
+  char file_name[MAX_PATH_SIZE];
+  char full_path[MAX_PATH_SIZE];
+  char temp_path[MAX_PATH_SIZE];
+  char flags_str[MAX_STRING_SIZE];
 
-	int host_fd;
+  int host_fd;
 
-	/* Arguments */
-	file_name_ptr = regs->r0;
-	flags = regs->r1;
-	mode = regs->r2;
-	length = mem_read_string(mem, file_name_ptr, sizeof file_name, file_name);
-	if (length >= MAX_PATH_SIZE)
-		fatal("syscall open: maximum path length exceeded");
-	arm_ctx_loader_get_full_path(ctx, file_name, full_path, sizeof full_path);
-	arm_sys_debug("  filename='%s' flags=0x%x, mode=0x%x\n",
-		file_name, flags, mode);
-	arm_sys_debug("  fullpath='%s'\n", full_path);
-	str_map_flags(&arm_sys_open_flags_map, flags, flags_str, sizeof flags_str);
-	arm_sys_debug("  flags=%s\n", flags_str);
+  /* Arguments */
+  file_name_ptr = regs->r0;
+  flags = regs->r1;
+  mode = regs->r2;
+  length = mem_read_string(mem, file_name_ptr, sizeof file_name, file_name);
+  if (length >= MAX_PATH_SIZE)
+    fatal("syscall open: maximum path length exceeded");
+  arm_ctx_loader_get_full_path(ctx, file_name, full_path, sizeof full_path);
+  arm_sys_debug("  filename='%s' flags=0x%x, mode=0x%x\n", file_name, flags,
+                mode);
+  arm_sys_debug("  fullpath='%s'\n", full_path);
+  str_map_flags(&arm_sys_open_flags_map, flags, flags_str, sizeof flags_str);
+  arm_sys_debug("  flags=%s\n", flags_str);
 
-	/* Virtual files */
-	if (!strncmp(full_path, "/proc/", 6))
-	{
-		/* File /proc/self/maps */
-		if (!strcmp(full_path, "/proc/self/maps"))
-		{
-			/* Create temporary file and open it. */
-			arm_ctx_gen_proc_self_maps(ctx, temp_path);
-			host_fd = open(temp_path, flags, mode);
-			assert(host_fd > 0);
+  /* Virtual files */
+  if (!strncmp(full_path, "/proc/", 6)) {
+    /* File /proc/self/maps */
+    if (!strcmp(full_path, "/proc/self/maps")) {
+      /* Create temporary file and open it. */
+      arm_ctx_gen_proc_self_maps(ctx, temp_path);
+      host_fd = open(temp_path, flags, mode);
+      assert(host_fd > 0);
 
-			/* Add file descriptor table entry. */
-			desc = arm_file_desc_table_entry_new(ctx->file_desc_table, arm_file_desc_virtual, host_fd, temp_path, flags);
-			arm_sys_debug("    host file '%s' opened: guest_fd=%d, host_fd=%d\n",
-				temp_path, desc->guest_fd, desc->host_fd);
-			return desc->guest_fd;
-		}
+      /* Add file descriptor table entry. */
+      desc = arm_file_desc_table_entry_new(ctx->file_desc_table,
+                                           arm_file_desc_virtual, host_fd,
+                                           temp_path, flags);
+      arm_sys_debug("    host file '%s' opened: guest_fd=%d, host_fd=%d\n",
+                    temp_path, desc->guest_fd, desc->host_fd);
+      return desc->guest_fd;
+    }
 
-		/* Unhandled virtual file. Let the application read the contents of the host
-		 * version of the file as if it was a regular file. */
-		arm_sys_debug("    warning: unhandled virtual file\n");
-	}
+    /* Unhandled virtual file. Let the application read the contents of the host
+     * version of the file as if it was a regular file. */
+    arm_sys_debug("    warning: unhandled virtual file\n");
+  }
 
-	/* Regular file. */
-	host_fd = open(full_path, flags, mode);
-	if (host_fd == -1)
-		return -errno;
+  /* Regular file. */
+  host_fd = open(full_path, flags, mode);
+  if (host_fd == -1) return -errno;
 
-	/* File opened, create a new file descriptor. */
-	desc = arm_file_desc_table_entry_new(ctx->file_desc_table,
-		arm_file_desc_regular, host_fd, full_path, flags);
-	arm_sys_debug("    file descriptor opened: guest_fd=%d, host_fd=%d\n",
-		desc->guest_fd, desc->host_fd);
+  /* File opened, create a new file descriptor. */
+  desc = arm_file_desc_table_entry_new(
+      ctx->file_desc_table, arm_file_desc_regular, host_fd, full_path, flags);
+  arm_sys_debug("    file descriptor opened: guest_fd=%d, host_fd=%d\n",
+                desc->guest_fd, desc->host_fd);
 
-	/* Return guest descriptor index */
-	return desc->guest_fd;
+  /* Return guest descriptor index */
+  return desc->guest_fd;
 }
-
-
-
 
 /*
  * System call 'brk' (code 45)
  */
 
-static int arm_sys_brk_impl(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
-	struct mem_t *mem = ctx->mem;
+static int arm_sys_brk_impl(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
+  struct mem_t *mem = ctx->mem;
 
-	unsigned int old_heap_break;
-	unsigned int new_heap_break;
-	unsigned int size;
+  unsigned int old_heap_break;
+  unsigned int new_heap_break;
+  unsigned int size;
 
-	unsigned int old_heap_break_aligned;
-	unsigned int new_heap_break_aligned;
+  unsigned int old_heap_break_aligned;
+  unsigned int new_heap_break_aligned;
 
-	/* Arguments */
-	new_heap_break = regs->r0;
-	old_heap_break = mem->heap_break;
-	arm_sys_debug("  newbrk=0x%x (previous brk was 0x%x)\n",
-		new_heap_break, old_heap_break);
+  /* Arguments */
+  new_heap_break = regs->r0;
+  old_heap_break = mem->heap_break;
+  arm_sys_debug("  newbrk=0x%x (previous brk was 0x%x)\n", new_heap_break,
+                old_heap_break);
 
-	/* Align */
-	new_heap_break_aligned = ROUND_UP(new_heap_break, MEM_PAGE_SIZE);
-	old_heap_break_aligned = ROUND_UP(old_heap_break, MEM_PAGE_SIZE);
+  /* Align */
+  new_heap_break_aligned = ROUND_UP(new_heap_break, MEM_PAGE_SIZE);
+  old_heap_break_aligned = ROUND_UP(old_heap_break, MEM_PAGE_SIZE);
 
-	/* If argument is zero, the system call is used to
-	 * obtain the current top of the heap. */
-	if (!new_heap_break)
-		return old_heap_break;
+  /* If argument is zero, the system call is used to
+   * obtain the current top of the heap. */
+  if (!new_heap_break) return old_heap_break;
 
-	/* If the heap is increased: if some page in the way is
-	 * allocated, do nothing and return old heap top. Otherwise,
-	 * allocate pages and return new heap top. */
-	if (new_heap_break > old_heap_break)
-	{
-		size = new_heap_break_aligned - old_heap_break_aligned;
-		if (size)
-		{
-			if (mem_map_space(mem, old_heap_break_aligned, size) != old_heap_break_aligned)
-				fatal("%s: out of memory", __FUNCTION__);
-			mem_map(mem, old_heap_break_aligned, size,
-				mem_access_read | mem_access_write);
-		}
-		mem->heap_break = new_heap_break;
-		arm_sys_debug("  heap grows %u bytes\n", new_heap_break - old_heap_break);
-		return new_heap_break;
-	}
+  /* If the heap is increased: if some page in the way is
+   * allocated, do nothing and return old heap top. Otherwise,
+   * allocate pages and return new heap top. */
+  if (new_heap_break > old_heap_break) {
+    size = new_heap_break_aligned - old_heap_break_aligned;
+    if (size) {
+      if (mem_map_space(mem, old_heap_break_aligned, size) !=
+          old_heap_break_aligned)
+        fatal("%s: out of memory", __FUNCTION__);
+      mem_map(mem, old_heap_break_aligned, size,
+              mem_access_read | mem_access_write);
+    }
+    mem->heap_break = new_heap_break;
+    arm_sys_debug("  heap grows %u bytes\n", new_heap_break - old_heap_break);
+    return new_heap_break;
+  }
 
-	/* Always allow to shrink the heap. */
-	if (new_heap_break < old_heap_break)
-	{
-		size = old_heap_break_aligned - new_heap_break_aligned;
-		if (size)
-			mem_unmap(mem, new_heap_break_aligned, size);
-		mem->heap_break = new_heap_break;
-		arm_sys_debug("  heap shrinks %u bytes\n", old_heap_break - new_heap_break);
-		return new_heap_break;
-	}
+  /* Always allow to shrink the heap. */
+  if (new_heap_break < old_heap_break) {
+    size = old_heap_break_aligned - new_heap_break_aligned;
+    if (size) mem_unmap(mem, new_heap_break_aligned, size);
+    mem->heap_break = new_heap_break;
+    arm_sys_debug("  heap shrinks %u bytes\n", old_heap_break - new_heap_break);
+    return new_heap_break;
+  }
 
-	/* Heap stays the same */
-	return 0;
+  /* Heap stays the same */
+  return 0;
 }
-
-
-
 
 /*
  * System call 'gettimeofday' (code 78)
  */
 
-static int arm_sys_gettimeofday_impl(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
-	struct mem_t *mem = ctx->mem;
+static int arm_sys_gettimeofday_impl(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
+  struct mem_t *mem = ctx->mem;
 
-	unsigned int tv_ptr;
-	unsigned int tz_ptr;
+  unsigned int tv_ptr;
+  unsigned int tz_ptr;
 
-	struct timeval tv;
-	struct timezone tz;
+  struct timeval tv;
+  struct timezone tz;
 
-	/* Arguments */
-	tv_ptr = regs->r0;
-	tz_ptr = regs->r1;
-	arm_sys_debug("  tv_ptr=0x%x, tz_ptr=0x%x\n", tv_ptr, tz_ptr);
+  /* Arguments */
+  tv_ptr = regs->r0;
+  tz_ptr = regs->r1;
+  arm_sys_debug("  tv_ptr=0x%x, tz_ptr=0x%x\n", tv_ptr, tz_ptr);
 
-	/* Host call */
-	gettimeofday(&tv, &tz);
+  /* Host call */
+  gettimeofday(&tv, &tz);
 
-	/* Write time value */
-	if (tv_ptr)
-	{
-		mem_write(mem, tv_ptr, 4, &tv.tv_sec);
-		mem_write(mem, tv_ptr + 4, 4, &tv.tv_usec);
-	}
+  /* Write time value */
+  if (tv_ptr) {
+    mem_write(mem, tv_ptr, 4, &tv.tv_sec);
+    mem_write(mem, tv_ptr + 4, 4, &tv.tv_usec);
+  }
 
-	/* Write time zone */
-	if (tz_ptr)
-	{
-		mem_write(mem, tz_ptr, 4, &tz.tz_minuteswest);
-		mem_write(mem, tz_ptr + 4, 4, &tz.tz_dsttime);
-	}
+  /* Write time zone */
+  if (tz_ptr) {
+    mem_write(mem, tz_ptr, 4, &tz.tz_minuteswest);
+    mem_write(mem, tz_ptr + 4, 4, &tz.tz_dsttime);
+  }
 
-	/* Return */
-	return 0;
+  /* Return */
+  return 0;
 }
-
-
-
 
 /*
  * System call 'mmap' (code 90)
  */
 
-#define SYS_MMAP_BASE_ADDRESS  0xb7fb0000
+#define SYS_MMAP_BASE_ADDRESS 0xb7fb0000
 
-static struct str_map_t sys_mmap_prot_map =
-{
-	6, {
-		{ "PROT_READ",       0x1 },
-		{ "PROT_WRITE",      0x2 },
-		{ "PROT_EXEC",       0x4 },
-		{ "PROT_SEM",        0x8 },
-		{ "PROT_GROWSDOWN",  0x01000000 },
-		{ "PROT_GROWSUP",    0x02000000 }
-	}
-};
+static struct str_map_t sys_mmap_prot_map = {6,
+                                             {{"PROT_READ", 0x1},
+                                              {"PROT_WRITE", 0x2},
+                                              {"PROT_EXEC", 0x4},
+                                              {"PROT_SEM", 0x8},
+                                              {"PROT_GROWSDOWN", 0x01000000},
+                                              {"PROT_GROWSUP", 0x02000000}}};
 
-static struct str_map_t sys_mmap_flags_map =
-{
-	11, {
-		{ "MAP_SHARED",      0x01 },
-		{ "MAP_PRIVATE",     0x02 },
-		{ "MAP_FIXED",       0x10 },
-		{ "MAP_ANONYMOUS",   0x20 },
-		{ "MAP_GROWSDOWN",   0x00100 },
-		{ "MAP_DENYWRITE",   0x00800 },
-		{ "MAP_EXECUTABLE",  0x01000 },
-		{ "MAP_LOCKED",      0x02000 },
-		{ "MAP_NORESERVE",   0x04000 },
-		{ "MAP_POPULATE",    0x08000 },
-		{ "MAP_NONBLOCK",    0x10000 }
-	}
-};
+static struct str_map_t sys_mmap_flags_map = {11,
+                                              {{"MAP_SHARED", 0x01},
+                                               {"MAP_PRIVATE", 0x02},
+                                               {"MAP_FIXED", 0x10},
+                                               {"MAP_ANONYMOUS", 0x20},
+                                               {"MAP_GROWSDOWN", 0x00100},
+                                               {"MAP_DENYWRITE", 0x00800},
+                                               {"MAP_EXECUTABLE", 0x01000},
+                                               {"MAP_LOCKED", 0x02000},
+                                               {"MAP_NORESERVE", 0x04000},
+                                               {"MAP_POPULATE", 0x08000},
+                                               {"MAP_NONBLOCK", 0x10000}}};
 
-static int arm_sys_mmap(struct arm_ctx_t *ctx, unsigned int addr, unsigned int len,
-	int prot, int flags, int guest_fd, int offset)
-{
-	struct mem_t *mem = ctx->mem;
+static int arm_sys_mmap(struct arm_ctx_t *ctx, unsigned int addr,
+                        unsigned int len, int prot, int flags, int guest_fd,
+                        int offset) {
+  struct mem_t *mem = ctx->mem;
 
-	unsigned int len_aligned;
+  unsigned int len_aligned;
 
-	int perm;
-	int host_fd;
+  int perm;
+  int host_fd;
 
-	struct arm_file_desc_t *desc;
+  struct arm_file_desc_t *desc;
 
-	/* Check that protection flags match in guest and host */
-	assert(PROT_READ == 1);
-	assert(PROT_WRITE == 2);
-	assert(PROT_EXEC == 4);
+  /* Check that protection flags match in guest and host */
+  assert(PROT_READ == 1);
+  assert(PROT_WRITE == 2);
+  assert(PROT_EXEC == 4);
 
-	/* Check that mapping flags match */
-	assert(MAP_SHARED == 0x01);
-	assert(MAP_PRIVATE == 0x02);
-	assert(MAP_FIXED == 0x10);
-	assert(MAP_ANONYMOUS == 0x20);
+  /* Check that mapping flags match */
+  assert(MAP_SHARED == 0x01);
+  assert(MAP_PRIVATE == 0x02);
+  assert(MAP_FIXED == 0x10);
+  assert(MAP_ANONYMOUS == 0x20);
 
-	/* Translate file descriptor */
-	desc = arm_file_desc_table_entry_get(ctx->file_desc_table, guest_fd);
-	host_fd = desc ? desc->host_fd : -1;
-	if (guest_fd > 0 && host_fd < 0)
-		fatal("%s: invalid guest descriptor", __FUNCTION__);
+  /* Translate file descriptor */
+  desc = arm_file_desc_table_entry_get(ctx->file_desc_table, guest_fd);
+  host_fd = desc ? desc->host_fd : -1;
+  if (guest_fd > 0 && host_fd < 0)
+    fatal("%s: invalid guest descriptor", __FUNCTION__);
 
-	/* Permissions */
-	perm = mem_access_init;
-	perm |= prot & PROT_READ ? mem_access_read : 0;
-	perm |= prot & PROT_WRITE ? mem_access_write : 0;
-	perm |= prot & PROT_EXEC ? mem_access_exec : 0;
+  /* Permissions */
+  perm = mem_access_init;
+  perm |= prot & PROT_READ ? mem_access_read : 0;
+  perm |= prot & PROT_WRITE ? mem_access_write : 0;
+  perm |= prot & PROT_EXEC ? mem_access_exec : 0;
 
-	/* Flag MAP_ANONYMOUS.
-	 * If it is set, the 'fd' parameter is ignored. */
-	if (flags & MAP_ANONYMOUS)
-		host_fd = -1;
+  /* Flag MAP_ANONYMOUS.
+   * If it is set, the 'fd' parameter is ignored. */
+  if (flags & MAP_ANONYMOUS) host_fd = -1;
 
-	/* 'addr' and 'offset' must be aligned to page size boundaries.
-	 * 'len' is rounded up to page boundary. */
-	if (offset & ~MEM_PAGE_MASK)
-		fatal("%s: unaligned offset", __FUNCTION__);
-	if (addr & ~MEM_PAGE_MASK)
-		fatal("%s: unaligned address", __FUNCTION__);
-	len_aligned = ROUND_UP(len, MEM_PAGE_SIZE);
+  /* 'addr' and 'offset' must be aligned to page size boundaries.
+   * 'len' is rounded up to page boundary. */
+  if (offset & ~MEM_PAGE_MASK) fatal("%s: unaligned offset", __FUNCTION__);
+  if (addr & ~MEM_PAGE_MASK) fatal("%s: unaligned address", __FUNCTION__);
+  len_aligned = ROUND_UP(len, MEM_PAGE_SIZE);
 
-	/* Find region for allocation */
-	if (flags & MAP_FIXED)
-	{
-		/* If MAP_FIXED is set, the 'addr' parameter must be obeyed, and is not just a
-		 * hint for a possible base address of the allocated range. */
-		if (!addr)
-			fatal("%s: no start specified for fixed mapping", __FUNCTION__);
+  /* Find region for allocation */
+  if (flags & MAP_FIXED) {
+    /* If MAP_FIXED is set, the 'addr' parameter must be obeyed, and is not just
+     * a
+     * hint for a possible base address of the allocated range. */
+    if (!addr) fatal("%s: no start specified for fixed mapping", __FUNCTION__);
 
-		/* Any allocated page in the range specified by 'addr' and 'len'
-		 * must be discarded. */
-		mem_unmap(mem, addr, len_aligned);
-	}
-	else
-	{
-		if (!addr || mem_map_space_down(mem, addr, len_aligned) != addr)
-			addr = SYS_MMAP_BASE_ADDRESS;
-		addr = mem_map_space_down(mem, addr, len_aligned);
-		if (addr == -1)
-			fatal("%s: out of guest memory", __FUNCTION__);
-	}
+    /* Any allocated page in the range specified by 'addr' and 'len'
+     * must be discarded. */
+    mem_unmap(mem, addr, len_aligned);
+  } else {
+    if (!addr || mem_map_space_down(mem, addr, len_aligned) != addr)
+      addr = SYS_MMAP_BASE_ADDRESS;
+    addr = mem_map_space_down(mem, addr, len_aligned);
+    if (addr == -1) fatal("%s: out of guest memory", __FUNCTION__);
+  }
 
-	/* Allocation of memory */
-	mem_map(mem, addr, len_aligned, perm);
+  /* Allocation of memory */
+  mem_map(mem, addr, len_aligned, perm);
 
-	/* Host mapping */
-	if (host_fd >= 0)
-	{
-		char buf[MEM_PAGE_SIZE];
+  /* Host mapping */
+  if (host_fd >= 0) {
+    char buf[MEM_PAGE_SIZE];
 
-		unsigned int last_pos;
-		unsigned int curr_addr;
+    unsigned int last_pos;
+    unsigned int curr_addr;
 
-		int size;
-		int count;
+    int size;
+    int count;
 
-		/* Save previous position */
-		last_pos = lseek(host_fd, 0, SEEK_CUR);
-		lseek(host_fd, offset, SEEK_SET);
+    /* Save previous position */
+    last_pos = lseek(host_fd, 0, SEEK_CUR);
+    lseek(host_fd, offset, SEEK_SET);
 
-		/* Read pages */
-		assert(len_aligned % MEM_PAGE_SIZE == 0);
-		assert(addr % MEM_PAGE_SIZE == 0);
-		curr_addr = addr;
-		for (size = len_aligned; size > 0; size -= MEM_PAGE_SIZE)
-		{
-			memset(buf, 0, MEM_PAGE_SIZE);
-			count = read(host_fd, buf, MEM_PAGE_SIZE);
-			if (count)
-				mem_access(mem, curr_addr, MEM_PAGE_SIZE, buf, mem_access_init);
-			curr_addr += MEM_PAGE_SIZE;
-		}
+    /* Read pages */
+    assert(len_aligned % MEM_PAGE_SIZE == 0);
+    assert(addr % MEM_PAGE_SIZE == 0);
+    curr_addr = addr;
+    for (size = len_aligned; size > 0; size -= MEM_PAGE_SIZE) {
+      memset(buf, 0, MEM_PAGE_SIZE);
+      count = read(host_fd, buf, MEM_PAGE_SIZE);
+      if (count)
+        mem_access(mem, curr_addr, MEM_PAGE_SIZE, buf, mem_access_init);
+      curr_addr += MEM_PAGE_SIZE;
+    }
 
-		/* Return file to last position */
-		lseek(host_fd, last_pos, SEEK_SET);
-	}
+    /* Return file to last position */
+    lseek(host_fd, last_pos, SEEK_SET);
+  }
 
-	/* Return mapped address */
-	return addr;
+  /* Return mapped address */
+  return addr;
 }
-
-
-
 
 /*
  * System call 'munmap' (code 91)
  */
 
-static int arm_sys_munmap_impl(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
-	struct mem_t *mem = ctx->mem;
+static int arm_sys_munmap_impl(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
+  struct mem_t *mem = ctx->mem;
 
-	unsigned int addr;
-	unsigned int size;
-	unsigned int size_aligned;
+  unsigned int addr;
+  unsigned int size;
+  unsigned int size_aligned;
 
-	/* Arguments */
-	addr = regs->r0;
-	size = regs->r1;
-	arm_sys_debug("  addr=0x%x, size=0x%x\n", addr, size);
+  /* Arguments */
+  addr = regs->r0;
+  size = regs->r1;
+  arm_sys_debug("  addr=0x%x, size=0x%x\n", addr, size);
 
-	/* Restrictions */
-	if (addr & (MEM_PAGE_SIZE - 1))
-		fatal("%s: address not aligned", __FUNCTION__);
+  /* Restrictions */
+  if (addr & (MEM_PAGE_SIZE - 1))
+    fatal("%s: address not aligned", __FUNCTION__);
 
-	/* Unmap */
-	size_aligned = ROUND_UP(size, MEM_PAGE_SIZE);
-	mem_unmap(mem, addr, size_aligned);
+  /* Unmap */
+  size_aligned = ROUND_UP(size, MEM_PAGE_SIZE);
+  mem_unmap(mem, addr, size_aligned);
 
-	/* Return */
-	return 0;
+  /* Return */
+  return 0;
 }
 
-
-
-
-struct sim_user_desc
-{
-	unsigned int entry_number;
-	unsigned int base_addr;
-	unsigned int limit;
-	unsigned int seg_32bit:1;
-	unsigned int contents:2;
-	unsigned int read_exec_only:1;
-	unsigned int limit_in_pages:1;
-	unsigned int seg_not_present:1;
-	unsigned int useable:1;
+struct sim_user_desc {
+  unsigned int entry_number;
+  unsigned int base_addr;
+  unsigned int limit;
+  unsigned int seg_32bit : 1;
+  unsigned int contents : 2;
+  unsigned int read_exec_only : 1;
+  unsigned int limit_in_pages : 1;
+  unsigned int seg_not_present : 1;
+  unsigned int useable : 1;
 };
 
 /*
  * System call 'newuname' (code 122)
  */
 
-struct sim_utsname
-{
-	char sysname[65];
-	char nodename[65];
-	char release[65];
-	char version[65];
-	char machine[65];
-	char domainname[65];
+struct sim_utsname {
+  char sysname[65];
+  char nodename[65];
+  char release[65];
+  char version[65];
+  char machine[65];
+  char domainname[65];
 } __attribute__((packed));
 
-static struct sim_utsname sim_utsname =
-{
-	"Linux",
-	"Multi2Sim",
-	"3.1.9-1.fc16.armv7"
-	"#1 Fri Jan 13 16:37:42 UTC 2012",
-	"armv7"
-	""
-};
+static struct sim_utsname sim_utsname = {"Linux", "Multi2Sim",
+                                         "3.1.9-1.fc16.armv7"
+                                         "#1 Fri Jan 13 16:37:42 UTC 2012",
+                                         "armv7"
+                                         ""};
 
-static int arm_sys_newuname_impl(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
-	struct mem_t *mem = ctx->mem;
+static int arm_sys_newuname_impl(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
+  struct mem_t *mem = ctx->mem;
 
-	unsigned int utsname_ptr;
+  unsigned int utsname_ptr;
 
-	/* Arguments */
-	utsname_ptr = regs->r0;
-	arm_sys_debug("  putsname=0x%x\n", utsname_ptr);
-	arm_sys_debug("  sysname='%s', nodename='%s'\n", sim_utsname.sysname, sim_utsname.nodename);
-	arm_sys_debug("  relaese='%s', version='%s'\n", sim_utsname.release, sim_utsname.version);
-	arm_sys_debug("  machine='%s', domainname='%s'\n", sim_utsname.machine, sim_utsname.domainname);
+  /* Arguments */
+  utsname_ptr = regs->r0;
+  arm_sys_debug("  putsname=0x%x\n", utsname_ptr);
+  arm_sys_debug("  sysname='%s', nodename='%s'\n", sim_utsname.sysname,
+                sim_utsname.nodename);
+  arm_sys_debug("  relaese='%s', version='%s'\n", sim_utsname.release,
+                sim_utsname.version);
+  arm_sys_debug("  machine='%s', domainname='%s'\n", sim_utsname.machine,
+                sim_utsname.domainname);
 
-	/* Return structure */
-	mem_write(mem, utsname_ptr, sizeof sim_utsname, &sim_utsname);
-	return 0;
+  /* Return structure */
+  mem_write(mem, utsname_ptr, sizeof sim_utsname, &sim_utsname);
+  return 0;
 }
-
-
-
 
 /*
  * System call 'mmap2' (code 192)
  */
 
-static int arm_sys_mmap2_impl(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
+static int arm_sys_mmap2_impl(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
 
-	unsigned int addr;
-	unsigned int len;
+  unsigned int addr;
+  unsigned int len;
 
-	int prot;
-	int flags;
-	int offset;
-	int guest_fd;
+  int prot;
+  int flags;
+  int offset;
+  int guest_fd;
 
-	char prot_str[MAX_STRING_SIZE];
-	char flags_str[MAX_STRING_SIZE];
+  char prot_str[MAX_STRING_SIZE];
+  char flags_str[MAX_STRING_SIZE];
 
-	/* Arguments */
-	addr = regs->r0;
-	len = regs->r1;
-	prot = regs->r2;
-	flags = regs->r3;
-	guest_fd = regs->r4;
-	offset = regs->r5;
+  /* Arguments */
+  addr = regs->r0;
+  len = regs->r1;
+  prot = regs->r2;
+  flags = regs->r3;
+  guest_fd = regs->r4;
+  offset = regs->r5;
 
-	/* Arm error handling for non-tls supported pointer mismatch */
-	if(!len)
-	{
-		len = 0x1000;
-	}
+  /* Arm error handling for non-tls supported pointer mismatch */
+  if (!len) {
+    len = 0x1000;
+  }
 
-	/* Debug */
-	arm_sys_debug("  addr=0x%x, len=%u, prot=0x%x, flags=0x%x, guest_fd=%d, offset=0x%x\n",
-		addr, len, prot, flags, guest_fd, offset);
-	str_map_flags(&sys_mmap_prot_map, prot, prot_str, MAX_STRING_SIZE);
-	str_map_flags(&sys_mmap_flags_map, flags, flags_str, MAX_STRING_SIZE);
-	arm_sys_debug("  prot=%s, flags=%s\n", prot_str, flags_str);
+  /* Debug */
+  arm_sys_debug(
+      "  addr=0x%x, len=%u, prot=0x%x, flags=0x%x, guest_fd=%d, offset=0x%x\n",
+      addr, len, prot, flags, guest_fd, offset);
+  str_map_flags(&sys_mmap_prot_map, prot, prot_str, MAX_STRING_SIZE);
+  str_map_flags(&sys_mmap_flags_map, flags, flags_str, MAX_STRING_SIZE);
+  arm_sys_debug("  prot=%s, flags=%s\n", prot_str, flags_str);
 
-	/* System calls 'mmap' and 'mmap2' only differ in the interpretation of
-	 * argument 'offset'. Here, it is given in memory pages. */
-	return arm_sys_mmap(ctx, addr, len, prot, flags, guest_fd, offset << MEM_PAGE_SHIFT);
+  /* System calls 'mmap' and 'mmap2' only differ in the interpretation of
+   * argument 'offset'. Here, it is given in memory pages. */
+  return arm_sys_mmap(ctx, addr, len, prot, flags, guest_fd,
+                      offset << MEM_PAGE_SHIFT);
 }
-
-
-
 
 /*
  * System call 'stat64' (code 195)
  */
 
-struct sim_stat64_t
-{
-	unsigned long long dev;  /* 0 8 */
-	unsigned int pad1;  /* 8 4 */
-	unsigned int __ino;  /* 12 4 */
-	unsigned int mode;  /* 16 4 */
-	unsigned int nlink;  /* 20 4 */
-	unsigned int uid;  /* 24 4 */
-	unsigned int gid;  /* 28 4 */
-	unsigned long long rdev;  /* 32 8 */
-	unsigned int pad2;  /* 40 4 */
-	long long size;  /* 44 8 */
-	unsigned int blksize;  /* 52 4 */
-	unsigned long long blocks;  /* 56 8 */
-	unsigned int atime;  /* 64 4 */
-	unsigned int atime_nsec;  /* 68 4 */
-	unsigned int mtime;  /* 72 4 */
-	unsigned int mtime_nsec;  /* 76 4 */
-	unsigned int ctime;  /* 80 4 */
-	unsigned int ctime_nsec;  /* 84 4 */
-	unsigned long long ino;  /* 88 8 */
+struct sim_stat64_t {
+  unsigned long long dev;    /* 0 8 */
+  unsigned int pad1;         /* 8 4 */
+  unsigned int __ino;        /* 12 4 */
+  unsigned int mode;         /* 16 4 */
+  unsigned int nlink;        /* 20 4 */
+  unsigned int uid;          /* 24 4 */
+  unsigned int gid;          /* 28 4 */
+  unsigned long long rdev;   /* 32 8 */
+  unsigned int pad2;         /* 40 4 */
+  long long size;            /* 44 8 */
+  unsigned int blksize;      /* 52 4 */
+  unsigned long long blocks; /* 56 8 */
+  unsigned int atime;        /* 64 4 */
+  unsigned int atime_nsec;   /* 68 4 */
+  unsigned int mtime;        /* 72 4 */
+  unsigned int mtime_nsec;   /* 76 4 */
+  unsigned int ctime;        /* 80 4 */
+  unsigned int ctime_nsec;   /* 84 4 */
+  unsigned long long ino;    /* 88 8 */
 } __attribute__((packed));
 
-static void arm_sys_stat_host_to_guest(struct sim_stat64_t *guest, struct stat *host)
-{
-	M2S_HOST_GUEST_MATCH(sizeof(struct sim_stat64_t), 96);
-	memset(guest, 0, sizeof(struct sim_stat64_t));
+static void arm_sys_stat_host_to_guest(struct sim_stat64_t *guest,
+                                       struct stat *host) {
+  M2S_HOST_GUEST_MATCH(sizeof(struct sim_stat64_t), 96);
+  memset(guest, 0, sizeof(struct sim_stat64_t));
 
-	guest->dev = host->st_dev;
-	guest->__ino = host->st_ino;
-	guest->mode = host->st_mode;
-	guest->nlink = host->st_nlink;
-	guest->uid = host->st_uid;
-	guest->gid = host->st_gid;
-	guest->rdev = host->st_rdev;
-	guest->size = host->st_size;
-	guest->blksize = host->st_blksize;
-	guest->blocks = host->st_blocks;
-	guest->atime = host->st_atime;
-	guest->mtime = host->st_mtime;
-	guest->ctime = host->st_ctime;
-	guest->ino = host->st_ino;
+  guest->dev = host->st_dev;
+  guest->__ino = host->st_ino;
+  guest->mode = host->st_mode;
+  guest->nlink = host->st_nlink;
+  guest->uid = host->st_uid;
+  guest->gid = host->st_gid;
+  guest->rdev = host->st_rdev;
+  guest->size = host->st_size;
+  guest->blksize = host->st_blksize;
+  guest->blocks = host->st_blocks;
+  guest->atime = host->st_atime;
+  guest->mtime = host->st_mtime;
+  guest->ctime = host->st_ctime;
+  guest->ino = host->st_ino;
 
-	arm_sys_debug("  stat64 structure:\n");
-	arm_sys_debug("    dev=%lld, ino=%lld, mode=%d, nlink=%d\n",
-		guest->dev, guest->ino, guest->mode, guest->nlink);
-	arm_sys_debug("    uid=%d, gid=%d, rdev=%lld\n",
-		guest->uid, guest->gid, guest->rdev);
-	arm_sys_debug("    size=%lld, blksize=%d, blocks=%lld\n",
-		guest->size, guest->blksize, guest->blocks);
+  arm_sys_debug("  stat64 structure:\n");
+  arm_sys_debug("    dev=%lld, ino=%lld, mode=%d, nlink=%d\n", guest->dev,
+                guest->ino, guest->mode, guest->nlink);
+  arm_sys_debug("    uid=%d, gid=%d, rdev=%lld\n", guest->uid, guest->gid,
+                guest->rdev);
+  arm_sys_debug("    size=%lld, blksize=%d, blocks=%lld\n", guest->size,
+                guest->blksize, guest->blocks);
 }
-
-
-
 
 /*
  * System call 'fstat64' (code 197)
  */
 
-static int arm_sys_fstat64_impl(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
-	struct mem_t *mem = ctx->mem;
+static int arm_sys_fstat64_impl(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
+  struct mem_t *mem = ctx->mem;
 
-	int fd;
-	int host_fd;
-	int err;
+  int fd;
+  int host_fd;
+  int err;
 
-	unsigned int statbuf_ptr;
+  unsigned int statbuf_ptr;
 
-	struct stat statbuf;
-	struct sim_stat64_t sim_statbuf;
+  struct stat statbuf;
+  struct sim_stat64_t sim_statbuf;
 
-	/* Arguments */
-	fd = regs->r0;
-	statbuf_ptr = regs->r1;
-	arm_sys_debug("  fd=%d, statbuf_ptr=0x%x\n", fd, statbuf_ptr);
+  /* Arguments */
+  fd = regs->r0;
+  statbuf_ptr = regs->r1;
+  arm_sys_debug("  fd=%d, statbuf_ptr=0x%x\n", fd, statbuf_ptr);
 
-	/* Get host descriptor */
-	host_fd = arm_file_desc_table_get_host_fd(ctx->file_desc_table, fd);
-	arm_sys_debug("  host_fd=%d\n", host_fd);
+  /* Get host descriptor */
+  host_fd = arm_file_desc_table_get_host_fd(ctx->file_desc_table, fd);
+  arm_sys_debug("  host_fd=%d\n", host_fd);
 
-	/* Host call */
-	err = fstat(host_fd, &statbuf);
-	if (err == -1)
-		return -errno;
+  /* Host call */
+  err = fstat(host_fd, &statbuf);
+  if (err == -1) return -errno;
 
-	/* Return */
-	arm_sys_stat_host_to_guest(&sim_statbuf, &statbuf);
-	mem_write(mem, statbuf_ptr, sizeof sim_statbuf, &sim_statbuf);
-	return 0;
+  /* Return */
+  arm_sys_stat_host_to_guest(&sim_statbuf, &statbuf);
+  mem_write(mem, statbuf_ptr, sizeof sim_statbuf, &sim_statbuf);
+  return 0;
 }
-
-
-
 
 /*
  * System call 'getuid' (code 199)
  */
 
-static int arm_sys_getuid_impl(struct arm_ctx_t *ctx)
-{
-	return getuid();
-}
-
-
+static int arm_sys_getuid_impl(struct arm_ctx_t *ctx) { return getuid(); }
 
 /*
  * System call 'getgid' (code 200)
  */
 
-static int arm_sys_getgid_impl(struct arm_ctx_t *ctx)
-{
-	return getgid();
-}
-
-
-
+static int arm_sys_getgid_impl(struct arm_ctx_t *ctx) { return getgid(); }
 
 /*
  * System call 'geteuid' (code 201)
  */
 
-static int arm_sys_geteuid_impl(struct arm_ctx_t *ctx)
-{
-	return geteuid();
-}
-
-
-
+static int arm_sys_geteuid_impl(struct arm_ctx_t *ctx) { return geteuid(); }
 
 /*
  * System call 'getegid' (code 202)
  */
 
-static int arm_sys_getegid_impl(struct arm_ctx_t *ctx)
-{
-	return getegid();
-}
-
-
-
+static int arm_sys_getegid_impl(struct arm_ctx_t *ctx) { return getegid(); }
 
 /*
  * System call 'exit_group' (code 252)
  */
 
-static int arm_sys_exit_group_impl(struct arm_ctx_t *ctx)
-{
-	struct arm_regs_t *regs = ctx->regs;
+static int arm_sys_exit_group_impl(struct arm_ctx_t *ctx) {
+  struct arm_regs_t *regs = ctx->regs;
 
-	int status;
+  int status;
 
-	/* Arguments */
-	status = regs->r0;
-	arm_sys_debug("  status=%d\n", status);
+  /* Arguments */
+  status = regs->r0;
+  arm_sys_debug("  status=%d\n", status);
 
-	/* Finish */
-	arm_ctx_finish_group(ctx, status);
-	return 0;
+  /* Finish */
+  arm_ctx_finish_group(ctx, status);
+  return 0;
 }
-
-
-
 
 /*
  * System call 'ARM_set_tls' (code 330)
  */
 
-static int arm_sys_ARM_set_tls_impl(struct arm_ctx_t *ctx)
-{
+static int arm_sys_ARM_set_tls_impl(struct arm_ctx_t *ctx) {
+  unsigned int newtls;
 
-	unsigned int newtls;
+  /* Arguments */
+  newtls = ctx->regs->r0;
 
-	/* Arguments */
-	newtls = ctx->regs->r0;
+  /* Set the tls value */
+  ctx->regs->cp15.c13_tls3 = newtls;
 
-	/* Set the tls value */
-	ctx->regs->cp15.c13_tls3 = newtls;
+  /*struct arm_regs_t *regs = ctx->regs;
+  struct mem_t *mem = ctx->mem;
 
+  unsigned int uinfo_ptr;
 
-	/*struct arm_regs_t *regs = ctx->regs;
-	struct mem_t *mem = ctx->mem;
+  struct sim_user_desc uinfo;
 
-	unsigned int uinfo_ptr;
+   Arguments
+  uinfo_ptr = regs->r0;
+  arm_sys_debug("  uinfo_ptr=0x%x\n", uinfo_ptr);
 
-	struct sim_user_desc uinfo;
+   Read structure
+  mem_read(mem, uinfo_ptr, sizeof uinfo, &uinfo);
+  arm_sys_debug("  entry_number=0x%x, base_addr=0x%x, limit=0x%x\n",
+          uinfo.entry_number, uinfo.base_addr, uinfo.limit);
+  arm_sys_debug("  seg_32bit=0x%x, contents=0x%x, read_exec_only=0x%x\n",
+          uinfo.seg_32bit, uinfo.contents, uinfo.read_exec_only);
+  arm_sys_debug("  limit_in_pages=0x%x, seg_not_present=0x%x, useable=0x%x\n",
+          uinfo.limit_in_pages, uinfo.seg_not_present, uinfo.useable);
+  if (!uinfo.seg_32bit)
+          fatal("syscall set_thread_area: only 32-bit segments supported");
 
-	 Arguments
-	uinfo_ptr = regs->r0;
-	arm_sys_debug("  uinfo_ptr=0x%x\n", uinfo_ptr);
+   Limit given in pages (4KB units)
+  if (uinfo.limit_in_pages)
+          uinfo.limit <<= 12;
 
-	 Read structure
-	mem_read(mem, uinfo_ptr, sizeof uinfo, &uinfo);
-	arm_sys_debug("  entry_number=0x%x, base_addr=0x%x, limit=0x%x\n",
-		uinfo.entry_number, uinfo.base_addr, uinfo.limit);
-	arm_sys_debug("  seg_32bit=0x%x, contents=0x%x, read_exec_only=0x%x\n",
-		uinfo.seg_32bit, uinfo.contents, uinfo.read_exec_only);
-	arm_sys_debug("  limit_in_pages=0x%x, seg_not_present=0x%x, useable=0x%x\n",
-		uinfo.limit_in_pages, uinfo.seg_not_present, uinfo.useable);
-	if (!uinfo.seg_32bit)
-		fatal("syscall set_thread_area: only 32-bit segments supported");
+  if (uinfo.entry_number == -1)
+  {
+          if (ctx->glibc_segment_base)
+                  fatal("%s: glibc segment already set", __FUNCTION__);
 
-	 Limit given in pages (4KB units)
-	if (uinfo.limit_in_pages)
-		uinfo.limit <<= 12;
-
-	if (uinfo.entry_number == -1)
-	{
-		if (ctx->glibc_segment_base)
-			fatal("%s: glibc segment already set", __FUNCTION__);
-
-		ctx->glibc_segment_base = uinfo.base_addr;
-		ctx->glibc_segment_limit = uinfo.limit;
-		uinfo.entry_number = 6;
-		mem_write(mem, uinfo_ptr, 4, &uinfo.entry_number);
-	}
-	else
-	{
-		if (uinfo.entry_number != 6)
-			fatal("%s: invalid entry number", __FUNCTION__);
-		if (!ctx->glibc_segment_base)
-			fatal("%s: glibc segment not set", __FUNCTION__);
-		ctx->glibc_segment_base = uinfo.base_addr;
-		ctx->glibc_segment_limit = uinfo.limit;
-	}
+          ctx->glibc_segment_base = uinfo.base_addr;
+          ctx->glibc_segment_limit = uinfo.limit;
+          uinfo.entry_number = 6;
+          mem_write(mem, uinfo_ptr, 4, &uinfo.entry_number);
+  }
+  else
+  {
+          if (uinfo.entry_number != 6)
+                  fatal("%s: invalid entry number", __FUNCTION__);
+          if (!ctx->glibc_segment_base)
+                  fatal("%s: glibc segment not set", __FUNCTION__);
+          ctx->glibc_segment_base = uinfo.base_addr;
+          ctx->glibc_segment_limit = uinfo.limit;
+  }
 */
-	/* Return */
-	return 0;
-
+  /* Return */
+  return 0;
 }
-
-
-
 
 /*
  * Not implemented system calls
  */
 
-#define SYS_NOT_IMPL(NAME) \
-	static int arm_sys_##NAME##_impl(struct arm_ctx_t *ctx) \
-	{ \
-		struct arm_regs_t *regs = ctx->regs; \
-		fatal("%s: system call not implemented (code %d, inst %lld, pid %d).\n%s", \
-			__FUNCTION__, regs->r7, asEmu(arm_emu)->instructions, ctx->pid, \
-			err_arm_sys_note); \
-		return 0; \
-	}
+#define SYS_NOT_IMPL(NAME)                                                     \
+  static int arm_sys_##NAME##_impl(struct arm_ctx_t *ctx) {                    \
+    struct arm_regs_t *regs = ctx->regs;                                       \
+    fatal("%s: system call not implemented (code %d, inst %lld, pid %d).\n%s", \
+          __FUNCTION__, regs->r7, asEmu(arm_emu)->instructions, ctx->pid,      \
+          err_arm_sys_note);                                                   \
+    return 0;                                                                  \
+  }
 
 SYS_NOT_IMPL(restart_syscall)
 SYS_NOT_IMPL(exit)
@@ -1533,4 +1388,3 @@ SYS_NOT_IMPL(glut)
 SYS_NOT_IMPL(opengl)
 SYS_NOT_IMPL(cuda)
 SYS_NOT_IMPL(clrt)
-

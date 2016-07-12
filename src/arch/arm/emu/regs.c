@@ -17,30 +17,21 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #include <lib/mhandle/mhandle.h>
 
 #include "regs.h"
 
+struct arm_regs_t *arm_regs_create() {
+  struct arm_regs_t *regs;
 
-struct arm_regs_t *arm_regs_create()
-{
-	struct arm_regs_t *regs;
+  regs = xcalloc(1, sizeof(struct arm_regs_t));
 
-	regs = xcalloc(1, sizeof(struct arm_regs_t));
-
-	regs->cpsr.mode = ARM_MODE_USER;
-	return regs;
+  regs->cpsr.mode = ARM_MODE_USER;
+  return regs;
 }
 
+void arm_regs_free(struct arm_regs_t *regs) { free(regs); }
 
-void arm_regs_free(struct arm_regs_t *regs)
-{
-	free(regs);
-}
-
-
-void arm_regs_copy(struct arm_regs_t *dst, struct arm_regs_t *src)
-{
-	memcpy(dst, src, sizeof(struct arm_regs_t));
+void arm_regs_copy(struct arm_regs_t *dst, struct arm_regs_t *src) {
+  memcpy(dst, src, sizeof(struct arm_regs_t));
 }

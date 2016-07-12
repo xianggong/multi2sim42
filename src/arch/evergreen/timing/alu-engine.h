@@ -24,4 +24,3 @@ struct evg_compute_unit_t;
 void evg_alu_engine_run(struct evg_compute_unit_t *compute_unit);
 
 #endif
-

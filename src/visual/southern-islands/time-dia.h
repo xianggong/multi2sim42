@@ -20,18 +20,17 @@
 #ifndef VISUAL_SOUTHERN_ISLANDS_TIME_DIA_H
 #define VISUAL_SOUTHERN_ISLANDS_TIME_DIA_H
 
-
 struct vi_si_time_dia_t;
 
 struct vi_si_compute_unit_t;
-struct vi_si_time_dia_t *vi_si_time_dia_create(struct vi_si_compute_unit_t *compute_unit);
+struct vi_si_time_dia_t *vi_si_time_dia_create(
+    struct vi_si_compute_unit_t *compute_unit);
 void vi_si_time_dia_free(struct vi_si_time_dia_t *time_dia);
 
 GtkWidget *vi_si_time_dia_get_widget(struct vi_si_time_dia_t *time_dia);
 
-void vi_si_time_dia_go_to_cycle(struct vi_si_time_dia_t *time_dia, long long cycle);
+void vi_si_time_dia_go_to_cycle(struct vi_si_time_dia_t *time_dia,
+                                long long cycle);
 void vi_si_time_dia_refresh(struct vi_si_time_dia_t *time_dia);
 
-
 #endif
-

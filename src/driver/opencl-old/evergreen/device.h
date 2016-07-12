@@ -22,24 +22,21 @@
 
 #include <lib/util/class.h>
 
-
 /*
  * Object 'evg_opencl_device_t'
  */
 
-struct evg_opencl_device_t
-{
-	unsigned int id;
-	EvgEmu *emu;
+struct evg_opencl_device_t {
+  unsigned int id;
+  EvgEmu *emu;
 };
 
 struct evg_opencl_device_t *evg_opencl_device_create(EvgEmu *emu);
 void evg_opencl_device_free(struct evg_opencl_device_t *device);
 
 struct mem_t;
-unsigned int evg_opencl_device_get_info(struct evg_opencl_device_t *device, unsigned int name,
-	struct mem_t *mem, unsigned int addr, unsigned int size);
-
+unsigned int evg_opencl_device_get_info(struct evg_opencl_device_t *device,
+                                        unsigned int name, struct mem_t *mem,
+                                        unsigned int addr, unsigned int size);
 
 #endif
-

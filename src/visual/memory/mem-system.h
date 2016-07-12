@@ -17,28 +17,22 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #ifndef VISUAL_MEMORY_MEM_SYSTEM_H
 #define VISUAL_MEMORY_MEM_SYSTEM_H
 
 struct hash_table_t;
 struct list_t;
 
-struct vi_mem_system_t
-{
-	struct hash_table_t *mod_table;
-	struct hash_table_t *net_table;
-	struct hash_table_t *access_table;
-	struct list_t *mod_level_list;
+struct vi_mem_system_t {
+  struct hash_table_t *mod_table;
+  struct hash_table_t *net_table;
+  struct hash_table_t *access_table;
+  struct list_t *mod_level_list;
 };
 
-
 extern struct vi_mem_system_t *vi_mem_system;
-
 
 void vi_mem_system_init(void);
 void vi_mem_system_done(void);
 
-
 #endif
-

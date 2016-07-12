@@ -20,7 +20,6 @@
 #ifndef ARCH_X86_TIMING_SCHED_H
 #define ARCH_X86_TIMING_SCHED_H
 
-
 /*
  * Class 'X86Thread'
  * Additional functions
@@ -43,9 +42,6 @@ void X86ThreadEvictContext(X86Thread *self, X86Context *context);
 
 /* Scheduling actions for all contexts currently mapped to a thread. */
 void X86ThreadSchedule(X86Thread *self);
-
-
-
 
 /*
  * Class 'X86Cpu'
@@ -73,6 +69,4 @@ void X86CpuUpdateMinAllocCycle(X86Cpu *self);
  * practically no cost. */
 void X86CpuSchedule(X86Cpu *self);
 
-
 #endif
-

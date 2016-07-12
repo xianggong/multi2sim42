@@ -23,84 +23,86 @@
 #include <arch/x86/emu/uinst.h>
 #include <lib/util/class.h>
 
-
-
 /*
  * Object 'x86_uop_t'
  */
 
-struct x86_uop_t
-{
-	/* Micro-instruction */
-	struct x86_uinst_t *uinst;
-	enum x86_uinst_flag_t flags;
+struct x86_uop_t {
+  /* Micro-instruction */
+  struct x86_uinst_t *uinst;
+  enum x86_uinst_flag_t flags;
 
-	/* Name and sequence numbers */
-	long long magic;  /* Magic number for debugging */
-	long long id;  /* Unique ID */
-	long long id_in_core;  /* Unique ID in core */
+  /* Name and sequence numbers */
+  long long magic;      /* Magic number for debugging */
+  long long id;         /* Unique ID */
+  long long id_in_core; /* Unique ID in core */
 
-	/* Software context and hardware thread where uop belongs */
-	X86Context *ctx;
-	X86Thread *thread;
+  /* Software context and hardware thread where uop belongs */
+  X86Context *ctx;
+  X86Thread *thread;
 
-	/* Fetch info */
-	unsigned int eip;  /* Address of x86 macro-instruction */
-	unsigned int neip;  /* Address of next non-speculative x86 macro-instruction */
-	unsigned int pred_neip; /* Address of next predicted x86 macro-instruction (for branches) */
-	unsigned int target_neip;  /* Address of target x86 macro-instruction assuming branch taken (for branches) */
-	int specmode;
-	unsigned int fetch_address;  /* Physical address of memory access to fetch this instruction */
-	long long fetch_access;  /* Access identifier to fetch this instruction */
-	int trace_cache;  /* Flag telling if uop came from trace cache */
+  /* Fetch info */
+  unsigned int eip;  /* Address of x86 macro-instruction */
+  unsigned int neip; /* Address of next non-speculative x86 macro-instruction */
+  unsigned int pred_neip; /* Address of next predicted x86 macro-instruction
+                             (for branches) */
+  unsigned int
+      target_neip; /* Address of target x86 macro-instruction assuming branch
+                      taken (for branches) */
+  int specmode;
+  unsigned int
+      fetch_address;      /* Physical address of memory access to fetch this
+                             instruction */
+  long long fetch_access; /* Access identifier to fetch this instruction */
+  int trace_cache;        /* Flag telling if uop came from trace cache */
 
-	/* Fields associated with macroinstruction */
-	char mop_name[40];
-	int mop_index;  /* Index of uop within macroinstruction */
-	int mop_count;  /* Number of uops within macroinstruction */
-	int mop_size;  /* Corresponding macroinstruction size */
-	long long mop_id;  /* Sequence number of macroinstruction */
+  /* Fields associated with macroinstruction */
+  char mop_name[40];
+  int mop_index;    /* Index of uop within macroinstruction */
+  int mop_count;    /* Number of uops within macroinstruction */
+  int mop_size;     /* Corresponding macroinstruction size */
+  long long mop_id; /* Sequence number of macroinstruction */
 
-	/* Logical dependencies */
-	int idep_count;
-	int odep_count;
+  /* Logical dependencies */
+  int idep_count;
+  int odep_count;
 
-	/* Physical mappings */
-	int ph_int_idep_count, ph_fp_idep_count, ph_xmm_idep_count;
-	int ph_int_odep_count, ph_fp_odep_count, ph_xmm_odep_count;
-	int ph_idep[X86_UINST_MAX_IDEPS];
-	int ph_odep[X86_UINST_MAX_ODEPS];
-	int ph_oodep[X86_UINST_MAX_ODEPS];
+  /* Physical mappings */
+  int ph_int_idep_count, ph_fp_idep_count, ph_xmm_idep_count;
+  int ph_int_odep_count, ph_fp_odep_count, ph_xmm_odep_count;
+  int ph_idep[X86_UINST_MAX_IDEPS];
+  int ph_odep[X86_UINST_MAX_ODEPS];
+  int ph_oodep[X86_UINST_MAX_ODEPS];
 
-	/* Queues where instruction is */
-	int in_fetch_queue : 1;
-	int in_uop_queue : 1;
-	int in_iq : 1;
-	int in_lq : 1;
-	int in_sq : 1;
-	int in_preq : 1;
-	int in_event_queue : 1;
-	int in_rob : 1;
-	int in_uop_trace_list : 1;
+  /* Queues where instruction is */
+  int in_fetch_queue : 1;
+  int in_uop_queue : 1;
+  int in_iq : 1;
+  int in_lq : 1;
+  int in_sq : 1;
+  int in_preq : 1;
+  int in_event_queue : 1;
+  int in_rob : 1;
+  int in_uop_trace_list : 1;
 
-	/* Instruction status */
-	int ready;
-	int issued;
-	int completed;
+  /* Instruction status */
+  int ready;
+  int issued;
+  int completed;
 
-	/* For memory uops */
-	unsigned int phy_addr;  /* ... corresponding to 'uop->uinst->address' */
+  /* For memory uops */
+  unsigned int phy_addr; /* ... corresponding to 'uop->uinst->address' */
 
-	/* Cycles */
-	long long when;  /* cycle when ready */
-	long long issue_try_when;  /* first cycle when f.u. is tried to be reserved */
-	long long issue_when;  /* cycle when issued */
+  /* Cycles */
+  long long when;           /* cycle when ready */
+  long long issue_try_when; /* first cycle when f.u. is tried to be reserved */
+  long long issue_when;     /* cycle when issued */
 
-	/* Branch prediction */
-	int pred;  /* Global prediction (0=not taken, 1=taken) */
-	int bimod_index, bimod_pred;
-	int twolevel_bht_index, twolevel_pht_row, twolevel_pht_col, twolevel_pred;
-	int choice_index, choice_pred;
+  /* Branch prediction */
+  int pred; /* Global prediction (0=not taken, 1=taken) */
+  int bimod_index, bimod_pred;
+  int twolevel_bht_index, twolevel_pht_row, twolevel_pht_col, twolevel_pred;
+  int choice_index, choice_pred;
 };
 
 struct x86_uop_t *x86_uop_create(void);
@@ -114,6 +116,4 @@ struct linked_list_t;
 void x86_uop_list_dump(struct list_t *uop_list, FILE *f);
 void x86_uop_linked_list_dump(struct linked_list_t *uop_list, FILE *f);
 
-
 #endif
-

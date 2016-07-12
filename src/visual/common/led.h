@@ -17,12 +17,10 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #ifndef VISUAL_COMMON_LED_H
 #define VISUAL_COMMON_LED_H
 
 #include <gtk/gtk.h>
-
 
 struct vi_led_t;
 
@@ -33,6 +31,4 @@ void vi_led_set_color(struct vi_led_t *led, GdkColor *color);
 
 GtkWidget *vi_led_get_widget(struct vi_led_t *led);
 
-
 #endif
-

@@ -17,26 +17,23 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #ifndef VISUAL_MEMORY_MOD_ACCESS_H
 #define VISUAL_MEMORY_MOD_ACCESS_H
 
+struct vi_mod_access_t {
+  char *name;
+  char *state;
 
-struct vi_mod_access_t
-{
-	char *name;
-	char *state;
+  unsigned int address;
 
-	unsigned int address;
+  /* An access is considered to be in a module as long as the access
+   * is currently in any block of the module. For an access in a module,
+   * this field gives the number of accesses (objects with same
+   * 'name' field) located in different blocks of the module. */
+  int num_links;
 
-	/* An access is considered to be in a module as long as the access
-	 * is currently in any block of the module. For an access in a module,
-	 * this field gives the number of accesses (objects with same
-	 * 'name' field) located in different blocks of the module. */
-	int num_links;
-
-	long long creation_cycle;
-	long long state_update_cycle;
+  long long creation_cycle;
+  long long state_update_cycle;
 };
 
 struct vi_mod_access_t *vi_mod_access_create(char *name, unsigned int address);
@@ -51,6 +48,4 @@ void vi_mod_access_get_name_short(char *access_name, char *buf, int size);
 void vi_mod_access_get_name_long(char *access_name, char *buf, int size);
 void vi_mod_access_get_desc(char *access_name, char *buf, int size);
 
-
 #endif
-

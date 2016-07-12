@@ -22,24 +22,22 @@
 
 #include <stdio.h>
 
+struct vi_evg_compute_unit_t {
+  char *name;
 
-struct vi_evg_compute_unit_t
-{
-	char *name;
+  struct hash_table_t *work_group_table;
+  struct hash_table_t *inst_table;
 
-	struct hash_table_t *work_group_table;
-	struct hash_table_t *inst_table;
-
-	/* Number of instructions created */
-	long long num_insts;
+  /* Number of instructions created */
+  long long num_insts;
 };
 
 struct vi_evg_compute_unit_t *vi_evg_compute_unit_create(char *name);
 void vi_evg_compute_unit_free(struct vi_evg_compute_unit_t *compute_unit);
 
-void vi_evg_compute_unit_read_checkpoint(struct vi_evg_compute_unit_t *compute_unit, FILE *f);
-void vi_evg_compute_unit_write_checkpoint(struct vi_evg_compute_unit_t *compute_unit, FILE *f);
-
+void vi_evg_compute_unit_read_checkpoint(
+    struct vi_evg_compute_unit_t *compute_unit, FILE *f);
+void vi_evg_compute_unit_write_checkpoint(
+    struct vi_evg_compute_unit_t *compute_unit, FILE *f);
 
 #endif
-

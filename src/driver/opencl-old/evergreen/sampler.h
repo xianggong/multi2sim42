@@ -20,20 +20,16 @@
 #ifndef ARCH_EVERGREEN_EMU_OPENCL_SAMPLER_H
 #define ARCH_EVERGREEN_EMU_OPENCL_SAMPLER_H
 
+struct evg_opencl_sampler_t {
+  unsigned int id;
+  int ref_count;
 
-struct evg_opencl_sampler_t
-{
-	unsigned int id;
-	int ref_count;
-
-	unsigned int normalized_coords;
-	unsigned int filter_mode;
-	unsigned int addressing_mode;
+  unsigned int normalized_coords;
+  unsigned int filter_mode;
+  unsigned int addressing_mode;
 };
 
 struct evg_opencl_sampler_t *evg_opencl_sampler_create(void);
 void evg_opencl_sampler_free(struct evg_opencl_sampler_t *sampler);
 
-
 #endif
-

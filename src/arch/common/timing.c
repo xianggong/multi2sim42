@@ -26,92 +26,70 @@
 #include "emu.h"
 #include "timing.h"
 
-
-
 /*
  * Class 'Timing'
  */
 
-
 CLASS_IMPLEMENTATION(Timing);
 
-
-void TimingCreate(Timing *self)
-{
-	/* Virtual functions */
-	asObject(self)->Dump = TimingDump;
-	self->Run = TimingRun;
-	self->MemConfigDefault = TimingMemConfigDefault;
-	self->MemConfigCheck = TimingMemConfigCheck;
-	self->MemConfigParseEntry = TimingMemConfigParseEntry;
+void TimingCreate(Timing *self) {
+  /* Virtual functions */
+  asObject(self)->Dump = TimingDump;
+  self->Run = TimingRun;
+  self->MemConfigDefault = TimingMemConfigDefault;
+  self->MemConfigCheck = TimingMemConfigCheck;
+  self->MemConfigParseEntry = TimingMemConfigParseEntry;
 }
 
+void TimingDestroy(Timing *self) {}
 
-void TimingDestroy(Timing *self)
-{
+void TimingDump(Object *self, FILE *f) {}
+
+void TimingDumpSummary(Timing *self, FILE *f) {
+  double time_in_sec;
+  double cycles_per_sec;
+  double cycle_time; /* In nanoseconds */
+
+  struct arch_t *arch;
+
+  Emu *emu;
+  Timing *timing;
+
+  /* Obtain objects */
+  timing = asTiming(self);
+  arch = timing->arch;
+  assert(arch);
+  emu = arch->emu;
+  assert(emu);
+
+  /* Calculate statistics */
+  time_in_sec = (double)m2s_timer_get_value(emu->timer) / 1.0e6;
+  cycles_per_sec =
+      time_in_sec > 0.0 ? (double)timing->cycle / time_in_sec : 0.0;
+  cycle_time =
+      (double)esim_domain_cycle_time(timing->frequency_domain) / 1000.0;
+
+  /* Print */
+  fprintf(f, "SimTime = %.2f [ns]\n", timing->cycle * cycle_time);
+  fprintf(f, "Frequency = %d [MHz]\n", timing->frequency);
+  fprintf(f, "Cycles = %lld\n", timing->cycle);
+  fprintf(f, "CyclesPerSecond = %.0f\n", cycles_per_sec);
 }
 
-
-void TimingDump(Object *self, FILE *f)
-{
+int TimingRun(Timing *self) {
+  panic("%s: abstract function not overridden", __FUNCTION__);
+  return 0;
 }
 
-
-void TimingDumpSummary(Timing *self, FILE *f)
-{
-	double time_in_sec;
-	double cycles_per_sec;
-	double cycle_time;  /* In nanoseconds */
-
-	struct arch_t *arch;
-
-	Emu *emu;
-	Timing *timing;
-
-	/* Obtain objects */
-	timing = asTiming(self);
-	arch = timing->arch;
-	assert(arch);
-	emu = arch->emu;
-	assert(emu);
-
-	/* Calculate statistics */
-	time_in_sec = (double) m2s_timer_get_value(emu->timer) / 1.0e6;
-	cycles_per_sec = time_in_sec > 0.0 ? (double) timing->cycle / time_in_sec : 0.0;
-	cycle_time = (double) esim_domain_cycle_time(timing->frequency_domain) / 1000.0;
-
-	/* Print */
-	fprintf(f, "SimTime = %.2f [ns]\n", timing->cycle * cycle_time);
-	fprintf(f, "Frequency = %d [MHz]\n", timing->frequency);
-	fprintf(f, "Cycles = %lld\n", timing->cycle);
-	fprintf(f, "CyclesPerSecond = %.0f\n", cycles_per_sec);
+void TimingMemConfigDefault(Timing *self, struct config_t *config) {
+  panic("%s: abstract function not overridden", __FUNCTION__);
 }
 
-
-int TimingRun(Timing *self)
-{
-	panic("%s: abstract function not overridden",
-			__FUNCTION__);
-	return 0;
+void TimingMemConfigCheck(Timing *self, struct config_t *config) {
+  panic("%s: abstract function not overridden", __FUNCTION__);
 }
 
-
-void TimingMemConfigDefault(Timing *self, struct config_t *config)
-{
-	panic("%s: abstract function not overridden",
-			__FUNCTION__);
-}
-
-
-void TimingMemConfigCheck(Timing *self, struct config_t *config)
-{
-	panic("%s: abstract function not overridden",
-			__FUNCTION__);
-}
-
-
-void TimingMemConfigParseEntry(Timing *self, struct config_t *config, char *section)
-{
-	panic("%s: abstract function not overridden",
-			__FUNCTION__);
+void TimingMemConfigParseEntry(Timing *self, struct config_t *config,
+                               char *section) {
+  panic("%s: abstract function not overridden", __FUNCTION__);
 }

@@ -21,15 +21,12 @@
 #define ARCH_EVERGREEN_TIMING_SCHED_H
 
 extern struct str_map_t evg_gpu_sched_policy_map;
-extern enum evg_gpu_sched_policy_t
-{
-	evg_gpu_sched_invalid = 0,  /* For invalid user input */
-	evg_gpu_sched_round_robin,
-	evg_gpu_sched_greedy
+extern enum evg_gpu_sched_policy_t {
+  evg_gpu_sched_invalid = 0, /* For invalid user input */
+  evg_gpu_sched_round_robin,
+  evg_gpu_sched_greedy
 } evg_gpu_sched_policy;
-
 
 struct evg_wavefront_t *evg_schedule(struct evg_compute_unit_t *compute_unit);
 
 #endif
-

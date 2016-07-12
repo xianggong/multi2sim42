@@ -20,7 +20,6 @@
 #ifndef ARCH_EVERGREEN_TIMING_FAULTS_H
 #define ARCH_EVERGREEN_TIMING_FAULTS_H
 
-
 /*
  * GPU-REL
  */
@@ -36,6 +35,4 @@ void evg_faults_done(void);
 
 void evg_faults_insert(void);
 
-
 #endif
-

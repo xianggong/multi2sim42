@@ -22,56 +22,50 @@
 
 #include <lib/util/class.h>
 
-
-
-enum evg_opencl_command_type_t
-{
-	evg_opencl_command_queue_task_invalid,
-	evg_opencl_command_queue_task_read_buffer,
-	evg_opencl_command_queue_task_write_buffer,
-	evg_opencl_command_queue_task_ndrange_kernel
+enum evg_opencl_command_type_t {
+  evg_opencl_command_queue_task_invalid,
+  evg_opencl_command_queue_task_read_buffer,
+  evg_opencl_command_queue_task_write_buffer,
+  evg_opencl_command_queue_task_ndrange_kernel
 };
 
-struct evg_opencl_command_t
-{
-	enum evg_opencl_command_type_t type;
-	union
-	{
-		struct
-		{
-			struct evg_ndrange_t *ndrange;
-		} ndrange_kernel;
-	} u;
+struct evg_opencl_command_t {
+  enum evg_opencl_command_type_t type;
+  union {
+    struct {
+      struct evg_ndrange_t *ndrange;
+    } ndrange_kernel;
+  } u;
 };
 
-struct evg_opencl_command_queue_t
-{
-	unsigned int id;
-	int ref_count;
+struct evg_opencl_command_queue_t {
+  unsigned int id;
+  int ref_count;
 
-	unsigned int device_id;
-	unsigned int context_id;
-	unsigned int properties;
+  unsigned int device_id;
+  unsigned int context_id;
+  unsigned int properties;
 
-	struct linked_list_t *command_list;
+  struct linked_list_t *command_list;
 };
 
 struct evg_opencl_command_queue_t *evg_opencl_command_queue_create(void);
-void evg_opencl_command_queue_free(struct evg_opencl_command_queue_t *command_queue);
+void evg_opencl_command_queue_free(
+    struct evg_opencl_command_queue_t *command_queue);
 
-struct evg_opencl_command_t *evg_opencl_command_create(enum
-	evg_opencl_command_type_t type);
+struct evg_opencl_command_t *evg_opencl_command_create(
+    enum evg_opencl_command_type_t type);
 void evg_opencl_command_free(struct evg_opencl_command_t *command);
 
-void evg_opencl_command_queue_submit(struct evg_opencl_command_queue_t *command_queue,
-	struct evg_opencl_command_t *command);
-void evg_opencl_command_queue_complete(struct evg_opencl_command_queue_t *command_queue,
-	struct evg_opencl_command_t *command);
+void evg_opencl_command_queue_submit(
+    struct evg_opencl_command_queue_t *command_queue,
+    struct evg_opencl_command_t *command);
+void evg_opencl_command_queue_complete(
+    struct evg_opencl_command_queue_t *command_queue,
+    struct evg_opencl_command_t *command);
 
 /* Callback function of type 'x86_ctx_wakeup_callback_func_t'.
  * Argument 'data' is type-casted to 'struct evg_opencl_command_queue_t' */
 int evg_opencl_command_queue_can_wakeup(X86Context *ctx, void *data);
 
-
 #endif
-

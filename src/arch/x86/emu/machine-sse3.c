@@ -17,9 +17,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #include "isa.h"
-
 
 /* Macros defined to prevent accidental use of 'mem_<xx>' instructions */
 #define mem_access __COMPILATION_ERROR__
@@ -37,16 +35,10 @@
 #endif
 #define assert __COMPILATION_ERROR__
 
-
-void x86_isa_palignr_xmm_xmmm128_imm8_impl(X86Context *ctx)
-{
-	X86ContextError(ctx, "%s: not implemented", __FUNCTION__);
+void x86_isa_palignr_xmm_xmmm128_imm8_impl(X86Context *ctx) {
+  X86ContextError(ctx, "%s: not implemented", __FUNCTION__);
 }
 
-
-void x86_isa_pshufb_xmm_xmmm128_impl(X86Context *ctx)
-{
-	X86ContextError(ctx, "%s: not implemented", __FUNCTION__);
+void x86_isa_pshufb_xmm_xmmm128_impl(X86Context *ctx) {
+  X86ContextError(ctx, "%s: not implemented", __FUNCTION__);
 }
-
-

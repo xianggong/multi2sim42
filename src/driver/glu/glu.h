@@ -22,7 +22,6 @@
 
 #include <lib/util/class.h>
 
-
 /*
  * GLU system call interface
  *
@@ -40,6 +39,4 @@ void glu_done(void);
 
 int glu_abi_call(X86Context *ctx);
 
-
 #endif
-

@@ -20,26 +20,23 @@
 #ifndef NETWORK_ROUTING_TABLE_H
 #define NETWORK_ROUTING_TABLE_H
 
-
 /* Routing table entry */
-struct net_routing_table_entry_t
-{
-	int cost;  /* Cost in hops */
-	struct net_node_t *next_node;  /* Next node to destination */
-	struct net_buffer_t *output_buffer;  /* Output buffer to destination */
+struct net_routing_table_entry_t {
+  int cost;                           /* Cost in hops */
+  struct net_node_t *next_node;       /* Next node to destination */
+  struct net_buffer_t *output_buffer; /* Output buffer to destination */
 };
 
 /* Table */
-struct net_routing_table_t
-{
-	struct net_t *net;	/* Associated network */
+struct net_routing_table_t {
+  struct net_t *net; /* Associated network */
 
-	/* 2D array containing routing table */
-	int dim;		/* Array dimensions ('dim' x 'dim') */
-	struct net_routing_table_entry_t *entries;
+  /* 2D array containing routing table */
+  int dim; /* Array dimensions ('dim' x 'dim') */
+  struct net_routing_table_entry_t *entries;
 
-	/* Flag set when a cycle was detected */
-	int has_cycle;
+  /* Flag set when a cycle was detected */
+  int has_cycle;
 };
 
 struct net_routing_table_t *net_routing_table_create(struct net_t *net);
@@ -47,22 +44,21 @@ void net_routing_table_free(struct net_routing_table_t *routing_table);
 
 void net_routing_table_initiate(struct net_routing_table_t *routing_table);
 
-void net_routing_table_floyd_warshall(struct net_routing_table_t
-	*routing_table);
-void net_routing_table_dump(struct net_routing_table_t *routing_table,
-	FILE *f);
+void net_routing_table_floyd_warshall(
+    struct net_routing_table_t *routing_table);
+void net_routing_table_dump(struct net_routing_table_t *routing_table, FILE *f);
 
 void net_routing_table_route_create(struct net_routing_table_t *routing_table,
-	struct net_node_t *src_node_r, struct net_node_t *dst_node_r,
-	struct net_node_t *nxt_node_r, int vc_used);
+                                    struct net_node_t *src_node_r,
+                                    struct net_node_t *dst_node_r,
+                                    struct net_node_t *nxt_node_r, int vc_used);
 void net_routing_table_route_update(struct net_routing_table_t *routing_table,
-	struct net_node_t *src_node, struct net_node_t *dst_node,
-	struct net_node_t *nxt_node, int vc_used);
+                                    struct net_node_t *src_node,
+                                    struct net_node_t *dst_node,
+                                    struct net_node_t *nxt_node, int vc_used);
 
-struct net_routing_table_entry_t *net_routing_table_lookup(struct
-	net_routing_table_t *routing_table, struct net_node_t *src_node,
-	struct net_node_t *dst_node);
-
+struct net_routing_table_entry_t *net_routing_table_lookup(
+    struct net_routing_table_t *routing_table, struct net_node_t *src_node,
+    struct net_node_t *dst_node);
 
 #endif
-

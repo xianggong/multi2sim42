@@ -22,7 +22,6 @@
 
 #include <lib/util/class.h>
 
-
 /* Function tables */
 extern char *evg_opencl_func_name[];
 extern int evg_opencl_func_argc[];
@@ -32,16 +31,15 @@ extern int evg_opencl_func_argc[];
 extern int evg_opencl_debug_category;
 
 /* Some constants */
-#define EVG_OPENCL_FUNC_FIRST  1000
-#define EVG_OPENCL_FUNC_LAST  1073
-#define EVG_OPENCL_FUNC_COUNT  (EVG_OPENCL_FUNC_LAST - EVG_OPENCL_FUNC_FIRST + 1)
-#define EVG_OPENCL_MAX_ARGS  14
+#define EVG_OPENCL_FUNC_FIRST 1000
+#define EVG_OPENCL_FUNC_LAST 1073
+#define EVG_OPENCL_FUNC_COUNT (EVG_OPENCL_FUNC_LAST - EVG_OPENCL_FUNC_FIRST + 1)
+#define EVG_OPENCL_MAX_ARGS 14
 
 int evg_opencl_abi_call(X86Context *ctx);
 
-int evg_opencl_abi_read_args(X86Context *ctx, int *argc_ptr,
-		void *argv_ptr, int argv_size);
+int evg_opencl_abi_read_args(X86Context *ctx, int *argc_ptr, void *argv_ptr,
+                             int argv_size);
 void evg_opencl_abi_return(X86Context *ctx, int value);
 
 #endif
-

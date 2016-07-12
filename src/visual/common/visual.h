@@ -17,15 +17,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #ifndef VISUAL_COMMON_VISUAL_H
 #define VISUAL_COMMON_VISUAL_H
-
 
 /* Function to invoke visualization tool.
  * The name of the trace file is passed as the argument. */
 void visual_run(char *file_name);
 
-
 #endif
-

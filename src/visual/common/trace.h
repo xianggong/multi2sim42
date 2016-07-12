@@ -22,17 +22,16 @@
 
 #include <stdio.h>
 
-
 struct vi_trace_t;
 
 struct vi_trace_t *vi_trace_create(char *file_name);
 void vi_trace_free(struct vi_trace_t *trace);
 
-
 struct vi_trace_line_t;
 
 struct vi_trace_line_t *vi_trace_line_create_from_file(FILE *f);
-struct vi_trace_line_t *vi_trace_line_create_from_trace(struct vi_trace_t *trace);
+struct vi_trace_line_t *vi_trace_line_create_from_trace(
+    struct vi_trace_t *trace);
 void vi_trace_line_free(struct vi_trace_line_t *line);
 
 void vi_trace_line_dump(struct vi_trace_line_t *line, FILE *f);
@@ -42,10 +41,11 @@ long int vi_trace_line_get_offset(struct vi_trace_line_t *line);
 
 char *vi_trace_line_get_command(struct vi_trace_line_t *line);
 char *vi_trace_line_get_symbol(struct vi_trace_line_t *line, char *symbol_name);
-int vi_trace_line_get_symbol_int(struct vi_trace_line_t *line, char *symbol_name);
-long long vi_trace_line_get_symbol_long_long(struct vi_trace_line_t *line, char *symbol_name);
-unsigned int vi_trace_line_get_symbol_hex(struct vi_trace_line_t *line, char *symbol_name);
-
+int vi_trace_line_get_symbol_int(struct vi_trace_line_t *line,
+                                 char *symbol_name);
+long long vi_trace_line_get_symbol_long_long(struct vi_trace_line_t *line,
+                                             char *symbol_name);
+unsigned int vi_trace_line_get_symbol_hex(struct vi_trace_line_t *line,
+                                          char *symbol_name);
 
 #endif
-

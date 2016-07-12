@@ -31,6 +31,4 @@ extern int EV_NET_COMMAND_SEND;
 
 void net_command_handler(int event, void *data);
 
-
 #endif
-

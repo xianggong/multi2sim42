@@ -22,7 +22,6 @@
 
 #include <lib/util/class.h>
 
-
 /*
  * OPENGL system call interface
  *
@@ -39,6 +38,4 @@ void opengl_done(void);
 
 int opengl_abi_call(X86Context *ctx);
 
-
 #endif
-

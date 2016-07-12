@@ -25,35 +25,30 @@
 
 struct x86_inst_t;
 
-
 /*
  * Class 'X86Asm'
  */
 
 CLASS_BEGIN(X86Asm, Asm)
 
-	/* Array containing 'x86_inst_opcode_count' elements of type
-	 * 'x86_inst_info_t' allocated contiguously, and storing instructions
-	 * information as given in 'asm.dat'. */
-	struct x86_inst_info_t *inst_info_list;
+/* Array containing 'x86_inst_opcode_count' elements of type
+ * 'x86_inst_info_t' allocated contiguously, and storing instructions
+ * information as given in 'asm.dat'. */
+struct x86_inst_info_t *inst_info_list;
 
-	/* Arrays containing 256 elements of type 'x86_inst_info_elem_t *'
-	 * allocated contiguously. These tables are used for lookups when
-	 * decoding instructions. */
-	struct x86_inst_info_elem_t *inst_info_table[0x100];
-	struct x86_inst_info_elem_t *inst_info_table_0f[0x100];
+/* Arrays containing 256 elements of type 'x86_inst_info_elem_t *'
+ * allocated contiguously. These tables are used for lookups when
+ * decoding instructions. */
+struct x86_inst_info_elem_t *inst_info_table[0x100];
+struct x86_inst_info_elem_t *inst_info_table_0f[0x100];
 
-	/* Look-up table returning true if a byte is an x86 prefix */
-	unsigned char is_prefix[0x100];
+/* Look-up table returning true if a byte is an x86 prefix */
+unsigned char is_prefix[0x100];
 
 CLASS_END(X86Asm)
 
-
 void X86AsmCreate(X86Asm *self);
 void X86AsmDestroy(X86Asm *self);
-
-
-
 
 /*
  * Non-class Public Functions
@@ -66,6 +61,5 @@ void x86_asm_init(void);
 void x86_asm_done(void);
 
 void x86_asm_disassemble_binary(char *path);
-
 
 #endif

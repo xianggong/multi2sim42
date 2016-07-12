@@ -20,20 +20,16 @@
 #ifndef X86_ARCH_TIMING_LOAD_STORE_QUEUE_H
 #define X86_ARCH_TIMING_LOAD_STORE_QUEUE_H
 
-
 /*
  * Public
  */
 
 extern char *x86_lsq_kind_map[];
-extern enum x86_lsq_kind_t
-{
-	x86_lsq_kind_shared = 0,
-	x86_lsq_kind_private
+extern enum x86_lsq_kind_t {
+  x86_lsq_kind_shared = 0,
+  x86_lsq_kind_private
 } x86_lsq_kind;
 extern int x86_lsq_size;
-
-
 
 /*
  * Class 'X86Thread'

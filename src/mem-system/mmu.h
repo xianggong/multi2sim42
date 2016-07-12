@@ -20,13 +20,11 @@
 #ifndef MEM_SYSTEM_MMU_H
 #define MEM_SYSTEM_MMU_H
 
-
-enum mmu_access_t
-{
-	mmu_access_invalid = 0,
-	mmu_access_read,
-	mmu_access_write,
-	mmu_access_execute
+enum mmu_access_t {
+  mmu_access_invalid = 0,
+  mmu_access_read,
+  mmu_access_write,
+  mmu_access_execute
 };
 
 extern char *mmu_report_file_name;
@@ -45,6 +43,4 @@ int mmu_valid_phy_addr(unsigned int phy_addr);
 
 void mmu_access_page(unsigned int phy_addr, enum mmu_access_t access);
 
-
 #endif
-

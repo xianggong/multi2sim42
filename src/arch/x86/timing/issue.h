@@ -22,7 +22,6 @@
 
 #include <lib/util/class.h>
 
-
 /*
  * Class 'X86Cpu'
  */
@@ -30,4 +29,3 @@
 void X86CpuIssue(X86Cpu *self);
 
 #endif
-

@@ -25,32 +25,28 @@
 
 #include "module.h"
 
-
 struct list_t *module_list;
 
 /* Create a module */
-struct cuda_module_t *cuda_module_create(char *cubin_path)
-{
-	struct cuda_module_t *module;
+struct cuda_module_t *cuda_module_create(char *cubin_path) {
+  struct cuda_module_t *module;
 
-	/* Initialize */
-	module = xcalloc(1, sizeof(struct cuda_module_t));
-	module->id = list_count(module_list);
-	module->ref_count = 1;
-	assert(cubin_path);
-	module->elf_file = elf_file_create_from_path(cubin_path);
+  /* Initialize */
+  module = xcalloc(1, sizeof(struct cuda_module_t));
+  module->id = list_count(module_list);
+  module->ref_count = 1;
+  assert(cubin_path);
+  module->elf_file = elf_file_create_from_path(cubin_path);
 
-	list_add(module_list, module);
+  list_add(module_list, module);
 
-	return module;
+  return module;
 }
 
 /* Free module */
-void cuda_module_free(struct cuda_module_t *module)
-{
-	assert(module->elf_file);
-	elf_file_free(module->elf_file);
+void cuda_module_free(struct cuda_module_t *module) {
+  assert(module->elf_file);
+  elf_file_free(module->elf_file);
 
-	free(module);
+  free(module);
 }
-

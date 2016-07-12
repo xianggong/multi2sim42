@@ -27,42 +27,26 @@
 
 CLASS_IMPLEMENTATION(MIPSCpu);
 
-void MIPSCpuCreate(MIPSCpu *self)
-{
-	/* Parent */
-	TimingCreate(asTiming(self));
+void MIPSCpuCreate(MIPSCpu *self) {
+  /* Parent */
+  TimingCreate(asTiming(self));
 
-	/* Virtual functions */
-	asObject(self)->Dump = MIPSCpuDump;
-	asTiming(self)->DumpSummary = MIPSCpuDumpSummary;
-	asTiming(self)->Run = MIPSCpuRun;
+  /* Virtual functions */
+  asObject(self)->Dump = MIPSCpuDump;
+  asTiming(self)->DumpSummary = MIPSCpuDumpSummary;
+  asTiming(self)->Run = MIPSCpuRun;
 }
 
+void MIPSCpuDestroy(MIPSCpu *self) {}
 
-void MIPSCpuDestroy(MIPSCpu *self)
-{
+void MIPSCpuDump(Object *self, FILE *f) {}
+
+void MIPSCpuDumpSummary(Timing *self, FILE *f) {
+  /* Call parent */
+  TimingDumpSummary(self, f);
 }
 
-
-void MIPSCpuDump(Object *self, FILE *f)
-{
-}
-
-
-void MIPSCpuDumpSummary(Timing *self, FILE *f)
-{
-	/* Call parent */
-	TimingDumpSummary(self, f);
-}
-
-
-int MIPSCpuRun(Timing *self)
-{
-	return FALSE;
-}
-
-
-
+int MIPSCpuRun(Timing *self) { return FALSE; }
 
 /*
  * Public Functions
@@ -70,16 +54,8 @@ int MIPSCpuRun(Timing *self)
 
 MIPSCpu *mips_cpu;
 
-void mips_cpu_read_config(void)
-{
-}
+void mips_cpu_read_config(void) {}
 
+void mips_cpu_init(void) {}
 
-void mips_cpu_init(void)
-{
-}
-
-
-void mips_cpu_done(void)
-{
-}
+void mips_cpu_done(void) {}

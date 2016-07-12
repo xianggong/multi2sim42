@@ -31,6 +31,4 @@ void vi_evg_panel_refresh(struct vi_evg_panel_t *panel);
 
 GtkWidget *vi_evg_panel_get_widget(struct vi_evg_panel_t *panel);
 
-
 #endif
-

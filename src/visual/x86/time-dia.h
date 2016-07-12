@@ -22,7 +22,6 @@
 
 #include <gtk/gtk.h>
 
-
 struct vi_x86_time_dia_t;
 
 struct vi_x86_core_t;
@@ -32,8 +31,7 @@ void vi_x86_time_dia_free(struct vi_x86_time_dia_t *time_dia);
 GtkWidget *vi_x86_time_dia_get_widget(struct vi_x86_time_dia_t *time_dia);
 
 void vi_x86_time_dia_refresh(struct vi_x86_time_dia_t *time_dia);
-void vi_x86_time_dia_go_to_cycle(struct vi_x86_time_dia_t *time_dia, long long cycle);
-
+void vi_x86_time_dia_go_to_cycle(struct vi_x86_time_dia_t *time_dia,
+                                 long long cycle);
 
 #endif
-

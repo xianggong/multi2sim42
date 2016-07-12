@@ -24,47 +24,45 @@
 
 #include <arch/common/emu.h>
 
-
 /*
  * Class 'FrmEmu'
  */
 
 CLASS_BEGIN(FrmEmu, Emu)
-	
-	/* List of grids */
-	struct list_t *grids;
-	struct list_t *pending_grids;
-	struct list_t *running_grids;
-	struct list_t *finished_grids;
 
-	/* Global memory */
-	struct mem_t *global_mem;
-	unsigned int global_mem_top;
-	struct mem_t *shared_mem; /* shared with the CPU */
+/* List of grids */
+struct list_t *grids;
+struct list_t *pending_grids;
+struct list_t *running_grids;
+struct list_t *finished_grids;
 
-	/* Constant memory, which is organized as 16 banks of 64KB each. */
-	struct mem_t *const_mem;
+/* Global memory */
+struct mem_t *global_mem;
+unsigned int global_mem_top;
+struct mem_t *shared_mem; /* shared with the CPU */
 
-	/* Flags indicating whether the first 32 bytes of constant memory
-	 * are initialized. A warning will be issued by the simulator
-	 * if an uninitialized element is used by the kernel. */
-	int const_mem_init[32];
+/* Constant memory, which is organized as 16 banks of 64KB each. */
+struct mem_t *const_mem;
 
-	unsigned int free_global_mem_size;
-	unsigned int total_global_mem_size;
+/* Flags indicating whether the first 32 bytes of constant memory
+ * are initialized. A warning will be issued by the simulator
+ * if an uninitialized element is used by the kernel. */
+int const_mem_init[32];
 
-	/* Stats */
-	int grid_count;  /* Number of CUDA functions executed */
-	long long scalar_alu_inst_count;  /* Scalar ALU instructions executed */
-	long long scalar_mem_inst_count;  /* Scalar mem instructions executed */
-	long long branch_inst_count;  /* Branch instructions executed */
-	long long vector_alu_inst_count;  /* Vector ALU instructions executed */
-	long long lds_inst_count;  /* LDS instructions executed */
-	long long vector_mem_inst_count;  /* Vector mem instructions executed */
-	long long export_inst_count; /* Export instruction executed */
+unsigned int free_global_mem_size;
+unsigned int total_global_mem_size;
+
+/* Stats */
+int grid_count;                  /* Number of CUDA functions executed */
+long long scalar_alu_inst_count; /* Scalar ALU instructions executed */
+long long scalar_mem_inst_count; /* Scalar mem instructions executed */
+long long branch_inst_count;     /* Branch instructions executed */
+long long vector_alu_inst_count; /* Vector ALU instructions executed */
+long long lds_inst_count;        /* LDS instructions executed */
+long long vector_mem_inst_count; /* Vector mem instructions executed */
+long long export_inst_count;     /* Export instruction executed */
 
 CLASS_END(FrmEmu)
-
 
 void FrmEmuCreate(FrmEmu *self);
 void FrmEmuDestroy(FrmEmu *self);
@@ -74,9 +72,6 @@ void FrmEmuDumpSummary(Emu *self, FILE *f);
 
 /* Virtual function from class 'Emu' */
 int FrmEmuRun(Emu *emu);
-
-
-
 
 /*
  * Public Stuff
@@ -99,4 +94,3 @@ void frm_emu_init(void);
 void frm_emu_done(void);
 
 #endif
-

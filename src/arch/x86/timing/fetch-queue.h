@@ -20,7 +20,6 @@
 #ifndef X86_ARCH_TIMING_FETCH_QUEUE_H
 #define X86_ARCH_TIMING_FETCH_QUEUE_H
 
-
 /*
  * Class 'X86Thread'
  */
@@ -31,13 +30,10 @@ void X86ThreadFreeFetchQueue(X86Thread *self);
 void X86ThreadRecoverFetchQueue(X86Thread *self);
 struct x86_uop_t *X86ThreadRemoveFromFetchQueue(X86Thread *self, int index);
 
-
-
 /*
  * Public
  */
 
 extern int x86_fetch_queue_size;
-
 
 #endif

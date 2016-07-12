@@ -20,8 +20,7 @@
 #ifndef MEM_SYSTEM_PREFETCH_HISTORY_H
 #define MEM_SYSTEM_PREFETCH_HISTORY_H
 
-
-/* 
+/*
  * This file specifies a prefetch history structure
  * that can be used by CPU/GPUs to keep track of
  * prefetches that they have initiated to the memory.
@@ -37,16 +36,16 @@
 struct mod_t;
 extern int prefetch_history_size;
 
-struct prefetch_history_t
-{
-	unsigned int *table;
-	int size;
-	int hindex;
+struct prefetch_history_t {
+  unsigned int *table;
+  int size;
+  int hindex;
 };
 
-int prefetch_history_is_redundant(struct prefetch_history_t *ph, struct mod_t *mod, 
-				  unsigned int phy_addr);
-void prefetch_history_record(struct prefetch_history_t *ph, unsigned int phy_addr);
+int prefetch_history_is_redundant(struct prefetch_history_t *ph,
+                                  struct mod_t *mod, unsigned int phy_addr);
+void prefetch_history_record(struct prefetch_history_t *ph,
+                             unsigned int phy_addr);
 struct prefetch_history_t *prefetch_history_create();
 void prefetch_history_free(struct prefetch_history_t *pf);
 

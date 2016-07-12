@@ -27,14 +27,11 @@
  */
 
 extern char *x86_rob_kind_map[];
-extern enum x86_rob_kind_t
-{
-	x86_rob_kind_private = 0,
-	x86_rob_kind_shared
+extern enum x86_rob_kind_t {
+  x86_rob_kind_private = 0,
+  x86_rob_kind_shared
 } x86_rob_kind;
 extern int x86_rob_size;
-
-
 
 /*
  * Class 'X86Core'
@@ -47,7 +44,6 @@ void X86CoreDumpROB(X86Core *self, FILE *f);
 int X86CoreCanEnqueueInROB(X86Core *self, struct x86_uop_t *uop);
 void X86CoreEnqueueInROB(X86Core *self, struct x86_uop_t *uop);
 
-
 /*
  * Class 'X86Thread'
  */
@@ -59,6 +55,4 @@ struct x86_uop_t *X86ThreadGetROBTail(X86Thread *self);
 void X86ThreadRemoveROBTail(X86Thread *self);
 struct x86_uop_t *X86GetROBEntry(X86Thread *self, int index);
 
-
 #endif
-

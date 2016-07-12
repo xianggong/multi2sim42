@@ -20,38 +20,34 @@
 #ifndef ARCH_EVERGREEN_EMU_OPENCL_MEM_H
 #define ARCH_EVERGREEN_EMU_OPENCL_MEM_H
 
-struct evg_opencl_image_format_t
-{
-	unsigned int image_channel_order;
-	unsigned int image_channel_data_type;
+struct evg_opencl_image_format_t {
+  unsigned int image_channel_order;
+  unsigned int image_channel_data_type;
 };
 
-struct evg_opencl_mem_t
-{
-	unsigned int id;
-	int ref_count;
+struct evg_opencl_mem_t {
+  unsigned int id;
+  int ref_count;
 
-	unsigned int type;  /* 0 buffer, 1 2D image, 2 3D image */
+  unsigned int type; /* 0 buffer, 1 2D image, 2 3D image */
 
-	unsigned int size;
+  unsigned int size;
 
-	/* Used for images only */
-	unsigned int height;
-	unsigned int width;
-	unsigned int depth;
-	unsigned int num_pixels;
-	unsigned int pixel_size;
-	unsigned int num_channels_per_pixel;
+  /* Used for images only */
+  unsigned int height;
+  unsigned int width;
+  unsigned int depth;
+  unsigned int num_pixels;
+  unsigned int pixel_size;
+  unsigned int num_channels_per_pixel;
 
-	unsigned int flags;
-	unsigned int host_ptr;
+  unsigned int flags;
+  unsigned int host_ptr;
 
-	unsigned int device_ptr;  /* Position assigned in device global memory */
+  unsigned int device_ptr; /* Position assigned in device global memory */
 };
 
 struct evg_opencl_mem_t *evg_opencl_mem_create(void);
 void evg_opencl_mem_free(struct evg_opencl_mem_t *mem);
 
-
 #endif
-

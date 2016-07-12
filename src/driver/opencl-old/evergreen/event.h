@@ -20,60 +20,56 @@
 #ifndef ARCH_EVERGREEN_EMU_OPENCL_EVENT_H
 #define ARCH_EVERGREEN_EMU_OPENCL_EVENT_H
 
-
-enum evg_opencl_event_kind_t
-{
-	EVG_OPENCL_EVENT_NONE = 0,
-	EVG_OPENCL_EVENT_NDRANGE_KERNEL,
-	EVG_OPENCL_EVENT_TASK,
-	EVG_OPENCL_EVENT_NATIVE_KERNEL,
-	EVG_OPENCL_EVENT_READ_BUFFER,
-	EVG_OPENCL_EVENT_WRITE_BUFFER,
-	EVG_OPENCL_EVENT_MAP_BUFFER,
-	EVG_OPENCL_EVENT_UNMAP_MEM_OBJECT,
-	EVG_OPENCL_EVENT_READ_BUFFER_RECT,
-	EVG_OPENCL_EVENT_WRITE_BUFFER_RECT,
-	EVG_OPENCL_EVENT_READ_IMAGE,
-	EVG_OPENCL_EVENT_WRITE_IMAGE,
-	EVG_OPENCL_EVENT_MAP_IMAGE,
-	EVG_OPENCL_EVENT_COPY_BUFFER,
-	EVG_OPENCL_EVENT_COPY_IMAGE,
-	EVG_OPENCL_EVENT_COPY_BUFFER_RECT,
-	EVG_OPENCL_EVENT_COPY_BUFFER_TO_IMAGE,
-	EVG_OPENCL_EVENT_COPY_IMAGE_TO_BUFFER,
-	EVG_OPENCL_EVENT_MARKER,
-	EVG_OPENCL_EVENT_COUNT
+enum evg_opencl_event_kind_t {
+  EVG_OPENCL_EVENT_NONE = 0,
+  EVG_OPENCL_EVENT_NDRANGE_KERNEL,
+  EVG_OPENCL_EVENT_TASK,
+  EVG_OPENCL_EVENT_NATIVE_KERNEL,
+  EVG_OPENCL_EVENT_READ_BUFFER,
+  EVG_OPENCL_EVENT_WRITE_BUFFER,
+  EVG_OPENCL_EVENT_MAP_BUFFER,
+  EVG_OPENCL_EVENT_UNMAP_MEM_OBJECT,
+  EVG_OPENCL_EVENT_READ_BUFFER_RECT,
+  EVG_OPENCL_EVENT_WRITE_BUFFER_RECT,
+  EVG_OPENCL_EVENT_READ_IMAGE,
+  EVG_OPENCL_EVENT_WRITE_IMAGE,
+  EVG_OPENCL_EVENT_MAP_IMAGE,
+  EVG_OPENCL_EVENT_COPY_BUFFER,
+  EVG_OPENCL_EVENT_COPY_IMAGE,
+  EVG_OPENCL_EVENT_COPY_BUFFER_RECT,
+  EVG_OPENCL_EVENT_COPY_BUFFER_TO_IMAGE,
+  EVG_OPENCL_EVENT_COPY_IMAGE_TO_BUFFER,
+  EVG_OPENCL_EVENT_MARKER,
+  EVG_OPENCL_EVENT_COUNT
 };
 
-enum evg_opencl_event_status_t
-{
-	EVG_OPENCL_EVENT_STATUS_NONE = 0,
-	EVG_OPENCL_EVENT_STATUS_QUEUED,
-	EVG_OPENCL_EVENT_STATUS_SUBMITTED,
-	EVG_OPENCL_EVENT_STATUS_RUNNING,
-	EVG_OPENCL_EVENT_STATUS_COMPLETE
+enum evg_opencl_event_status_t {
+  EVG_OPENCL_EVENT_STATUS_NONE = 0,
+  EVG_OPENCL_EVENT_STATUS_QUEUED,
+  EVG_OPENCL_EVENT_STATUS_SUBMITTED,
+  EVG_OPENCL_EVENT_STATUS_RUNNING,
+  EVG_OPENCL_EVENT_STATUS_COMPLETE
 };
 
-struct evg_opencl_event_t
-{
-	unsigned int id;
-	int ref_count;
-	enum evg_opencl_event_kind_t kind;
-	enum evg_opencl_event_status_t status;
+struct evg_opencl_event_t {
+  unsigned int id;
+  int ref_count;
+  enum evg_opencl_event_kind_t kind;
+  enum evg_opencl_event_status_t status;
 
-	long long time_queued;
-	long long time_submit;
-	long long time_start;
-	long long time_end;
+  long long time_queued;
+  long long time_submit;
+  long long time_start;
+  long long time_end;
 };
 
-struct evg_opencl_event_t *evg_opencl_event_create(enum evg_opencl_event_kind_t kind);
+struct evg_opencl_event_t *evg_opencl_event_create(
+    enum evg_opencl_event_kind_t kind);
 void evg_opencl_event_free(struct evg_opencl_event_t *event);
 
-unsigned int evg_opencl_event_get_profiling_info(struct evg_opencl_event_t *event, unsigned int name,
-	struct mem_t *mem, unsigned int addr, unsigned int size);
+unsigned int evg_opencl_event_get_profiling_info(
+    struct evg_opencl_event_t *event, unsigned int name, struct mem_t *mem,
+    unsigned int addr, unsigned int size);
 long long evg_opencl_event_timer(void);
 
-
 #endif
-

@@ -23,21 +23,19 @@
 struct opengl_si_program_t;
 struct si_opengl_shader_binary_t *shader_bin;
 
-struct opengl_si_shader_t
-{
-	/* Shader type */
-	enum si_opengl_shader_binary_kind_t shader_kind;
+struct opengl_si_shader_t {
+  /* Shader type */
+  enum si_opengl_shader_binary_kind_t shader_kind;
 
-	/* Program that shader belongs to */
-	struct opengl_si_program_t *program;
+  /* Program that shader belongs to */
+  struct opengl_si_program_t *program;
 
-	/* AMD Shader binary (internal ELF) */
-	struct si_opengl_shader_binary_t *shader_bin;
+  /* AMD Shader binary (internal ELF) */
+  struct si_opengl_shader_binary_t *shader_bin;
 
-	/* Memory requirements */
-	int mem_size_local;
-	int mem_size_private;	
-
+  /* Memory requirements */
+  int mem_size_local;
+  int mem_size_private;
 };
 
 extern struct list_t *opengl_si_shader_list;
@@ -45,22 +43,21 @@ extern struct list_t *opengl_si_shader_list;
 void opengl_si_shader_list_init(void);
 void opengl_si_shader_list_done(void);
 
-
-struct opengl_si_shader_t *opengl_si_shader_create(
-	unsigned int shader_id, unsigned int shader_kind);
+struct opengl_si_shader_t *opengl_si_shader_create(unsigned int shader_id,
+                                                   unsigned int shader_kind);
 void opengl_si_shader_free(struct opengl_si_shader_t *shdr);
-void opengl_si_shader_init( struct opengl_si_program_t *program, unsigned int shader_id);
-
+void opengl_si_shader_init(struct opengl_si_program_t *program,
+                           unsigned int shader_id);
 
 struct si_ndrange_t;
 void opengl_si_shader_create_ndrange_constant_buffers(
-	struct si_ndrange_t *ndrange);
+    struct si_ndrange_t *ndrange);
 void opengl_si_shader_setup_ndrange_constant_buffers(
-	struct si_ndrange_t *ndrange);
+    struct si_ndrange_t *ndrange);
 void opengl_si_shader_setup_ndrange_inputs(struct opengl_si_shader_t *shdr,
-		struct si_ndrange_t *ndrange);
-void opengl_si_shader_debug_ndrange_state(struct opengl_si_shader_t *shader, 
-	struct si_ndrange_t *ndrange);
+                                           struct si_ndrange_t *ndrange);
+void opengl_si_shader_debug_ndrange_state(struct opengl_si_shader_t *shader,
+                                          struct si_ndrange_t *ndrange);
 void opengl_si_shader_create_ndrange_tables(struct si_ndrange_t *ndrange);
 
 #endif

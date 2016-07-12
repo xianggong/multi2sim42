@@ -20,18 +20,17 @@
 #ifndef ARCH_SOUTHERN_ISLANDS_TIMING_LDS_UNIT_H
 #define ARCH_SOUTHERN_ISLANDS_TIMING_LDS_UNIT_H
 
-struct si_lds_t
-{
-	struct list_t *issue_buffer;  /* Issued instructions */
-	struct list_t *decode_buffer; /* Decoded instructions */
-	struct list_t *read_buffer;   /* Register reads */
-	struct list_t *mem_buffer;   /* Submitted memory accesses */
-	struct list_t *write_buffer;  /* Register writes */
+struct si_lds_t {
+  struct list_t *issue_buffer;  /* Issued instructions */
+  struct list_t *decode_buffer; /* Decoded instructions */
+  struct list_t *read_buffer;   /* Register reads */
+  struct list_t *mem_buffer;    /* Submitted memory accesses */
+  struct list_t *write_buffer;  /* Register writes */
 
-	struct si_compute_unit_t *compute_unit;
+  struct si_compute_unit_t *compute_unit;
 
-	/* Statistics */
-	long long inst_count;
+  /* Statistics */
+  long long inst_count;
 };
 
 #endif

@@ -25,22 +25,19 @@
 #include "regs.h"
 #include "syscall.h"
 
-
-
 /* Return from a signal handler */
-void arm_signal_handler_return(struct arm_ctx_t *ctx)
-{
-	/* Change context status */
-	if (!arm_ctx_get_status(ctx, arm_ctx_handler))
-		fatal("%s: not handling a signal", __FUNCTION__);
-	arm_ctx_clear_status(ctx, arm_ctx_handler);
+void arm_signal_handler_return(struct arm_ctx_t *ctx) {
+  /* Change context status */
+  if (!arm_ctx_get_status(ctx, arm_ctx_handler))
+    fatal("%s: not handling a signal", __FUNCTION__);
+  arm_ctx_clear_status(ctx, arm_ctx_handler);
 
-	/* Free signal frame */
-	mem_unmap(ctx->mem, ctx->signal_mask_table->pretcode, MEM_PAGE_SIZE);
-	arm_sys_debug("  signal handler return code at 0x%x deallocated\n",
-		ctx->signal_mask_table->pretcode);
+  /* Free signal frame */
+  mem_unmap(ctx->mem, ctx->signal_mask_table->pretcode, MEM_PAGE_SIZE);
+  arm_sys_debug("  signal handler return code at 0x%x deallocated\n",
+                ctx->signal_mask_table->pretcode);
 
-	/* Restore saved register file and free backup */
-	arm_regs_copy(ctx->regs, ctx->signal_mask_table->regs);
-	arm_regs_free(ctx->signal_mask_table->regs);
+  /* Restore saved register file and free backup */
+  arm_regs_copy(ctx->regs, ctx->signal_mask_table->regs);
+  arm_regs_free(ctx->signal_mask_table->regs);
 }

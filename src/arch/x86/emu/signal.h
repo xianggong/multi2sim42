@@ -20,7 +20,6 @@
 #ifndef ARCH_X86_EMU_SIGNAL_H
 #define ARCH_X86_EMU_SIGNAL_H
 
-
 /*
  * Class 'X86Context'
  * Additional functions
@@ -44,54 +43,46 @@ void X86ContextCheckSignalHandler(X86Context *self);
  *    next to the system call, and register 'eax' is set to -EINTR. */
 void X86ContextCheckSignalHandlerIntr(X86Context *self);
 
-
-
-
 /*
  * Object 'x86_signal_mask_table_t'
  */
 
 /* Every context (parent and children) has its own masks */
-struct x86_signal_mask_table_t
-{
-	unsigned long long pending;  /* Mask of pending signals */
-	unsigned long long blocked;  /* Mask of blocked signals */
-	unsigned long long backup;  /* Backup of blocked signals while suspended */
-	struct x86_regs_t *regs;  /* Backup of regs while executing handler */
-	unsigned int pretcode;  /* Base address of a memory page allocated for retcode execution */
+struct x86_signal_mask_table_t {
+  unsigned long long pending; /* Mask of pending signals */
+  unsigned long long blocked; /* Mask of blocked signals */
+  unsigned long long backup;  /* Backup of blocked signals while suspended */
+  struct x86_regs_t *regs;    /* Backup of regs while executing handler */
+  unsigned int pretcode; /* Base address of a memory page allocated for retcode
+                            execution */
 };
 
 struct x86_signal_mask_table_t *x86_signal_mask_table_create(void);
 void x86_signal_mask_table_free(struct x86_signal_mask_table_t *table);
 
-
-
 /*
  * Object 'x86_signal_handler_table_t'
  */
 
-struct x86_signal_handler_table_t
-{
-	/* Number of extra contexts sharing the table */
-	int num_links;
+struct x86_signal_handler_table_t {
+  /* Number of extra contexts sharing the table */
+  int num_links;
 
-	/* Signal handlers */
-	struct x86_sigaction_t
-	{
-		unsigned int handler;
-		unsigned int flags;
-		unsigned int restorer;
-		unsigned long long mask;
-	} sigaction[64];
+  /* Signal handlers */
+  struct x86_sigaction_t {
+    unsigned int handler;
+    unsigned int flags;
+    unsigned int restorer;
+    unsigned long long mask;
+  } sigaction[64];
 };
 
 struct x86_signal_handler_table_t *x86_signal_handler_table_create(void);
 void x86_signal_handler_table_free(struct x86_signal_handler_table_t *table);
 
-struct x86_signal_handler_table_t *x86_signal_handler_table_link(struct x86_signal_handler_table_t *table);
+struct x86_signal_handler_table_t *x86_signal_handler_table_link(
+    struct x86_signal_handler_table_t *table);
 void x86_signal_handler_table_unlink(struct x86_signal_handler_table_t *table);
-
-
 
 /*
  * Public Functions
@@ -105,6 +96,4 @@ void x86_sigset_add(unsigned long long *sim_sigset, int signal);
 void x86_sigset_del(unsigned long long *sim_sigset, int signal);
 int x86_sigset_member(unsigned long long *sim_sigset, int signal);
 
-
 #endif
-

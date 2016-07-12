@@ -20,22 +20,20 @@
 #ifndef ARCH_FERMI_TIMING_VECTOR_MEM_H
 #define ARCH_FERMI_TIMING_VECTOR_MEM_H
 
-struct frm_vector_mem_unit_t
-{
-	struct list_t *issue_buffer;  /* Issued instructions */
-	struct list_t *decode_buffer; /* Decoded instructions */
-	struct list_t *read_buffer;   /* Register reads */
-	struct list_t *mem_buffer;    /* Submitted memory accesses */
-	struct list_t *write_buffer;  /* Register writes */
+struct frm_vector_mem_unit_t {
+  struct list_t *issue_buffer;  /* Issued instructions */
+  struct list_t *decode_buffer; /* Decoded instructions */
+  struct list_t *read_buffer;   /* Register reads */
+  struct list_t *mem_buffer;    /* Submitted memory accesses */
+  struct list_t *write_buffer;  /* Register writes */
 
-	struct frm_sm_t *sm;
+  struct frm_sm_t *sm;
 
-	/* Statistics */
-	long long inst_count;
+  /* Statistics */
+  long long inst_count;
 
-	/* Spatial profiling statistics*/
-	long long inflight_mem_accesses ;
-
+  /* Spatial profiling statistics*/
+  long long inflight_mem_accesses;
 };
 
 #endif

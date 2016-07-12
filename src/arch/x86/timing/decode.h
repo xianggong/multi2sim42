@@ -29,4 +29,3 @@
 void X86CpuDecode(X86Cpu *self);
 
 #endif
-

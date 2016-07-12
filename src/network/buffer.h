@@ -24,66 +24,60 @@
 
 #include "message.h"
 
-
 /* Event to be scheduled when space released in buffer */
-struct net_buffer_wakeup_t
-{
-	int event;
-	void *stack;
-
+struct net_buffer_wakeup_t {
+  int event;
+  void *stack;
 };
 
-enum net_buffer_kind_t
-{
-	net_buffer_invalid= 0,
-	net_buffer_link,
-	net_buffer_bus
+enum net_buffer_kind_t {
+  net_buffer_invalid = 0,
+  net_buffer_link,
+  net_buffer_bus
 };
 
-struct net_buffer_t
-{
-	struct net_t *net;	/* Network it belongs to */
-	struct net_node_t *node;	/* Node where it belongs */
-	char *name;		/* String identifier */
-	int index;		/* Index in input/output buffer list of node */
-	int size;		/* Total size */
-	int count;		/* Occupied buffer size */
-	enum net_buffer_kind_t kind;
+struct net_buffer_t {
+  struct net_t *net;       /* Network it belongs to */
+  struct net_node_t *node; /* Node where it belongs */
+  char *name;              /* String identifier */
+  int index;               /* Index in input/output buffer list of node */
+  int size;                /* Total size */
+  int count;               /* Occupied buffer size */
+  enum net_buffer_kind_t kind;
 
-	/* Cycle until a read/write operation on buffer lasts */
-	long long read_busy;
-	long long write_busy;
+  /* Cycle until a read/write operation on buffer lasts */
+  long long read_busy;
+  long long write_busy;
 
-	/* Link connected to buffer */
-	struct net_link_t *link;
+  /* Link connected to buffer */
+  struct net_link_t *link;
 
-	/* BUS connected to buffer */
-	struct net_bus_t *bus;
+  /* BUS connected to buffer */
+  struct net_bus_t *bus;
 
+  /* List of messages in the buffer */
+  struct list_t *msg_list;
 
-	/* List of messages in the buffer */
-	struct list_t *msg_list;
+  /* Scheduling for output buffers */
+  long long sched_when;              /* Last cycle when scheduler was called */
+  struct net_buffer_t *sched_buffer; /* Input buffer to fetch from */
 
-	/* Scheduling for output buffers */
-	long long sched_when;	/* Last cycle when scheduler was called */
-	struct net_buffer_t *sched_buffer;	/* Input buffer to fetch from */
+  /* List of events to schedule when new space becomes available in the
+   * buffer. Elements are of type 'struct net_buffer_wakeup_t' */
+  struct linked_list_t *wakeup_list;
 
-	/* List of events to schedule when new space becomes available in the 
-	 * buffer. Elements are of type 'struct net_buffer_wakeup_t' */
-	struct linked_list_t *wakeup_list;
-
-	/* Stats */
-	int occupancy_bytes_value;
-	int occupancy_msgs_value;
-	long long occupancy_measured_cycle;
-	long long occupancy_bytes_acc;
-	long long occupancy_msgs_acc;
+  /* Stats */
+  int occupancy_bytes_value;
+  int occupancy_msgs_value;
+  long long occupancy_measured_cycle;
+  long long occupancy_bytes_acc;
+  long long occupancy_msgs_acc;
 };
-
 
 /* Functions */
 struct net_buffer_t *net_buffer_create(struct net_t *net,
-	struct net_node_t *node, int size, char *name);
+                                       struct net_node_t *node, int size,
+                                       char *name);
 void net_buffer_free(struct net_buffer_t *buffer);
 
 void net_buffer_dump(struct net_buffer_t *buffer, FILE *f);
@@ -96,6 +90,5 @@ void net_buffer_wait(struct net_buffer_t *buffer, int event, void *stack);
 void net_buffer_wakeup(struct net_buffer_t *buffer);
 
 void net_buffer_update_occupancy(struct net_buffer_t *buffer);
-
 
 #endif

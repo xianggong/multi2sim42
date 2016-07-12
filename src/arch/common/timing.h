@@ -25,46 +25,42 @@
 /* Forward declarations */
 struct config_t;
 
-
 /*
  * Class 'Timing'
  */
 
 CLASS_BEGIN(Timing, Object)
 
-	/* Architecture that this timing simulator belongs to */
-	struct arch_t *arch;
-	
-	/* Current cycle */
-	long long cycle;
+/* Architecture that this timing simulator belongs to */
+struct arch_t *arch;
 
-	/* Frequency domain, as returned by 'esim_new_domain()'.
-	 * This variable is initialized by the child class. */
-	int frequency;
-	int frequency_domain;
+/* Current cycle */
+long long cycle;
 
+/* Frequency domain, as returned by 'esim_new_domain()'.
+ * This variable is initialized by the child class. */
+int frequency;
+int frequency_domain;
 
+/*** Virtual functions ***/
 
-	/*** Virtual functions ***/
+/* Print statistics summary */
+void (*DumpSummary)(Timing *self, FILE *f);
 
-	/* Print statistics summary */
-	void (*DumpSummary)(Timing *self, FILE *f);
+/* Virtual abstract function to run one step of the timing simulation
+ * loop. The function returns TRUE if any valid simulation was
+ * performed by the architecture. */
+int (*Run)(Timing *self);
 
-	/* Virtual abstract function to run one step of the timing simulation
-	 * loop. The function returns TRUE if any valid simulation was
-	 * performed by the architecture. */
-	int (*Run)(Timing *self);
-
-	/* Function related with the creation of default memory hierarchies and
-	 * processing of memory configuration files. These are all abstract
-	 * functions that must be overridden by children. */
-	void (*MemConfigDefault)(Timing *self, struct config_t *config);
-	void (*MemConfigCheck)(Timing *self, struct config_t *config);
-	void (*MemConfigParseEntry)(Timing *self, struct config_t *config,
-			char *section);
+/* Function related with the creation of default memory hierarchies and
+ * processing of memory configuration files. These are all abstract
+ * functions that must be overridden by children. */
+void (*MemConfigDefault)(Timing *self, struct config_t *config);
+void (*MemConfigCheck)(Timing *self, struct config_t *config);
+void (*MemConfigParseEntry)(Timing *self, struct config_t *config,
+                            char *section);
 
 CLASS_END(Timing)
-
 
 void TimingCreate(Timing *self);
 void TimingDestroy(Timing *self);
@@ -76,7 +72,7 @@ int TimingRun(Timing *self);
 
 void TimingMemConfigDefault(Timing *self, struct config_t *config);
 void TimingMemConfigCheck(Timing *self, struct config_t *config);
-void TimingMemConfigParseEntry(Timing *self, struct config_t *config, char *section);
-
+void TimingMemConfigParseEntry(Timing *self, struct config_t *config,
+                               char *section);
 
 #endif

@@ -26,31 +26,29 @@
 typedef int (*runtime_abi_func_t)(void *user_data);
 
 /* Runtime type */
-struct runtime_t
-{
-	/* Runtime name, just used for debug info. */
-	char *name;
+struct runtime_t {
+  /* Runtime name, just used for debug info. */
+  char *name;
 
-	/* Name of the library to intercept during the execution of the
-	 * 'open' system call. */
-	char *lib_name;
+  /* Name of the library to intercept during the execution of the
+   * 'open' system call. */
+  char *lib_name;
 
-	/* Name of the library to redirect it to, searching either in the
-	 * source tree or Multi2Sim installation path. */
-	char *redirect_lib_name;
+  /* Name of the library to redirect it to, searching either in the
+   * source tree or Multi2Sim installation path. */
+  char *redirect_lib_name;
 
-	/* Record here failed attempts to access this runtime. This is used
-	 * to issue a warning to the user at the end of the simulation. */
-	int open_attempt;
+  /* Record here failed attempts to access this runtime. This is used
+   * to issue a warning to the user at the end of the simulation. */
+  int open_attempt;
 
-	/* System call code used for the driver ABI. When the runtime needs
-	 * to communicate with the driver, it is done through this system call. */
-	int syscall_code;
+  /* System call code used for the driver ABI. When the runtime needs
+   * to communicate with the driver, it is done through this system call. */
+  int syscall_code;
 
-	/* Function called when the system call 'syscall_code' is intercepted. */
-	runtime_abi_func_t abi_func;
+  /* Function called when the system call 'syscall_code' is intercepted. */
+  runtime_abi_func_t abi_func;
 };
-
 
 /* Initialization/finalization of runtimes management. */
 void runtime_init(void);
@@ -64,7 +62,7 @@ void runtime_done(void);
  * the runtime with the driver (ABI). Argument 'abi_func' is the function to
  * be called when this system call is encountered. */
 void runtime_register(char *name, char *lib_name, char *redirect_lib_name,
-		int syscall_code, runtime_abi_func_t abi_func);
+                      int syscall_code, runtime_abi_func_t abi_func);
 
 /* Function used in the 'open' system call to redirect a runtime. If 'path' is a
  * registered runtime, the function returns True and writes the redirection path
@@ -81,4 +79,3 @@ struct runtime_t *runtime_get_from_syscall_code(int syscall_code);
 int runtime_abi_call(struct runtime_t *runtime, void *user_data);
 
 #endif
-

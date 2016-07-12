@@ -20,7 +20,6 @@
 #ifndef DRIVER_GLUT_FRAME_BUFFER_H
 #define DRIVER_GLUT_FRAME_BUFFER_H
 
-
 void glut_frame_buffer_init(void);
 void glut_frame_buffer_done(void);
 
@@ -33,6 +32,4 @@ void glut_frame_buffer_get_size(int *width, int *height);
 void glut_frame_buffer_flush_request(void);
 void glut_frame_buffer_flush_if_requested(void);
 
-
 #endif
-

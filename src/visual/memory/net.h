@@ -20,12 +20,10 @@
 #ifndef VISUAL_MEMORY_NET_H
 #define VISUAL_MEMORY_NET_H
 
+struct vi_net_t {
+  char *name;
 
-struct vi_net_t
-{
-	char *name;
-
-	struct list_t *node_list;
+  struct list_t *node_list;
 };
 
 struct vi_trace_line_t;
@@ -33,9 +31,8 @@ struct vi_net_t *vi_net_create(struct vi_trace_line_t *trace_line);
 void vi_net_free(struct vi_net_t *net);
 
 struct vi_mod_t;
-void vi_net_attach_mod(struct vi_net_t *net, struct vi_mod_t *mod, int node_index);
+void vi_net_attach_mod(struct vi_net_t *net, struct vi_mod_t *mod,
+                       int node_index);
 struct vi_mod_t *vi_net_get_mod(struct vi_net_t *net, int node_index);
 
-
 #endif
-

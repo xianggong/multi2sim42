@@ -22,17 +22,16 @@
 
 #include <gtk/gtk.h>
 
-
 typedef void (*vi_cycle_bar_refresh_func_t)(void *user_data, long long cycle);
 
-void vi_cycle_bar_init(vi_cycle_bar_refresh_func_t refresh_func, void *user_data);
+void vi_cycle_bar_init(vi_cycle_bar_refresh_func_t refresh_func,
+                       void *user_data);
 void vi_cycle_bar_done(void);
 
-void vi_cycle_bar_set_refresh_func(vi_cycle_bar_refresh_func_t refresh_func, void *user_data);
+void vi_cycle_bar_set_refresh_func(vi_cycle_bar_refresh_func_t refresh_func,
+                                   void *user_data);
 
 GtkWidget *vi_cycle_bar_get_widget(void);
 long long vi_cycle_bar_get_cycle(void);
 
-
 #endif
-

@@ -24,7 +24,6 @@
 
 #include <arch/common/timing.h>
 
-
 /*
  * Class 'ARMCpu'
  */
@@ -40,8 +39,6 @@ int ARMCpuRun(Timing *self);
 
 void ARMCpuDump(Object *self, FILE *f);
 void ARMCpuDumpSummary(Timing *self, FILE *f);
-
-
 
 /*
  * Non-Class Stuff

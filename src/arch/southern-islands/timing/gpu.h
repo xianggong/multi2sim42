@@ -22,7 +22,6 @@
 
 #include <arch/common/timing.h>
 
-
 /* Trace */
 #define si_tracing() trace_status(si_trace_category)
 #define si_trace(...) trace(si_trace_category, __VA_ARGS__)
@@ -37,7 +36,6 @@ extern char *si_gpu_calc_file_name;
 
 /* FIXME - remove */
 extern int si_gpu_fused_device;
-
 
 /* OpenCL Device Info */
 extern unsigned long long si_gpu_device_type;
@@ -105,11 +103,10 @@ extern unsigned int si_gpu_platform;
 
 extern unsigned int si_gpu_register_alloc_size;
 extern struct str_map_t si_gpu_register_alloc_granularity_map;
-extern enum si_gpu_register_alloc_granularity_t
-{
-	si_gpu_register_alloc_invalid = 0,  /* For invalid user input */
-	si_gpu_register_alloc_wavefront,
-	si_gpu_register_alloc_work_group
+extern enum si_gpu_register_alloc_granularity_t {
+  si_gpu_register_alloc_invalid = 0, /* For invalid user input */
+  si_gpu_register_alloc_wavefront,
+  si_gpu_register_alloc_work_group
 } si_gpu_register_alloc_granularity;
 
 /* User configurable options */
@@ -192,8 +189,9 @@ extern int si_gpu_lds_latency;
 extern int si_gpu_lds_block_size;
 extern int si_gpu_lds_num_ports;
 
-#define SI_GPU_FOREACH_COMPUTE_UNIT(COMPUTE_UNIT_ID) \
-	for ((COMPUTE_UNIT_ID) = 0; (COMPUTE_UNIT_ID) < si_gpu_num_compute_units; (COMPUTE_UNIT_ID)++)
+#define SI_GPU_FOREACH_COMPUTE_UNIT(COMPUTE_UNIT_ID)                        \
+  for ((COMPUTE_UNIT_ID) = 0; (COMPUTE_UNIT_ID) < si_gpu_num_compute_units; \
+       (COMPUTE_UNIT_ID)++)
 
 /* Forward declaration */
 struct si_uop_t;
@@ -203,8 +201,6 @@ struct si_simd_t;
 struct si_branch_unit_t;
 struct si_vector_mem_unit_t;
 struct si_lds_t;
-
-
 
 /*
  * Public Functions
@@ -234,25 +230,23 @@ void si_branch_unit_run(struct si_branch_unit_t *branch_unit);
 void si_vector_mem_run(struct si_vector_mem_unit_t *vector_mem);
 void si_lds_run(struct si_lds_t *lds);
 
-
-
 /*
  * Class 'SIGpu'
  */
 
 CLASS_BEGIN(SIGpu, Timing)
 
-	/* ND-Range running on it */
-	int work_groups_per_wavefront_pool;
-	int work_groups_per_compute_unit;
+/* ND-Range running on it */
+int work_groups_per_wavefront_pool;
+int work_groups_per_compute_unit;
 
-	/* Compute units */
-	struct si_compute_unit_t **compute_units;
+/* Compute units */
+struct si_compute_unit_t **compute_units;
 
-	/* List of ready compute units accepting work-groups */
-	struct list_t *available_compute_units;
+/* List of ready compute units accepting work-groups */
+struct list_t *available_compute_units;
 
-	long long int last_complete_cycle;
+long long int last_complete_cycle;
 
 CLASS_END(SIGpu)
 
@@ -264,14 +258,10 @@ void SIGpuDumpSummary(Timing *self, FILE *f);
 
 int SIGpuRun(Timing *self);
 
-
-
 /*
  * Public
  */
 
 extern SIGpu *si_gpu;
 
-
 #endif
-

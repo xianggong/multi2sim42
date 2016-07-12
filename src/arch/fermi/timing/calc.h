@@ -21,7 +21,8 @@
 #define ARCH_FERMI_TIMING_CALC_H
 
 int frm_calc_get_thread_blocks_per_sm(int threads_per_thread_block,
-	int registers_per_thread, int shared_mem_per_thread_block);
+                                      int registers_per_thread,
+                                      int shared_mem_per_thread_block);
 void frm_calc_plot(void);
 
 #endif

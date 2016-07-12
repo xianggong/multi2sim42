@@ -23,15 +23,11 @@
 
 #include "uop.h"
 
-
-
 /*
  * Public variables
  */
 
 int frm_stack_debug_category;
-
-
 
 /*
  * Private
@@ -40,7 +36,6 @@ int frm_stack_debug_category;
 static long long gpu_uop_id_counter = 0;
 
 static struct repos_t *gpu_uop_repos;
-
 
 #if 0
 static void frm_uop_add_src_idep(struct frm_uop_t *uop, struct frm_inst_t *inst, int src_idx)
@@ -68,56 +63,41 @@ static void frm_uop_add_src_idep(struct frm_uop_t *uop, struct frm_inst_t *inst,
 }
 #endif
 
-
-
-
 /*
  * Public Functions
  */
 
-void frm_uop_init()
-{
-	/* GPU uop repository.
-	 * The size assigned for each 'frm_uop_t' is equals to the 
-	 * baseline structure size plus the size of a 'frm_thread_uop_t' 
-	 * element for each thread in the warp. */
-	gpu_uop_repos = repos_create(sizeof(struct frm_uop_t) + 
-			sizeof(struct frm_thread_uop_t)	* frm_emu_warp_size,
-			"gpu_uop_repos");
+void frm_uop_init() {
+  /* GPU uop repository.
+   * The size assigned for each 'frm_uop_t' is equals to the
+   * baseline structure size plus the size of a 'frm_thread_uop_t'
+   * element for each thread in the warp. */
+  gpu_uop_repos =
+      repos_create(sizeof(struct frm_uop_t) +
+                       sizeof(struct frm_thread_uop_t) * frm_emu_warp_size,
+                   "gpu_uop_repos");
 }
 
+void frm_uop_done() { repos_free(gpu_uop_repos); }
 
-void frm_uop_done()
-{
-	repos_free(gpu_uop_repos);
+struct frm_uop_t *frm_uop_create() {
+  struct frm_uop_t *uop;
+
+  uop = repos_create_object(gpu_uop_repos);
+  uop->id = gpu_uop_id_counter++;
+  return uop;
 }
 
-
-struct frm_uop_t *frm_uop_create()
-{
-	struct frm_uop_t *uop;
-
-	uop = repos_create_object(gpu_uop_repos);
-	uop->id = gpu_uop_id_counter++;
-	return uop;
+void frm_uop_free(struct frm_uop_t *gpu_uop) {
+  if (!gpu_uop) return;
+  repos_free_object(gpu_uop_repos, gpu_uop);
 }
 
-
-void frm_uop_free(struct frm_uop_t *gpu_uop)
-{
-	if (!gpu_uop)
-		return;
-	repos_free_object(gpu_uop_repos, gpu_uop);
-}
-
-
-void frm_uop_list_free(struct list_t *uop_list)
-{
-	struct frm_uop_t *uop;
-	while (list_count(uop_list))
-	{
-		uop = list_head(uop_list);
-		list_remove(uop_list, uop);
-		frm_uop_free(uop);
-	}
+void frm_uop_list_free(struct list_t *uop_list) {
+  struct frm_uop_t *uop;
+  while (list_count(uop_list)) {
+    uop = list_head(uop_list);
+    list_remove(uop_list, uop);
+    frm_uop_free(uop);
+  }
 }

@@ -22,8 +22,6 @@
 
 #include <lib/util/class.h>
 
-
-
 /*
  * Class 'X86Emu'
  * Additional functions
@@ -33,4 +31,3 @@ void X86EmuLoadCheckpoint(X86Emu *self, char *file_name);
 void X86EmuSaveCheckpoint(X86Emu *self, char *file_name);
 
 #endif
-

@@ -23,15 +23,11 @@
 
 #include "uop.h"
 
-
-
 /*
  * Public variables
  */
 
 int si_stack_debug_category;
-
-
 
 /*
  * Private
@@ -40,7 +36,6 @@ int si_stack_debug_category;
 static long long gpu_uop_id_counter = 0;
 
 static struct repos_t *gpu_uop_repos;
-
 
 #if 0
 static void si_uop_add_src_idep(struct si_uop_t *uop, struct si_inst_t *inst, int src_idx)
@@ -68,56 +63,41 @@ static void si_uop_add_src_idep(struct si_uop_t *uop, struct si_inst_t *inst, in
 }
 #endif
 
-
-
-
 /*
  * Public Functions
  */
 
-void si_uop_init()
-{
-	/* GPU uop repository.
-	 * The size assigned for each 'si_uop_t' is equals to the 
-	 * baseline structure size plus the size of a 'si_work_item_uop_t' 
-	 * element for each work-item in the wavefront. */
-	gpu_uop_repos = repos_create(sizeof(struct si_uop_t) + 
-		sizeof(struct si_work_item_uop_t)
-		* si_emu_wavefront_size, "gpu_uop_repos");
+void si_uop_init() {
+  /* GPU uop repository.
+   * The size assigned for each 'si_uop_t' is equals to the
+   * baseline structure size plus the size of a 'si_work_item_uop_t'
+   * element for each work-item in the wavefront. */
+  gpu_uop_repos = repos_create(
+      sizeof(struct si_uop_t) +
+          sizeof(struct si_work_item_uop_t) * si_emu_wavefront_size,
+      "gpu_uop_repos");
 }
 
+void si_uop_done() { repos_free(gpu_uop_repos); }
 
-void si_uop_done()
-{
-	repos_free(gpu_uop_repos);
+struct si_uop_t *si_uop_create() {
+  struct si_uop_t *uop;
+
+  uop = repos_create_object(gpu_uop_repos);
+  uop->id = gpu_uop_id_counter++;
+  return uop;
 }
 
-
-struct si_uop_t *si_uop_create()
-{
-	struct si_uop_t *uop;
-
-	uop = repos_create_object(gpu_uop_repos);
-	uop->id = gpu_uop_id_counter++;
-	return uop;
+void si_uop_free(struct si_uop_t *gpu_uop) {
+  if (!gpu_uop) return;
+  repos_free_object(gpu_uop_repos, gpu_uop);
 }
 
-
-void si_uop_free(struct si_uop_t *gpu_uop)
-{
-	if (!gpu_uop)
-		return;
-	repos_free_object(gpu_uop_repos, gpu_uop);
-}
-
-
-void si_uop_list_free(struct list_t *uop_list)
-{
-	struct si_uop_t *uop;
-	while (list_count(uop_list))
-	{
-		uop = list_head(uop_list);
-		list_remove(uop_list, uop);
-		si_uop_free(uop);
-	}
+void si_uop_list_free(struct list_t *uop_list) {
+  struct si_uop_t *uop;
+  while (list_count(uop_list)) {
+    uop = list_head(uop_list);
+    list_remove(uop_list, uop);
+    si_uop_free(uop);
+  }
 }

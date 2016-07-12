@@ -22,57 +22,58 @@
 
 #include <stdio.h>
 
-
-enum mips_file_desc_kind_t
-{
-	mips_file_desc_invalid = 0,
-	mips_file_desc_regular,  /* Regular mips_file */
-	mips_file_desc_std,  /* Standard input or output */
-	mips_file_desc_pipe,  /* A pipe */
-	mips_file_desc_virtual,  /* A virtual mips_file with artificial contents */
-	mips_file_desc_gpu,  /* GPU device */
-	mips_file_desc_socket  /* Network socket */
+enum mips_file_desc_kind_t {
+  mips_file_desc_invalid = 0,
+  mips_file_desc_regular, /* Regular mips_file */
+  mips_file_desc_std,     /* Standard input or output */
+  mips_file_desc_pipe,    /* A pipe */
+  mips_file_desc_virtual, /* A virtual mips_file with artificial contents */
+  mips_file_desc_gpu,     /* GPU device */
+  mips_file_desc_socket   /* Network socket */
 };
 
-struct mips_file_desc_t
-{
-	enum mips_file_desc_kind_t kind;  /* File type */
-	int guest_fd;  /* Guest mips_file descriptor id */
-	int host_fd;  /* Equivalent open host mips_file */
-	int flags;  /* O_xxx flags */
-	char *path;  /* Associated path if applicable */
+struct mips_file_desc_t {
+  enum mips_file_desc_kind_t kind; /* File type */
+  int guest_fd;                    /* Guest mips_file descriptor id */
+  int host_fd;                     /* Equivalent open host mips_file */
+  int flags;                       /* O_xxx flags */
+  char *path;                      /* Associated path if applicable */
 };
-
 
 /* File descriptor table */
-struct mips_file_desc_table_t
-{
-	/* Number of extra contexts sharing table */
-	int num_links;
+struct mips_file_desc_table_t {
+  /* Number of extra contexts sharing table */
+  int num_links;
 
-	/* List of descriptors */
-	struct list_t *mips_file_desc_list;
+  /* List of descriptors */
+  struct list_t *mips_file_desc_list;
 };
-
 
 struct mips_file_desc_table_t *mips_file_desc_table_create(void);
 void mips_file_desc_table_free(struct mips_file_desc_table_t *table);
 
-struct mips_file_desc_table_t *mips_file_desc_table_link(struct mips_file_desc_table_t *table);
+struct mips_file_desc_table_t *mips_file_desc_table_link(
+    struct mips_file_desc_table_t *table);
 void mips_file_desc_table_unlink(struct mips_file_desc_table_t *table);
 
 void mips_file_desc_table_dump(struct mips_file_desc_table_t *table, FILE *f);
 
-struct mips_file_desc_t *mips_file_desc_table_entry_get(struct mips_file_desc_table_t *table, int index);
-struct mips_file_desc_t *mips_file_desc_table_entry_new(struct mips_file_desc_table_t *table,
-	enum mips_file_desc_kind_t kind, int host_fd, char *path, int flags);
-struct mips_file_desc_t *mips_file_desc_table_entry_new_guest_fd(struct mips_file_desc_table_t *table,
-        enum mips_file_desc_kind_t kind, int guest_fd, int host_fd, char *path, int flags);
-void mips_file_desc_table_entry_free(struct mips_file_desc_table_t *table, int index);
-void mips_file_desc_table_entry_dump(struct mips_file_desc_table_t *table, int index, FILE *f);
+struct mips_file_desc_t *mips_file_desc_table_entry_get(
+    struct mips_file_desc_table_t *table, int index);
+struct mips_file_desc_t *mips_file_desc_table_entry_new(
+    struct mips_file_desc_table_t *table, enum mips_file_desc_kind_t kind,
+    int host_fd, char *path, int flags);
+struct mips_file_desc_t *mips_file_desc_table_entry_new_guest_fd(
+    struct mips_file_desc_table_t *table, enum mips_file_desc_kind_t kind,
+    int guest_fd, int host_fd, char *path, int flags);
+void mips_file_desc_table_entry_free(struct mips_file_desc_table_t *table,
+                                     int index);
+void mips_file_desc_table_entry_dump(struct mips_file_desc_table_t *table,
+                                     int index, FILE *f);
 
-int mips_file_desc_table_get_host_fd(struct mips_file_desc_table_t *table, int guest_fd);
-int mips_file_desc_table_get_guest_fd(struct mips_file_desc_table_t *table, int host_fd);
-
+int mips_file_desc_table_get_host_fd(struct mips_file_desc_table_t *table,
+                                     int guest_fd);
+int mips_file_desc_table_get_guest_fd(struct mips_file_desc_table_t *table,
+                                      int host_fd);
 
 #endif

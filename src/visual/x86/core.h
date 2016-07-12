@@ -20,22 +20,20 @@
 #ifndef VISUAL_X86_CORE_H
 #define VISUAL_X86_CORE_H
 
+struct vi_x86_core_t {
+  char *name;
 
-struct vi_x86_core_t
-{
-	char *name;
+  /* Hash table of contexts.
+   * Only names are stored. The elements in the table are all
+   * 'VI_X86_CONTEXT_EMPTY'. */
+  struct hash_table_t *context_table;
 
-	/* Hash table of contexts.
-	 * Only names are stored. The elements in the table are all
-	 * 'VI_X86_CONTEXT_EMPTY'. */
-	struct hash_table_t *context_table;
+  /* Hash table of instructions.
+   * Each element is of type 'struct vi_x86_inst_t'. */
+  struct hash_table_t *inst_table;
 
-	/* Hash table of instructions.
-	 * Each element is of type 'struct vi_x86_inst_t'. */
-	struct hash_table_t *inst_table;
-
-	/* Number of instructions */
-	long long num_insts;
+  /* Number of instructions */
+  long long num_insts;
 };
 
 struct vi_x86_core_t *vi_x86_core_create(char *name);
@@ -44,6 +42,4 @@ void vi_x86_core_free(struct vi_x86_core_t *core);
 void vi_x86_core_read_checkpoint(struct vi_x86_core_t *core, FILE *f);
 void vi_x86_core_write_checkpoint(struct vi_x86_core_t *core, FILE *f);
 
-
 #endif
-

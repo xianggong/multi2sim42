@@ -20,7 +20,6 @@
 #ifndef X86_ARCH_TIMING_EVENT_QUEUE_H
 #define X86_ARCH_TIMING_EVENT_QUEUE_H
 
-
 /*
  * Class 'X86Core'
  */
@@ -31,8 +30,6 @@ void X86CoreFreeEventQueue(X86Core *self);
 void X86CoreInsertInEventQueue(X86Core *self, struct x86_uop_t *uop);
 struct x86_uop_t *X86CoreExtractFromEventQueue(X86Core *self);
 
-
-
 /*
  * Class 'X86Thread'
  */
@@ -41,6 +38,4 @@ int X86ThreadLongLatencyInEventQueue(X86Thread *self);
 int X86ThreadCacheMissInEventQueue(X86Thread *self);
 void X86ThreadRecoverEventQueue(X86Thread *self);
 
-
 #endif
-

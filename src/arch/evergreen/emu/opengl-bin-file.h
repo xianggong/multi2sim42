@@ -22,48 +22,44 @@
 
 #include <lib/util/elf-format.h>
 
-
 /* Shader types */
-enum evg_opengl_shader_kind_t
-{
-	EVG_OPENGL_SHADER_VERTEX,
-	EVG_OPENGL_SHADER_FRAGMENT,
-	EVG_OPENGL_SHADER_GEOMETRY,
-	EVG_OPENGL_SHADER_EVALUATION,
-	EVG_OPENGL_SHADER_CONTROL
+enum evg_opengl_shader_kind_t {
+  EVG_OPENGL_SHADER_VERTEX,
+  EVG_OPENGL_SHADER_FRAGMENT,
+  EVG_OPENGL_SHADER_GEOMETRY,
+  EVG_OPENGL_SHADER_EVALUATION,
+  EVG_OPENGL_SHADER_CONTROL
 };
 
 /* OpenGL shader binary */
-struct evg_opengl_shader_t
-{
-	/* Shader kind */
-	enum evg_opengl_shader_kind_t shader_kind;
+struct evg_opengl_shader_t {
+  /* Shader kind */
+  enum evg_opengl_shader_kind_t shader_kind;
 
-	/* Associated ELF file */
-	struct elf_file_t *external_elf_file;
-	struct elf_file_t *internal_elf_file;
+  /* Associated ELF file */
+  struct elf_file_t *external_elf_file;
+  struct elf_file_t *internal_elf_file;
 
-	/* ISA buffer, which ptr element points to .text section in internel_elf_file  */
-	struct elf_buffer_t isa_buffer;
+  /* ISA buffer, which ptr element points to .text section in internel_elf_file
+   */
+  struct elf_buffer_t isa_buffer;
 };
 
 /* OpenGL shader binary */
-struct evg_opengl_bin_file_t
-{
-	/* Name of the associated binary file */
-	char *name;
-	
-	/* List of shaders associated with binary file.
-	 * Elements are of type 'struct evg_opengl_shader_t' */
-	struct list_t *shader_list;
+struct evg_opengl_bin_file_t {
+  /* Name of the associated binary file */
+  char *name;
 
-	/* NEED or NOT ? */
-	// struct evg_opengl_shader_t *amd_opengl_shader;
+  /* List of shaders associated with binary file.
+   * Elements are of type 'struct evg_opengl_shader_t' */
+  struct list_t *shader_list;
+
+  /* NEED or NOT ? */
+  // struct evg_opengl_shader_t *amd_opengl_shader;
 };
 
-struct evg_opengl_bin_file_t *evg_opengl_bin_file_create(void *ptr, int size, char *name);
+struct evg_opengl_bin_file_t *evg_opengl_bin_file_create(void *ptr, int size,
+                                                         char *name);
 void evg_opengl_bin_file_free(struct evg_opengl_bin_file_t *bin_file);
 
-
 #endif
-

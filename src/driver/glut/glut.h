@@ -24,7 +24,6 @@
 
 #include <lib/util/class.h>
 
-
 /*
  * GLUT system call interface
  *
@@ -44,6 +43,4 @@ void glut_done(void);
 
 int glut_abi_call(X86Context *ctx);
 
-
 #endif
-

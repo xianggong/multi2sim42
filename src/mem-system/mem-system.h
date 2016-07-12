@@ -20,25 +20,19 @@
 #ifndef MEM_SYSTEM_MEM_SYSTEM_H
 #define MEM_SYSTEM_MEM_SYSTEM_H
 
-
 /*
  * Memory System Object
  */
 
-struct mem_system_t
-{
-	/* List of modules and networks */
-	struct list_t *mod_list;
-	struct list_t *net_list;
+struct mem_system_t {
+  /* List of modules and networks */
+  struct list_t *mod_list;
+  struct list_t *net_list;
 };
-
-
-
 
 /*
  * Global Variables
  */
-
 
 extern char *mem_report_file_name;
 
@@ -51,7 +45,6 @@ extern int mem_debug_category;
 #define mem_trace_header(...) trace_header(mem_trace_category, __VA_ARGS__)
 extern int mem_trace_category;
 
-
 /* Configuration */
 extern int mem_frequency;
 extern int mem_peer_transfers;
@@ -62,13 +55,9 @@ extern int mem_domain_index;
 /* Global memory system */
 extern struct mem_system_t *mem_system;
 
-
-
-
 /*
  * Public Functions
  */
-
 
 void mem_system_init(void);
 void mem_system_done(void);
@@ -78,6 +67,4 @@ void mem_system_dump_report(void);
 struct mod_t *mem_system_get_mod(char *mod_name);
 struct net_t *mem_system_get_net(char *net_name);
 
-
 #endif
-

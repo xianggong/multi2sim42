@@ -22,28 +22,25 @@
 
 #include <stdio.h>
 
+struct x86_regs_t {
+  /* Integer registers */
+  unsigned int eax, ecx, edx, ebx;
+  unsigned int esp, ebp, esi, edi;
+  unsigned short int es, cs, ss, ds, fs, gs;
+  unsigned int eip;
+  unsigned int eflags;
 
-struct x86_regs_t
-{
-	/* Integer registers */
-	unsigned int eax, ecx, edx, ebx;
-	unsigned int esp, ebp, esi, edi;
-	unsigned short int es, cs, ss, ds, fs, gs;
-	unsigned int eip;
-	unsigned int eflags;
+  /* Floating-point unit */
+  struct {
+    unsigned char value[10];
+    int valid;
+  } fpu_stack[8];
+  int fpu_top;  /* top of stack (field 'top' of status register) */
+  int fpu_code; /* field 'code' of status register (C3-C2-C1-C0) */
+  unsigned short int fpu_ctrl; /* fpu control word */
 
-	/* Floating-point unit */
-	struct
-	{
-		unsigned char value[10];
-		int valid;
-	} fpu_stack[8];
-	int fpu_top;  /* top of stack (field 'top' of status register) */
-	int fpu_code;  /* field 'code' of status register (C3-C2-C1-C0) */
-	unsigned short int fpu_ctrl;  /* fpu control word */
-
-	/* XMM registers (8 128-bit regs) */
-	unsigned char xmm[8][16];
+  /* XMM registers (8 128-bit regs) */
+  unsigned char xmm[8][16];
 
 } __attribute__((packed));
 
@@ -55,4 +52,3 @@ void x86_regs_dump(struct x86_regs_t *regs, FILE *f);
 void x86_regs_fpu_stack_dump(struct x86_regs_t *regs, FILE *f);
 
 #endif
-

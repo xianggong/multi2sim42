@@ -14,7 +14,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifndef ARCH_KEPLER_ASM_ASM_H
@@ -23,7 +23,6 @@
 #include <stdio.h>
 
 /* 1st level struct */
-
 
 #if 0
 struct kpl_fmt_general0_t // IADD, IMUL, DADD  
@@ -157,60 +156,42 @@ struct kpl_fmt_general1_mod1_A_t /* LD, ST */
 
 #endif
 
-
-
-union kpl_inst_dword_t
-{
-        unsigned int bytes;
-
-
+union kpl_inst_dword_t {
+  unsigned int bytes;
 };
 
+enum kpl_inst_opcode_t {
+  KPL_INST_NONE = 0,
 
-enum kpl_inst_opcode_t
-{
-        KPL_INST_NONE = 0,
-
-#define DEFINST(_name, _fmt_str, ...)        \
-        KPL_INST_##_name,
+#define DEFINST(_name, _fmt_str, ...) KPL_INST_##_name,
 #include "asm.dat"
 #undef DEFINST
 
-	/* Max */
-        KPL_INST_COUNT
+  /* Max */
+  KPL_INST_COUNT
 };
 
-
-
-struct kpl_inst_info_t
-{
-        enum kpl_inst_opcode_t opcode;
-        char *name;
-        char *fmt_str;
+struct kpl_inst_info_t {
+  enum kpl_inst_opcode_t opcode;
+  char *name;
+  char *fmt_str;
 };
 
+struct kpl_inst_table_entry_t {
+  /* Fields used when the table entry points to another table. */
+  int next_table_low;
+  int next_table_high;
+  struct kpl_inst_table_entry_t *next_table;
 
-struct kpl_inst_table_entry_t
-{
-	/* Fields used when the table entry points to another table. */
-        int next_table_low;
-        int next_table_high;
-        struct kpl_inst_table_entry_t *next_table;
-
-	/* Field used when the table entry points to a final instruction */
-	struct kpl_inst_info_t *info;
+  /* Field used when the table entry points to a final instruction */
+  struct kpl_inst_info_t *info;
 };
 
-
-struct kpl_inst_t
-{
-        unsigned int addr;
-        union kpl_inst_dword_t dword;
-        struct kpl_inst_info_t *info;
-
+struct kpl_inst_t {
+  unsigned int addr;
+  union kpl_inst_dword_t dword;
+  struct kpl_inst_info_t *info;
 };
-
-
 
 /*
  * Public Functions
@@ -231,6 +212,4 @@ void kpl_disasm_buffer(void *buf, int size);
  * inst->info is set to NULL. */
 void kpl_inst_decode(struct kpl_inst_t *inst);
 
-
 #endif
-

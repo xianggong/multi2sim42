@@ -27,5 +27,4 @@ extern char *mem_config_help;
  * didn't pass '--mem-config' command-line option. */
 void mem_config_read(void);
 
-
 #endif

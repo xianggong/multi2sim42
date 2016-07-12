@@ -23,7 +23,6 @@
 /* Forward declarations */
 struct config_t;
 
-
 /*
  * Class 'SIGpu'
  * (Extra functions)
@@ -31,7 +30,8 @@ struct config_t;
 
 void SIGpuMemConfigFused(Timing *self, struct config_t *config);
 void SIGpuMemConfigDefault(Timing *self, struct config_t *config);
-void SIGpuMemConfigParseEntry(Timing *self, struct config_t *config, char *section);
+void SIGpuMemConfigParseEntry(Timing *self, struct config_t *config,
+                              char *section);
 void SIGpuMemConfigCheck(Timing *self, struct config_t *config);
 
 #endif

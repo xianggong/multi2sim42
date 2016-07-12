@@ -20,28 +20,23 @@
 #ifndef VISUAL_X86_CPU_H
 #define VISUAL_X86_CPU_H
 
-
 struct hash_table_t;
 struct list_t;
 
-struct vi_x86_cpu_t
-{
-	struct list_t *core_list;
+struct vi_x86_cpu_t {
+  struct list_t *core_list;
 
-	/* Hash table of contexts.
-	 * Elements are of type 'struct vi_x86_context_t' */
-	struct hash_table_t *context_table;
+  /* Hash table of contexts.
+   * Elements are of type 'struct vi_x86_context_t' */
+  struct hash_table_t *context_table;
 
-	/* True if the trace file contains x86 information at all */
-	int active;
+  /* True if the trace file contains x86 information at all */
+  int active;
 };
-
 
 extern struct vi_x86_cpu_t *vi_x86_cpu;
 
 void vi_x86_cpu_init(void);
 void vi_x86_cpu_done(void);
 
-
 #endif
-

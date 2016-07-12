@@ -25,9 +25,8 @@ typedef void (*mips_isa_inst_func_t)(struct mips_ctx_t *ctx);
 
 /* Declarations of function prototypes implementing MIPS ISA */
 #define DEFINST(_name, _fmt_str, _op0, _op1, _op2, _op3) \
-	extern void mips_isa_##_name##_impl(struct mips_ctx_t *ctx);
+  extern void mips_isa_##_name##_impl(struct mips_ctx_t *ctx);
 #include <arch/mips/asm/asm.dat>
 #undef DEFINST
-
 
 #endif

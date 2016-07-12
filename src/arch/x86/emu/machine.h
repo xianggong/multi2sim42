@@ -20,46 +20,45 @@
 #ifndef ARCH_X86_EMU_MACHINE_H
 #define ARCH_X86_EMU_MACHINE_H
 
-
 extern long x86_context_host_flags;
 
-#define __X86_ISA_ASM_START__ asm volatile ( \
-	"pushf\n\t" \
-	"pop %0\n\t" \
-	: "=m" (x86_context_host_flags));
+#define __X86_ISA_ASM_START__ \
+  asm volatile(               \
+      "pushf\n\t"             \
+      "pop %0\n\t"            \
+      : "=m"(x86_context_host_flags));
 
-#define __X86_ISA_ASM_END__ asm volatile ( \
-	"push %0\n\t" \
-	"popf\n\t" \
-	: "=m" (x86_context_host_flags));
-
+#define __X86_ISA_ASM_END__ \
+  asm volatile(             \
+      "push %0\n\t"         \
+      "popf\n\t"            \
+      : "=m"(x86_context_host_flags));
 
 extern unsigned char x86_context_host_fpenv[28];
 
-#define __X86_ISA_FP_ASM_START__ asm volatile ( \
-	"pushf\n\t" \
-	"pop %0\n\t" \
-	"fnstenv %1\n\t" /* store host FPU environment */ \
-	"fnclex\n\t" /* clear host FP exceptions */ \
-	"fldcw %2\n\t" \
-	: "=m" (x86_context_host_flags), "=m" (*x86_context_host_fpenv) \
-	: "m" (ctx->regs->fpu_ctrl));
+#define __X86_ISA_FP_ASM_START__                                    \
+  asm volatile(                                                     \
+      "pushf\n\t"                                                   \
+      "pop %0\n\t"                                                  \
+      "fnstenv %1\n\t" /* store host FPU environment */             \
+      "fnclex\n\t"     /* clear host FP exceptions */               \
+      "fldcw %2\n\t"                                                \
+      : "=m"(x86_context_host_flags), "=m"(*x86_context_host_fpenv) \
+      : "m"(ctx->regs->fpu_ctrl));
 
-#define __X86_ISA_FP_ASM_END__ asm volatile ( \
-	"push %0\n\t" \
-	"popf\n\t" \
-	"fnstcw %1\n\t" \
-	"fldenv %2\n\t" /* restore host FPU environment */ \
-	: "=m" (x86_context_host_flags), "=m" (ctx->regs->fpu_ctrl) \
-	: "m" (*x86_context_host_fpenv));
-
+#define __X86_ISA_FP_ASM_END__                                  \
+  asm volatile(                                                 \
+      "push %0\n\t"                                             \
+      "popf\n\t"                                                \
+      "fnstcw %1\n\t"                                           \
+      "fldenv %2\n\t" /* restore host FPU environment */        \
+      : "=m"(x86_context_host_flags), "=m"(ctx->regs->fpu_ctrl) \
+      : "m"(*x86_context_host_fpenv));
 
 /* References to functions emulating x86 instructions */
 #define DEFINST(name, op1, op2, op3, modrm, imm, pfx) \
-	void x86_isa_##name##_impl(X86Context *ctx);
+  void x86_isa_##name##_impl(X86Context *ctx);
 #include <arch/x86/asm/asm.dat>
 #undef DEFINST
 
-
 #endif
-

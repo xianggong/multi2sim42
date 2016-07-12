@@ -21,8 +21,8 @@
 #define ARCH_EVERGREEN_TIMING_CALC_H
 
 int evg_calc_get_work_groups_per_compute_unit(int work_items_per_work_group,
-	int registers_per_work_item, int local_mem_per_work_group);
+                                              int registers_per_work_item,
+                                              int local_mem_per_work_group);
 void evg_calc_plot(void);
 
 #endif
-

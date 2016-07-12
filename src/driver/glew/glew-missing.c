@@ -22,49 +22,31 @@
 
 #include "glew.h"
 
-
 int glew_debug_category;
 
 static char *glew_err_missing =
-	"\tMulti2Sim has been compiled without support for OpenGL graphics.\n"
-	"\tPlease install the OpenGL/GLUT/GLU/GLEW development libraries on\n"
-	"\tyour system and retry compilation.\n";
-
+    "\tMulti2Sim has been compiled without support for OpenGL graphics.\n"
+    "\tPlease install the OpenGL/GLUT/GLU/GLEW development libraries on\n"
+    "\tyour system and retry compilation.\n";
 
 /*
  * Private Functions
  */
 
-#define __GLEW_MISSING__  glew_missing();
-static void glew_missing(void)
-{
-	fatal("support for GLEW not available.\n%s",
-		glew_err_missing);
+#define __GLEW_MISSING__ glew_missing();
+static void glew_missing(void) {
+  fatal("support for GLEW not available.\n%s", glew_err_missing);
 }
-
-
-
 
 /*
  * Public Functions
  */
 
-void glew_init(void)
-{
-	/* Silent missing feature */
+void glew_init(void) { /* Silent missing feature */ }
+
+void glew_done(void) { /* Silent missing feature */ }
+
+int glew_abi_call(X86Context *context) {
+  __GLEW_MISSING__
+  return 0;
 }
-
-
-void glew_done(void)
-{
-	/* Silent missing feature */
-}
-
-
-int glew_abi_call(X86Context *context)
-{
-	__GLEW_MISSING__
-	return 0;
-}
-
-

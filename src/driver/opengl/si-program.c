@@ -17,7 +17,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #include <lib/util/debug.h>
 #include <lib/util/list.h>
 #include <lib/mhandle/mhandle.h>
@@ -32,60 +31,51 @@
 
 struct list_t *opengl_si_program_list;
 
-void opengl_si_program_list_init(void)
-{
-	/* Already initialized */
-	if (opengl_si_program_list)
-		return;
+void opengl_si_program_list_init(void) {
+  /* Already initialized */
+  if (opengl_si_program_list) return;
 
-	/* Initialize and add one empty element */
-	opengl_si_program_list = list_create();
-	list_add(opengl_si_program_list, NULL);
+  /* Initialize and add one empty element */
+  opengl_si_program_list = list_create();
+  list_add(opengl_si_program_list, NULL);
 }
 
+void opengl_si_program_list_done(void) {
+  int index;
+  struct opengl_si_program_t *program;
 
-void opengl_si_program_list_done(void)
-{
-	int index;
-	struct opengl_si_program_t *program;
+  /* Not initialized */
+  if (!opengl_si_program_list) return;
 
-	/* Not initialized */
-	if (!opengl_si_program_list)
-		return;
-
-	/* Free list of Southern Islands programs */
-	LIST_FOR_EACH(opengl_si_program_list, index)
-	{
-		program = list_get(opengl_si_program_list, index);
-		if (program)
-			opengl_si_program_free(program);
-	}
-	list_free(opengl_si_program_list);
+  /* Free list of Southern Islands programs */
+  LIST_FOR_EACH(opengl_si_program_list, index) {
+    program = list_get(opengl_si_program_list, index);
+    if (program) opengl_si_program_free(program);
+  }
+  list_free(opengl_si_program_list);
 }
 
 /*
  * Constant Buffer
  */
 
-struct opengl_si_constant_buffer_t *opengl_si_constant_buffer_create(int id,
-	unsigned int device_ptr, unsigned int size)
-{
-	struct opengl_si_constant_buffer_t *constant_buffer;
+struct opengl_si_constant_buffer_t *opengl_si_constant_buffer_create(
+    int id, unsigned int device_ptr, unsigned int size) {
+  struct opengl_si_constant_buffer_t *constant_buffer;
 
-	/* Initialize */
-	constant_buffer = xcalloc(1, sizeof(struct opengl_si_constant_buffer_t));
-	constant_buffer->id = id;
-	constant_buffer->device_ptr = device_ptr;
-	constant_buffer->size = size;
+  /* Initialize */
+  constant_buffer = xcalloc(1, sizeof(struct opengl_si_constant_buffer_t));
+  constant_buffer->id = id;
+  constant_buffer->device_ptr = device_ptr;
+  constant_buffer->size = size;
 
-	/* Return */
-	return constant_buffer;
+  /* Return */
+  return constant_buffer;
 }
 
-
-void opengl_si_constant_buffer_free(struct opengl_si_constant_buffer_t *constant_buffer)
-{
-	free(constant_buffer);
+void opengl_si_constant_buffer_free(
+    struct opengl_si_constant_buffer_t *constant_buffer) {
+  free(constant_buffer);
 }
 
 /*
@@ -93,67 +83,56 @@ void opengl_si_constant_buffer_free(struct opengl_si_constant_buffer_t *constant
  */
 
 static void opengl_si_program_initialize_constant_buffers(
-		struct opengl_si_program_t *program)
-{
-	/* TODO: Constant buffers store Uniforms ? */
-} 
-
-struct opengl_si_program_t *opengl_si_program_create(unsigned int program_id)
-{
-	struct opengl_si_program_t *program;
-
-	/* Initialize */
-	program = xcalloc(1, sizeof(struct opengl_si_program_t));
-
-	/* Insert in program list */
-	opengl_si_program_list_init();
-	program->id = program_id;
-	list_insert(opengl_si_program_list, program_id, program);
-
-	/* Return */
-	return program;
+    struct opengl_si_program_t *program) {
+  /* TODO: Constant buffers store Uniforms ? */
 }
 
+struct opengl_si_program_t *opengl_si_program_create(unsigned int program_id) {
+  struct opengl_si_program_t *program;
 
-void opengl_si_program_free(struct opengl_si_program_t *program)
-{
-	int index;
+  /* Initialize */
+  program = xcalloc(1, sizeof(struct opengl_si_program_t));
 
-	/* Free constant buffers */
-	if (program->constant_buffer_list)
-	{
-		LIST_FOR_EACH(program->constant_buffer_list, index)
-			opengl_si_constant_buffer_free(list_get(
-					program->constant_buffer_list,
-					index));
-		list_free(program->constant_buffer_list);
-	}
+  /* Insert in program list */
+  opengl_si_program_list_init();
+  program->id = program_id;
+  list_insert(opengl_si_program_list, program_id, program);
 
-	/* ELF file */
-	if (program->program_bin)
-		si_opengl_program_binary_free(program->program_bin);
-
-	/* Free program */
-	free(program);
+  /* Return */
+  return program;
 }
 
+void opengl_si_program_free(struct opengl_si_program_t *program) {
+  int index;
+
+  /* Free constant buffers */
+  if (program->constant_buffer_list) {
+    LIST_FOR_EACH(program->constant_buffer_list, index)
+    opengl_si_constant_buffer_free(
+        list_get(program->constant_buffer_list, index));
+    list_free(program->constant_buffer_list);
+  }
+
+  /* ELF file */
+  if (program->program_bin) si_opengl_program_binary_free(program->program_bin);
+
+  /* Free program */
+  free(program);
+}
 
 void opengl_si_program_set_binary(struct opengl_si_program_t *program,
-		void *buf, unsigned int size)
-{
-	char name[MAX_STRING_SIZE];
+                                  void *buf, unsigned int size) {
+  char name[MAX_STRING_SIZE];
 
-	/* Already set */
-	if (program->program_bin)
-		fatal("%s: binary already set", __FUNCTION__);
+  /* Already set */
+  if (program->program_bin) fatal("%s: binary already set", __FUNCTION__);
 
-	/* Load ELF binary from guest memory */
-	snprintf(name, sizeof name, "program[%d].externalELF", program->id);
+  /* Load ELF binary from guest memory */
+  snprintf(name, sizeof name, "program[%d].externalELF", program->id);
 
-	/* Program contains shader binary */
-	program->program_bin = si_opengl_program_binary_create(buf, size, name);
+  /* Program contains shader binary */
+  program->program_bin = si_opengl_program_binary_create(buf, size, name);
 
-	/* Initialize constant buffers */
-	opengl_si_program_initialize_constant_buffers(program);
+  /* Initialize constant buffers */
+  opengl_si_program_initialize_constant_buffers(program);
 }
-

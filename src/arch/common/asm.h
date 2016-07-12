@@ -24,24 +24,19 @@
 
 #include <lib/util/class.h>
 
-
 /*
  * Class 'Asm'
  */
 
 CLASS_BEGIN(Asm, Object)
-	
-	/* Architecture that it belongs to */
-	struct arch_t *arch;
+
+/* Architecture that it belongs to */
+struct arch_t *arch;
 
 CLASS_END(Asm)
 
-
 void AsmCreate(Asm *self);
 void AsmDestroy(Asm *self);
-
-
-
 
 /*
  * Non-Class Functions
@@ -54,6 +49,4 @@ void AsmDestroy(Asm *self);
  * format string. */
 int asm_is_token(char *fmt, char *token, int *length);
 
-
 #endif
-

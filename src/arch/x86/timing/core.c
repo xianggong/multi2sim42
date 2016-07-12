@@ -27,58 +27,51 @@
 #include "rob.h"
 #include "thread.h"
 
-
 /*
  * Class 'X86Core'
  */
 
 CLASS_IMPLEMENTATION(X86Core);
 
-void X86CoreCreate(X86Core *self, X86Cpu *cpu)
-{
-	int i;
+void X86CoreCreate(X86Core *self, X86Cpu *cpu) {
+  int i;
 
-	/* Initialize */
-	self->cpu = cpu;
+  /* Initialize */
+  self->cpu = cpu;
 
-	/* Create threads */
-	self->threads = xcalloc(x86_cpu_num_threads, sizeof(X86Thread *));
-	for (i = 0; i < x86_cpu_num_threads; i++)
-		self->threads[i] = new(X86Thread, self);
+  /* Create threads */
+  self->threads = xcalloc(x86_cpu_num_threads, sizeof(X86Thread *));
+  for (i = 0; i < x86_cpu_num_threads; i++)
+    self->threads[i] = new (X86Thread, self);
 
-	/* Prefetcher */
-	self->prefetch_history = prefetch_history_create();
+  /* Prefetcher */
+  self->prefetch_history = prefetch_history_create();
 
-	/* Structures */
-	X86CoreInitROB(self);
-	X86CoreInitEventQueue(self);
-	X86CoreInitFunctionalUnits(self);
+  /* Structures */
+  X86CoreInitROB(self);
+  X86CoreInitEventQueue(self);
+  X86CoreInitFunctionalUnits(self);
 }
 
+void X86CoreDestroy(X86Core *self) {
+  int i;
 
-void X86CoreDestroy(X86Core *self)
-{
-	int i;
+  /* Name */
+  self->name = str_free(self->name);
 
-	/* Name */
-	self->name = str_free(self->name);
+  /* Free threads */
+  for (i = 0; i < x86_cpu_num_threads; i++) delete (self->threads[i]);
+  free(self->threads);
 
-	/* Free threads */
-	for (i = 0; i < x86_cpu_num_threads; i++)
-		delete(self->threads[i]);
-	free(self->threads);
+  /* Prefetcher */
+  prefetch_history_free(self->prefetch_history);
 
-	/* Prefetcher */
-	prefetch_history_free(self->prefetch_history);
-
-	/* Structures */
-	X86CoreFreeROB(self);
-	X86CoreFreeEventQueue(self);
-	X86CoreFreeFunctionalUnits(self);
+  /* Structures */
+  X86CoreFreeROB(self);
+  X86CoreFreeEventQueue(self);
+  X86CoreFreeFunctionalUnits(self);
 }
 
-
-void X86CoreSetName(X86Core *self, char *name)
-{
-	self->name = str_set(self->name, name);
+void X86CoreSetName(X86Core *self, char *name) {
+  self->name = str_set(self->name, name);
 }

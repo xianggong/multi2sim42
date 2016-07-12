@@ -23,50 +23,34 @@
 
 #include "asm.h"
 
-
-
 /*
  * Class 'Asm'
  */
 
-
 CLASS_IMPLEMENTATION(Asm);
 
+void AsmCreate(Asm *self) {}
 
-void AsmCreate(Asm *self)
-{
-}
-
-
-void AsmDestroy(Asm *self)
-{
-}
-
-
-
+void AsmDestroy(Asm *self) {}
 
 /*
  * Non-Class Functions
  */
 
-int asm_is_token(char *fmt, char *token, int *length_ptr)
-{
-	int length;
-	int is_token;
+int asm_is_token(char *fmt, char *token, int *length_ptr) {
+  int length;
+  int is_token;
 
-	assert(token);
-	assert(fmt);
+  assert(token);
+  assert(fmt);
 
-	/* Check for token */
-	length = strlen(token);
-	is_token = !strncmp(fmt, token, length) &&
-		!isalnum(fmt[length]);
+  /* Check for token */
+  length = strlen(token);
+  is_token = !strncmp(fmt, token, length) && !isalnum(fmt[length]);
 
-	/* Return its length if found */
-	if (is_token && length_ptr)
-		*length_ptr = length;
+  /* Return its length if found */
+  if (is_token && length_ptr) *length_ptr = length;
 
-	/* Result */
-	return is_token;
+  /* Result */
+  return is_token;
 }
-

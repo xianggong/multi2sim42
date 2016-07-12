@@ -22,17 +22,15 @@
 
 extern struct list_t *module_list;
 
-struct cuda_module_t
-{
-	unsigned int id;
-	int ref_count;
+struct cuda_module_t {
+  unsigned int id;
+  int ref_count;
 
-	/* Kernel binary */
-	struct elf_file_t *elf_file;
+  /* Kernel binary */
+  struct elf_file_t *elf_file;
 };
 
 struct cuda_module_t *cuda_module_create(char *cubin_path);
 void cuda_module_free(struct cuda_module_t *module);
 
 #endif
-

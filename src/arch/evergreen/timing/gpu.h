@@ -22,7 +22,6 @@
 
 #include <arch/common/timing.h>
 
-
 /* Trace */
 #define evg_tracing() trace_status(evg_trace_category)
 #define evg_trace(...) trace(evg_trace_category, __VA_ARGS__)
@@ -39,11 +38,10 @@ extern int evg_gpu_num_registers;
 extern int evg_gpu_register_alloc_size;
 
 extern struct str_map_t evg_gpu_register_alloc_granularity_map;
-extern enum evg_gpu_register_alloc_granularity_t
-{
-	evg_gpu_register_alloc_invalid = 0,  /* For invalid user input */
-	evg_gpu_register_alloc_wavefront,
-	evg_gpu_register_alloc_work_group
+extern enum evg_gpu_register_alloc_granularity_t {
+  evg_gpu_register_alloc_invalid = 0, /* For invalid user input */
+  evg_gpu_register_alloc_wavefront,
+  evg_gpu_register_alloc_work_group
 } evg_gpu_register_alloc_granularity;
 
 extern int evg_gpu_max_work_groups_per_compute_unit;
@@ -67,16 +65,19 @@ extern int evg_gpu_tex_engine_inst_mem_latency;
 extern int evg_gpu_tex_engine_fetch_queue_size;
 extern int evg_gpu_tex_engine_load_queue_size;
 
+#define EVG_GPU_FOREACH_COMPUTE_UNIT(COMPUTE_UNIT_ID)                        \
+  for ((COMPUTE_UNIT_ID) = 0; (COMPUTE_UNIT_ID) < evg_gpu_num_compute_units; \
+       (COMPUTE_UNIT_ID)++)
 
-#define EVG_GPU_FOREACH_COMPUTE_UNIT(COMPUTE_UNIT_ID) \
-	for ((COMPUTE_UNIT_ID) = 0; (COMPUTE_UNIT_ID) < evg_gpu_num_compute_units; (COMPUTE_UNIT_ID)++)
-
-#define EVG_GPU_FOREACH_WORK_ITEM_IN_SUBWAVEFRONT(WAVEFRONT, SUBWAVEFRONT_ID, WORK_ITEM_ID) \
-	for ((WORK_ITEM_ID) = (WAVEFRONT)->work_item_id_first + (SUBWAVEFRONT_ID) * evg_gpu_num_stream_cores; \
-		(WORK_ITEM_ID) <= MIN((WAVEFRONT)->work_item_id_first + ((SUBWAVEFRONT_ID) + 1) \
-			* evg_gpu_num_stream_cores - 1, (WAVEFRONT)->work_item_id_last); \
-		(WORK_ITEM_ID)++)
-
+#define EVG_GPU_FOREACH_WORK_ITEM_IN_SUBWAVEFRONT(WAVEFRONT, SUBWAVEFRONT_ID, \
+                                                  WORK_ITEM_ID)               \
+  for ((WORK_ITEM_ID) = (WAVEFRONT)->work_item_id_first +                     \
+                        (SUBWAVEFRONT_ID)*evg_gpu_num_stream_cores;           \
+       (WORK_ITEM_ID) <=                                                      \
+           MIN((WAVEFRONT)->work_item_id_first +                              \
+                   ((SUBWAVEFRONT_ID) + 1) * evg_gpu_num_stream_cores - 1,    \
+               (WAVEFRONT)->work_item_id_last);                               \
+       (WORK_ITEM_ID)++)
 
 /*
  * Class 'EvgGpu'
@@ -84,33 +85,33 @@ extern int evg_gpu_tex_engine_load_queue_size;
 
 CLASS_BEGIN(EvgGpu, Timing)
 
-	/* ND-Range running on it */
-	struct evg_ndrange_t *ndrange;
-	int work_groups_per_compute_unit;
-	int wavefronts_per_compute_unit;
-	int work_items_per_compute_unit;
+/* ND-Range running on it */
+struct evg_ndrange_t *ndrange;
+int work_groups_per_compute_unit;
+int wavefronts_per_compute_unit;
+int work_items_per_compute_unit;
 
-	/* Compute units */
-	struct evg_compute_unit_t **compute_units;
+/* Compute units */
+struct evg_compute_unit_t **compute_units;
 
-	/* List of ready compute units accepting work-groups */
-	struct evg_compute_unit_t *ready_list_head;
-	struct evg_compute_unit_t *ready_list_tail;
-	int ready_list_count;
-	int ready_list_max;
+/* List of ready compute units accepting work-groups */
+struct evg_compute_unit_t *ready_list_head;
+struct evg_compute_unit_t *ready_list_tail;
+int ready_list_count;
+int ready_list_max;
 
-	/* List of busy compute units */
-	struct evg_compute_unit_t *busy_list_head;
-	struct evg_compute_unit_t *busy_list_tail;
-	int busy_list_count;
-	int busy_list_max;
+/* List of busy compute units */
+struct evg_compute_unit_t *busy_list_head;
+struct evg_compute_unit_t *busy_list_tail;
+int busy_list_count;
+int busy_list_max;
 
-	/* List of deleted instructions */
-	struct linked_list_t *trash_uop_list;
+/* List of deleted instructions */
+struct linked_list_t *trash_uop_list;
 
-	/* Last cycle when an instructions completed in any engine. This is used
- 	 * to decide when to stop simulation if there was a simulation stall. */
-	long long last_complete_cycle;
+/* Last cycle when an instructions completed in any engine. This is used
+ * to decide when to stop simulation if there was a simulation stall. */
+long long last_complete_cycle;
 
 CLASS_END(EvgGpu)
 
@@ -121,9 +122,6 @@ void EvgGpuDump(Object *self, FILE *f);
 void EvgGpuDumpSummary(Timing *self, FILE *f);
 
 int EvgGpuRun(Timing *self);
-
-
-
 
 /*
  * Public Functions
@@ -142,8 +140,4 @@ struct evg_uop_t;
 void evg_gpu_uop_trash_add(struct evg_uop_t *uop);
 void evg_gpu_uop_trash_empty(void);
 
-
-
-
 #endif
-

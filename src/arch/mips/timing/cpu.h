@@ -22,7 +22,6 @@
 
 #include <arch/common/timing.h>
 
-
 /*
  * Class 'MIPSCpu'
  */
@@ -38,9 +37,6 @@ void MIPSCpuDump(Object *self, FILE *f);
 void MIPSCpuDumpSummary(Timing *self, FILE *f);
 
 int MIPSCpuRun(Timing *self);
-
-
-
 
 /*
  * Public Functions

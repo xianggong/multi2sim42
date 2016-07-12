@@ -23,49 +23,31 @@
 
 #include "glu.h"
 
-
 int glu_debug_category;
 
 static char *glu_err_missing =
-	"\tMulti2Sim has been compiled without support for OpenGL graphics.\n"
-	"\tPlease install the OpenGL/GLUT/GLU/GLEW development libraries on\n"
-	"\tyour system and retry compilation.\n";
-
+    "\tMulti2Sim has been compiled without support for OpenGL graphics.\n"
+    "\tPlease install the OpenGL/GLUT/GLU/GLEW development libraries on\n"
+    "\tyour system and retry compilation.\n";
 
 /*
  * Private Functions
  */
 
-#define __GLU_MISSING__  glu_missing();
-static void glu_missing(void)
-{
-	fatal("support for GLU not available.\n%s",
-		glu_err_missing);
+#define __GLU_MISSING__ glu_missing();
+static void glu_missing(void) {
+  fatal("support for GLU not available.\n%s", glu_err_missing);
 }
-
-
-
 
 /*
  * Public Functions
  */
 
-void glu_init(void)
-{
-	/* Silent missing feature */
+void glu_init(void) { /* Silent missing feature */ }
+
+void glu_done(void) { /* Silent missing feature */ }
+
+int glu_abi_call(X86Context *context) {
+  __GLU_MISSING__
+  return 0;
 }
-
-
-void glu_done(void)
-{
-	/* Silent missing feature */
-}
-
-
-int glu_abi_call(X86Context *context)
-{
-	__GLU_MISSING__
-	return 0;
-}
-
-

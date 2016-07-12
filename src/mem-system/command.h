@@ -31,6 +31,4 @@ extern int EV_MEM_SYSTEM_END_COMMAND;
 void mem_system_command_handler(int event, void *data);
 void mem_system_end_command_handler(int event, void *data);
 
-
 #endif
-

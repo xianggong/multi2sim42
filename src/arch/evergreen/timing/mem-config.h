@@ -27,8 +27,8 @@ struct config_t;
 
 /* Functions for class 'EvgGpu' */
 void EvgGpuMemConfigDefault(Timing *self, struct config_t *config);
-void EvgGpuMemConfigParseEntry(Timing *self, struct config_t *config, char *section);
+void EvgGpuMemConfigParseEntry(Timing *self, struct config_t *config,
+                               char *section);
 void EvgGpuMemConfigCheck(Timing *self, struct config_t *config);
-
 
 #endif

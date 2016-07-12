@@ -22,7 +22,6 @@
 
 #include <lib/util/class.h>
 
-
 /*
  * Class 'Emu'
  * Base class for the emulators of all architectures.
@@ -30,31 +29,29 @@
 
 CLASS_BEGIN(Emu, Object)
 
-	/* Name of emulator */
-	char *name;
+/* Name of emulator */
+char *name;
 
-	/* Architecture it belongs to */
-	struct arch_t *arch;
-	
-	/* Timer keeping track of emulator activity */
-	struct m2s_timer_t *timer;
+/* Architecture it belongs to */
+struct arch_t *arch;
 
-	/* Number of emulated instructions */
-	long long instructions;
+/* Timer keeping track of emulator activity */
+struct m2s_timer_t *timer;
 
+/* Number of emulated instructions */
+long long instructions;
 
-	/*** Virtual functions ***/
+/*** Virtual functions ***/
 
-	/* Run one iteration of the emulation loop for the architecture. If
-	 * there was an active emulation, the function returns TRUE. This is
-	 * a virtual and abstract function (no implementation for 'Emu'). */
-	int (*Run)(Emu *self);
+/* Run one iteration of the emulation loop for the architecture. If
+ * there was an active emulation, the function returns TRUE. This is
+ * a virtual and abstract function (no implementation for 'Emu'). */
+int (*Run)(Emu *self);
 
-	/* Dump statistics summary */
-	void (*DumpSummary)(Emu *self, FILE *f);
+/* Dump statistics summary */
+void (*DumpSummary)(Emu *self, FILE *f);
 
 CLASS_END(Emu)
-
 
 void EmuCreate(Emu *self, char *name);
 void EmuDestroy(Emu *self);
@@ -67,6 +64,4 @@ void EmuDump(Object *self, FILE *f);
  * invoked by the child. */
 void EmuDumpSummary(Emu *self, FILE *f);
 
-
 #endif
-

@@ -17,27 +17,21 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #ifndef VISUAL_SOUTHERN_ISLANDS_GPU_H
 #define VISUAL_SOUTHERN_ISLANDS_GPU_H
 
-
 struct list_t;
 
-struct vi_si_gpu_t
-{
-	struct list_t *compute_unit_list;
+struct vi_si_gpu_t {
+  struct list_t *compute_unit_list;
 
-	/* True if the trace contains the Southern Islands GPU */
-	int active;
+  /* True if the trace contains the Southern Islands GPU */
+  int active;
 };
-
 
 extern struct vi_si_gpu_t *vi_si_gpu;
 
 void vi_si_gpu_init(void);
 void vi_si_gpu_done(void);
 
-
 #endif
-

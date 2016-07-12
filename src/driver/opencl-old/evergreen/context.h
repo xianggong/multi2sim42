@@ -20,14 +20,12 @@
 #ifndef ARCH_EVERGREEN_EMU_OPENCL_CONTEXT_H
 #define ARCH_EVERGREEN_EMU_OPENCL_CONTEXT_H
 
+struct evg_opencl_context_t {
+  unsigned int id;
+  int ref_count;
 
-struct evg_opencl_context_t
-{
-	unsigned int id;
-	int ref_count;
-
-	unsigned int platform_id;
-	unsigned int device_id;
+  unsigned int platform_id;
+  unsigned int device_id;
 };
 
 struct evg_opencl_context_t *evg_opencl_context_create(void);
@@ -35,10 +33,9 @@ void evg_opencl_context_free(struct evg_opencl_context_t *context);
 
 struct mem_t;
 unsigned int evg_opencl_context_get_info(struct evg_opencl_context_t *context,
-	unsigned int name, struct mem_t *mem, unsigned int addr, unsigned int size);
+                                         unsigned int name, struct mem_t *mem,
+                                         unsigned int addr, unsigned int size);
 void evg_opencl_context_set_properties(struct evg_opencl_context_t *context,
-	struct mem_t *mem, unsigned int addr);
-
+                                       struct mem_t *mem, unsigned int addr);
 
 #endif
-

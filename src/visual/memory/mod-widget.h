@@ -22,7 +22,6 @@
 
 #include <gtk/gtk.h>
 
-
 struct vi_mod_widget_t;
 
 struct vi_mod_widget_t *vi_mod_widget_create(char *name);
@@ -32,6 +31,4 @@ void vi_mod_widget_refresh(struct vi_mod_widget_t *visual_mod_widget);
 
 GtkWidget *vi_mod_widget_get_widget(struct vi_mod_widget_t *widget);
 
-
 #endif
-

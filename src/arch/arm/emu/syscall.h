@@ -20,12 +20,12 @@
 #ifndef ARCH_ARM_EMU_SYSCALL_H
 #define ARCH_ARM_EMU_SYSCALL_H
 
-
 #define ARM_set_tls 0xF0005
 #define ARM_exit_group 248
 
 #define arm_sys_debug(...) debug(arm_sys_debug_category, __VA_ARGS__)
-#define arm_sys_debug_buffer(...) debug_buffer(arm_sys_debug_category, __VA_ARGS__)
+#define arm_sys_debug_buffer(...) \
+  debug_buffer(arm_sys_debug_category, __VA_ARGS__)
 extern int arm_sys_debug_category;
 
 void arm_sys_init(void);
@@ -33,8 +33,4 @@ void arm_sys_done(void);
 
 void arm_sys_call(struct arm_ctx_t *ctx);
 
-
-
-
 #endif
-

@@ -20,7 +20,6 @@
 #ifndef MEM_SYSTEM_NMOESI_PROTOCOL_H
 #define MEM_SYSTEM_NMOESI_PROTOCOL_H
 
-
 /* NMOESI Event-Driven Simulation */
 
 extern int EV_MOD_NMOESI_LOAD;
@@ -103,7 +102,6 @@ extern int EV_MOD_NMOESI_MESSAGE_ACTION;
 extern int EV_MOD_NMOESI_MESSAGE_REPLY;
 extern int EV_MOD_NMOESI_MESSAGE_FINISH;
 
-
 void mod_handler_nmoesi_find_and_lock(int event, void *data);
 void mod_handler_nmoesi_load(int event, void *data);
 void mod_handler_nmoesi_store(int event, void *data);
@@ -116,6 +114,4 @@ void mod_handler_nmoesi_invalidate(int event, void *data);
 void mod_handler_nmoesi_peer(int event, void *data);
 void mod_handler_nmoesi_message(int event, void *data);
 
-
 #endif
-

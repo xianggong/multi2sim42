@@ -31,54 +31,46 @@
 #include "trace-cache.h"
 #include "uop-queue.h"
 
-
 /*
  * Class 'X86Thread'
  */
 
 CLASS_IMPLEMENTATION(X86Thread);
 
-void X86ThreadCreate(X86Thread *self, X86Core *core)
-{
-	/* Initialize */
-	self->core = core;
-	self->cpu = core->cpu;
+void X86ThreadCreate(X86Thread *self, X86Core *core) {
+  /* Initialize */
+  self->core = core;
+  self->cpu = core->cpu;
 
-	/* Structures */
-	X86ThreadInitUopQueue(self);
-	X86ThreadInitLSQ(self);
-	X86ThreadInitIQ(self);
-	X86ThreadInitRegFile(self);
-	X86ThreadInitFetchQueue(self);
-	X86ThreadInitBranchPred(self);
-	X86ThreadInitTraceCache(self);
+  /* Structures */
+  X86ThreadInitUopQueue(self);
+  X86ThreadInitLSQ(self);
+  X86ThreadInitIQ(self);
+  X86ThreadInitRegFile(self);
+  X86ThreadInitFetchQueue(self);
+  X86ThreadInitBranchPred(self);
+  X86ThreadInitTraceCache(self);
 }
 
+void X86ThreadDestroy(X86Thread *self) {
+  /* Structures */
+  X86ThreadFreeUopQueue(self);
+  X86ThreadFreeLSQ(self);
+  X86ThreadFreeIQ(self);
+  X86ThreadFreeRegFile(self);
+  X86ThreadFreeFetchQueue(self);
+  X86ThreadFreeBranchPred(self);
+  X86ThreadFreeTraceCache(self);
 
-void X86ThreadDestroy(X86Thread *self)
-{
-	/* Structures */
-	X86ThreadFreeUopQueue(self);
-	X86ThreadFreeLSQ(self);
-	X86ThreadFreeIQ(self);
-	X86ThreadFreeRegFile(self);
-	X86ThreadFreeFetchQueue(self);
-	X86ThreadFreeBranchPred(self);
-	X86ThreadFreeTraceCache(self);
-
-	/* Finalize */
-	self->name = str_free(self->name);
+  /* Finalize */
+  self->name = str_free(self->name);
 }
 
-
-void X86ThreadSetName(X86Thread *self, char *name)
-{
-	self->name = str_set(self->name, name);
+void X86ThreadSetName(X86Thread *self, char *name) {
+  self->name = str_set(self->name, name);
 }
 
-
-int X86ThreadIsPipelineEmpty(X86Thread *self)
-{
-	return !self->rob_count && !self->fetch_queue->count &&
-			!self->uop_queue->count;
+int X86ThreadIsPipelineEmpty(X86Thread *self) {
+  return !self->rob_count && !self->fetch_queue->count &&
+         !self->uop_queue->count;
 }

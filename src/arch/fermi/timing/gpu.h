@@ -22,7 +22,6 @@
 
 #include <arch/common/timing.h>
 
-
 /* Trace */
 #define frm_tracing() trace_status(frm_trace_category)
 #define frm_trace(...) trace(frm_trace_category, __VA_ARGS__)
@@ -101,11 +100,10 @@ extern unsigned int frm_gpu_platform;
 
 extern unsigned int frm_gpu_register_alloc_size;
 extern struct str_map_t frm_gpu_register_alloc_granularity_map;
-extern enum frm_gpu_register_alloc_granularity_t
-{
-	frm_gpu_register_alloc_invalid = 0,  /* For invalid user input */
-	frm_gpu_register_alloc_warp,
-	frm_gpu_register_alloc_thread_block
+extern enum frm_gpu_register_alloc_granularity_t {
+  frm_gpu_register_alloc_invalid = 0, /* For invalid user input */
+  frm_gpu_register_alloc_warp,
+  frm_gpu_register_alloc_thread_block
 } frm_gpu_register_alloc_granularity;
 
 /* User configurable options */
@@ -187,13 +185,14 @@ extern int frm_gpu_lds_block_size;
 extern int frm_gpu_lds_num_ports;
 
 #define FRM_GPU_FOREACH_SM(SM_ID) \
-	for ((SM_ID) = 0; (SM_ID) < frm_gpu_num_sms; (SM_ID)++)
+  for ((SM_ID) = 0; (SM_ID) < frm_gpu_num_sms; (SM_ID)++)
 
-#define FRM_GPU_FOREACH_THREAD_IN_SUBWARP(WARP, SUBWARP_ID, THREAD_ID) \
-	for ((THREAD_ID) = (WARP)->thread_id_first + (SUBWARP_ID) * frm_gpu_num_sps; \
-		(THREAD_ID) <= MIN((WARP)->thread_id_first + ((SUBWARP_ID) + 1) \
-			* frm_gpu_num_sps - 1, (WARP)->thread_id_last); \
-		(THREAD_ID)++)
+#define FRM_GPU_FOREACH_THREAD_IN_SUBWARP(WARP, SUBWARP_ID, THREAD_ID)       \
+  for ((THREAD_ID) = (WARP)->thread_id_first + (SUBWARP_ID)*frm_gpu_num_sps; \
+       (THREAD_ID) <= MIN((WARP)->thread_id_first +                          \
+                              ((SUBWARP_ID) + 1) * frm_gpu_num_sps - 1,      \
+                          (WARP)->thread_id_last);                           \
+       (THREAD_ID)++)
 
 /* Forward declaration */
 struct frm_uop_t;
@@ -204,34 +203,31 @@ struct frm_branch_unit_t;
 struct frm_vector_mem_unit_t;
 struct frm_lds_t;
 
-
-
 /*
  * Class 'FrmGpu
  */
 
 CLASS_BEGIN(FrmGpu, Timing)
 
-	/* Grids */
-	struct frm_grid_t *grid;
-	int thread_blocks_per_sm;
-	int warps_per_sm;
-	int threads_per_sm;
+/* Grids */
+struct frm_grid_t *grid;
+int thread_blocks_per_sm;
+int warps_per_sm;
+int threads_per_sm;
 
-	/* Streaming multiprocessors */
-	struct frm_sm_t **sms;
+/* Streaming multiprocessors */
+struct frm_sm_t **sms;
 
-	/* Lists */
-	struct list_t *sm_ready_list;
-	struct list_t *sm_busy_list;
+/* Lists */
+struct list_t *sm_ready_list;
+struct list_t *sm_busy_list;
 
-	/* List of deleted instructions */
-	struct linked_list_t *trash_uop_list;
+/* List of deleted instructions */
+struct linked_list_t *trash_uop_list;
 
-	long long int last_complete_cycle;
+long long int last_complete_cycle;
 
 CLASS_END(FrmGpu)
-
 
 void FrmGpuCreate(FrmGpu *self);
 void FrmGpuDestroy(FrmGpu *self);
@@ -240,9 +236,6 @@ void FrmGpuDump(Object *self, FILE *f);
 void FrmGpuDumpSummary(Timing *self, FILE *f);
 
 int FrmGpuRun(Timing *self);
-
-
-
 
 /*
  * Public Functions
@@ -272,4 +265,3 @@ void frm_vector_mem_run(struct frm_vector_mem_unit_t *vector_mem);
 void frm_lds_run(struct frm_lds_t *lds);
 
 #endif
-
