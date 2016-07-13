@@ -217,6 +217,11 @@ void si_vector_mem_mem(struct si_vector_mem_unit_t *vector_mem) {
       fatal("%s: invalid access kind", __FUNCTION__);
 
     /* Access global memory */
+    // int c_access =
+    //     mod_num_active_accesses(vector_mem->compute_unit->vector_cache);
+    // if (vector_mem->compute_unit->id == 0)
+    //   printf("%lld mem_acc_active = %d\n", asTiming(si_gpu)->cycle, c_access);
+
     assert(!uop->global_mem_witness);
     SI_FOREACH_WORK_ITEM_IN_WAVEFRONT(uop->wavefront, work_item_id) {
       work_item = uop->wavefront->work_items[work_item_id];

@@ -158,6 +158,18 @@ int mod_can_access(struct mod_t *mod, unsigned int addr) {
   return non_coalesced_accesses < mod->mshr_size;
 }
 
+/* Return count of active accesses */
+int mod_num_active_accesses(struct mod_t *mod) {
+  int non_coalesced_accesses;
+
+  /* Module can be accessed if number of non-coalesced in-flight
+   * accesses is smaller than the MSHR size. */
+  non_coalesced_accesses =
+      mod->access_list_count - mod->access_list_coalesced_count;
+  return non_coalesced_accesses;
+}
+
+
 /* Return {set, way, tag, state} for an address.
  * The function returns TRUE on hit, FALSE on miss. */
 int mod_find_block(struct mod_t *mod, unsigned int addr, int *set_ptr,

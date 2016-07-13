@@ -168,12 +168,17 @@ struct si_work_group_t *si_work_group_create(unsigned int work_group_id,
     wavefront->pc = 0;
 
     /* Set PC */
-
-    if (wavefront->work_group->id < ndrange->group_count / 2) {
+    float ratio_val = 0.5f;
+    char *ratio = getenv("M2S_MIX_RATIO");
+    if (ratio)
+       ratio_val = atof(ratio);
+    if (wavefront->work_group->id < (int)(ndrange->group_count * ratio_val)) {
       unsigned pc = si_ndrange_get_second_pc(ndrange);
       wavefront->pc = pc;
     }
-    printf("wg = %d, pc = %d\n", wavefront->work_group->id, wavefront->pc);
+
+    printf("wg[%d] wf[%d] pc = %d\n", 
+      wavefront->work_group->id, wavefront_id, wavefront->pc);
 
     /* Save work-group IDs in scalar registers */
     wavefront->sreg[ndrange->wg_id_sgpr].as_int =

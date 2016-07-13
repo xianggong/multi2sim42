@@ -1145,8 +1145,18 @@ void si_compute_unit_run(struct si_compute_unit_t *compute_unit) {
   if (!compute_unit->work_group_count) return;
 
   /* Fetch buffer chosen to issue this cycle */
+  char *stride = getenv("M2S_FETCH_STRIDE");
+  int stride_val = 1;
+  if (stride)
+     stride_val = atoi(stride);
+  if (!stride_val)
+    stride_val = 1;
+
   active_fetch_buffer =
-      asTiming(si_gpu)->cycle % compute_unit->num_wavefront_pools;
+    (asTiming(si_gpu)->cycle / stride_val) % compute_unit->num_wavefront_pools;
+
+  // if (compute_unit->id == 0)
+  //   printf("%lld: active_fb %d\n", asTiming(si_gpu)->cycle, active_fetch_buffer);
 
   assert(active_fetch_buffer >= 0 &&
          active_fetch_buffer < compute_unit->num_wavefront_pools);
