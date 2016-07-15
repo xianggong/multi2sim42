@@ -28,6 +28,9 @@
 #include "work-group.h"
 #include "work-item.h"
 
+/* Declaration */
+static int uniform_distribution(int rangeLow, int rangeHigh);
+
 /*
  * Public Functions
  */
@@ -167,18 +170,57 @@ struct si_work_group_t *si_work_group_create(unsigned int work_group_id,
 
     wavefront->pc = 0;
 
-    /* Set PC */
+    /* Get mix ratio */
     float ratio_val = 0.5f;
     char *ratio = getenv("M2S_MIX_RATIO");
-    if (ratio)
-       ratio_val = atof(ratio);
-    if (wavefront->work_group->id < (int)(ndrange->group_count * ratio_val)) {
-      unsigned pc = si_ndrange_get_second_pc(ndrange);
-      wavefront->pc = pc;
+    if (ratio) ratio_val = atof(ratio);
+
+    /* Get mix pattern */
+    int pattern_val = 0;
+    char *pattern = getenv("M2S_MIX_PATTERN");
+    if (pattern) pattern_val = atoi(pattern);
+
+    /* Set PC */
+    switch (pattern_val) {
+      // Default pattern: greater than
+      case 0:
+        if (wavefront->work_group->id >=
+            (int)(ndrange->group_count * ratio_val)) {
+          unsigned pc = si_ndrange_get_second_pc(ndrange);
+          wavefront->pc = pc;
+        }
+        break;
+      // Reverse pattern: less than
+      case 1:
+        if (wavefront->work_group->id <=
+            (int)(ndrange->group_count * ratio_val)) {
+          unsigned pc = si_ndrange_get_second_pc(ndrange);
+          wavefront->pc = pc;
+        }
+        break;
+      // Random pattern: random
+      case 2: {
+        int low = 0;
+        int high = 100;
+        int threshold = (int)((high - low) * ratio_val);
+        int r_val = uniform_distribution(low, high);
+        if (r_val <= threshold) {
+          unsigned pc = si_ndrange_get_second_pc(ndrange);
+          wavefront->pc = pc;
+        }
+      } break;
+      // Default to greater than
+      default:
+        if (wavefront->work_group->id >
+            (int)(ndrange->group_count * ratio_val)) {
+          unsigned pc = si_ndrange_get_second_pc(ndrange);
+          wavefront->pc = pc;
+        }
+        break;
     }
 
-    printf("wg[%d] wf[%d] pc = %d\n", 
-      wavefront->work_group->id, wavefront_id, wavefront->pc);
+    printf("wg[%d] wf[%d] pc = %d\n", wavefront->work_group->id, wavefront_id,
+           wavefront->pc);
 
     /* Save work-group IDs in scalar registers */
     wavefront->sreg[ndrange->wg_id_sgpr].as_int =
@@ -290,4 +332,18 @@ void si_work_group_free(struct si_work_group_t *work_group) {
   memset(work_group, 0, sizeof(struct si_work_group_t));
   free(work_group);
   work_group = NULL;
+}
+
+static int uniform_distribution(int rangeLow, int rangeHigh) {
+  int range =
+      rangeHigh - rangeLow + 1;  //+1 makes it [rangeLow, rangeHigh], inclusive.
+  int copies =
+      RAND_MAX / range;  // we can fit n-copies of [0...range-1] into RAND_MAX
+  // Use rejection sampling to avoid distribution errors
+  int limit = range * copies;
+  int myRand = -1;
+  while (myRand < 0 || myRand >= limit) {
+    myRand = rand();
+  }
+  return myRand / copies + rangeLow;  // note that this involves the high-bits
 }

@@ -1046,8 +1046,7 @@ void si_compute_unit_issue_first(struct si_compute_unit_t *compute_unit,
 
       /* Vector memory */
       case SI_FMT_MTBUF: {
-        /* Stall if max vector memory instructions already
-         * issued */
+        /* Stall if max vector memory instructions already issued */
         assert(mem_insts_issued <= si_gpu_fe_max_inst_issued_per_type);
         if (mem_insts_issued == si_gpu_fe_max_inst_issued_per_type) {
           si_trace(
@@ -1147,16 +1146,15 @@ void si_compute_unit_run(struct si_compute_unit_t *compute_unit) {
   /* Fetch buffer chosen to issue this cycle */
   char *stride = getenv("M2S_FETCH_STRIDE");
   int stride_val = 1;
-  if (stride)
-     stride_val = atoi(stride);
-  if (!stride_val)
-    stride_val = 1;
+  if (stride) stride_val = atoi(stride);
+  if (!stride_val) stride_val = 1;
 
-  active_fetch_buffer =
-    (asTiming(si_gpu)->cycle / stride_val) % compute_unit->num_wavefront_pools;
+  active_fetch_buffer = (asTiming(si_gpu)->cycle / stride_val) %
+                        compute_unit->num_wavefront_pools;
 
   // if (compute_unit->id == 0)
-  //   printf("%lld: active_fb %d\n", asTiming(si_gpu)->cycle, active_fetch_buffer);
+  //   printf("%lld: active_fb %d\n", asTiming(si_gpu)->cycle,
+  //   active_fetch_buffer);
 
   assert(active_fetch_buffer >= 0 &&
          active_fetch_buffer < compute_unit->num_wavefront_pools);

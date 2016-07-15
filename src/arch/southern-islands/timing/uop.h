@@ -38,6 +38,9 @@ struct si_work_item_uop_t {
   /* Flags */
   unsigned int active : 1; /* Active after instruction emulation */
 
+  /* Mark a work item that has successfully made a cache access */
+  int accessed_cache;
+
   /* LDS accesses */
   int lds_access_count;
   enum mod_access_kind_t lds_access_kind[SI_MAX_LDS_ACCESSES_PER_INST];

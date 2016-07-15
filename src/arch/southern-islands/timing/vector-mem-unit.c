@@ -22,6 +22,7 @@
 #include <lib/esim/trace.h>
 #include <lib/util/debug.h>
 #include <lib/util/list.h>
+#include <lib/util/misc.h>
 
 #include "compute-unit.h"
 #include "gpu.h"
@@ -220,18 +221,73 @@ void si_vector_mem_mem(struct si_vector_mem_unit_t *vector_mem) {
     // int c_access =
     //     mod_num_active_accesses(vector_mem->compute_unit->vector_cache);
     // if (vector_mem->compute_unit->id == 0)
-    //   printf("%lld mem_acc_active = %d\n", asTiming(si_gpu)->cycle, c_access);
+    //   printf("%lld mem_acc_active = %d\n", asTiming(si_gpu)->cycle,
+    //   c_access);
 
+    // This variable keeps track if any work items are unsuccessful
+    // in making an access to the vector cache.
+    // int all_work_items_accessed = TRUE;
+
+    // printf("%lld %d\n", uop->id, uop->global_mem_witness);
     assert(!uop->global_mem_witness);
+    // printf("init id=%lld cu=%d wf=%d uop_id=%lld witness=%d\n",
+    //        uop->id_in_compute_unit, vector_mem->compute_unit->id,
+    //        uop->wavefront->id, uop->id_in_wavefront, uop->global_mem_witness);
+
     SI_FOREACH_WORK_ITEM_IN_WAVEFRONT(uop->wavefront, work_item_id) {
       work_item = uop->wavefront->work_items[work_item_id];
       work_item_uop = &uop->work_item_uop[work_item->id_in_wavefront];
 
-      mod_access(vector_mem->compute_unit->vector_cache, access_kind,
-                 work_item_uop->global_mem_access_addr,
-                 &uop->global_mem_witness, NULL, NULL, NULL);
-      uop->global_mem_witness--;
+      // Check if the work item info struct has
+      // already made a successful vector cache
+      // access. If so, move on to the next work item.
+      // if (work_item_uop->accessed_cache) {
+      //   printf("accessed id=%lld cu=%d wf=%d uop_id=%lld witness=%d\n",
+      //          uop->id_in_compute_unit, vector_mem->compute_unit->id,
+      //          uop->wavefront->id, uop->id_in_wavefront,
+      //          uop->global_mem_witness);
+      //   continue;
+      // }
+
+      // Make sure we can access the vector cache. If
+      // so, submit the access. If we can access the
+      // cache, mark the accessed flag of the work
+      // item info struct.
+      // printf("# access=%d\n",
+      //        vector_mem->compute_unit->vector_cache->access_list_count -
+      //            vector_mem->compute_unit->vector_cache
+      //                ->access_list_coalesced_count);
+      // if (mod_can_access(vector_mem->compute_unit->vector_cache,
+      //                    work_item_uop->global_mem_access_addr)) {
+      //   printf("access id=%lld cu=%d wf=%d uop_id=%lld witness=%d\n",
+      //          uop->id_in_compute_unit, vector_mem->compute_unit->id,
+      //          uop->wavefront->id, uop->id_in_wavefront,
+      //          uop->global_mem_witness);
+      //   work_item_uop->accessed_cache = TRUE;
+
+        mod_access(vector_mem->compute_unit->vector_cache, access_kind,
+                   work_item_uop->global_mem_access_addr,
+                   &uop->global_mem_witness, NULL, NULL, NULL);
+        uop->global_mem_witness--;
+      // } else {
+      //   all_work_items_accessed = FALSE;
+      //   printf("no access id=%lld cu=%d wf=%d uop_id=%lld witness=%d\n",
+      //          uop->id_in_compute_unit, vector_mem->compute_unit->id,
+      //          uop->wavefront->id, uop->id_in_wavefront,
+      //          uop->global_mem_witness);
+      // }
     }
+    // printf("%lld %d\n", uop->id, uop->global_mem_witness);
+
+    // Make sure that all the work items in the wavefront have
+    // successfully accessed the vector cache. If not, the uop
+    // is not moved to the write buffer. Instead, the uop will
+    // be re-processed next cycle. Once all work items access
+    // the vector cache, the uop will be moved to the write buffer.
+    // if (!all_work_items_accessed) {
+    //   list_index++;
+    //   continue;
+    // }
 
     if (si_spatial_report_active) {
       if (uop->vector_mem_write) {

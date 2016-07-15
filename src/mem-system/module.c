@@ -169,7 +169,6 @@ int mod_num_active_accesses(struct mod_t *mod) {
   return non_coalesced_accesses;
 }
 
-
 /* Return {set, way, tag, state} for an address.
  * The function returns TRUE on hit, FALSE on miss. */
 int mod_find_block(struct mod_t *mod, unsigned int addr, int *set_ptr,
