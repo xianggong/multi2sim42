@@ -39,7 +39,7 @@ struct si_work_item_uop_t {
   unsigned int active : 1; /* Active after instruction emulation */
 
   /* Mark a work item that has successfully made a cache access */
-  int accessed_cache;
+  unsigned int accessed_cache;
 
   /* LDS accesses */
   int lds_access_count;
