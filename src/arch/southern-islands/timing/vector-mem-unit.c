@@ -152,8 +152,7 @@ void si_vector_mem_write(struct si_vector_mem_unit_t *vector_mem) {
   }
 }
 
-void si_vector_mem_mem(struct si_vector_mem_unit_t *vector_mem)
-{
+void si_vector_mem_mem(struct si_vector_mem_unit_t *vector_mem) {
   struct si_uop_t *uop;
   struct si_work_item_uop_t *work_item_uop;
   struct si_work_item_t *work_item;
@@ -165,47 +164,45 @@ void si_vector_mem_mem(struct si_vector_mem_unit_t *vector_mem)
   int list_index = 0;
 
   list_entries = list_count(vector_mem->read_buffer);
-  
+
   /* Sanity check the read buffer */
   assert(list_entries <= si_gpu_vector_mem_read_buffer_size);
 
-  for (i = 0; i < list_entries; i++)
-  {
+  for (i = 0; i < list_entries; i++) {
     uop = list_get(vector_mem->read_buffer, list_index);
     assert(uop);
 
     instructions_processed++;
 
     /* Uop is not ready yet */
-    if (asTiming(si_gpu)->cycle < uop->read_ready)
-    {
+    if (asTiming(si_gpu)->cycle < uop->read_ready) {
       list_index++;
       continue;
     }
 
     /* Stall if the width has been reached. */
-    if (instructions_processed > si_gpu_vector_mem_width)
-    {
-      si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-        "stg=\"s\"\n", uop->id_in_compute_unit, 
-        vector_mem->compute_unit->id, 
-        uop->wavefront->id, uop->id_in_wavefront);
+    if (instructions_processed > si_gpu_vector_mem_width) {
+      si_trace(
+          "si.inst id=%lld cu=%d wf=%d uop_id=%lld "
+          "stg=\"s\"\n",
+          uop->id_in_compute_unit, vector_mem->compute_unit->id,
+          uop->wavefront->id, uop->id_in_wavefront);
       list_index++;
       continue;
     }
 
     /* Sanity check mem buffer */
-    assert(list_count(vector_mem->mem_buffer) <= 
-      si_gpu_vector_mem_max_inflight_mem_accesses);
+    assert(list_count(vector_mem->mem_buffer) <=
+           si_gpu_vector_mem_max_inflight_mem_accesses);
 
     /* Stall if there is not room in the memory buffer */
-    if (list_count(vector_mem->mem_buffer) == 
-      si_gpu_vector_mem_max_inflight_mem_accesses)
-    {
-      si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-        "stg=\"s\"\n", uop->id_in_compute_unit, 
-        vector_mem->compute_unit->id, 
-        uop->wavefront->id, uop->id_in_wavefront);
+    if (list_count(vector_mem->mem_buffer) ==
+        si_gpu_vector_mem_max_inflight_mem_accesses) {
+      si_trace(
+          "si.inst id=%lld cu=%d wf=%d uop_id=%lld "
+          "stg=\"s\"\n",
+          uop->id_in_compute_unit, vector_mem->compute_unit->id,
+          uop->wavefront->id, uop->id_in_wavefront);
       list_index++;
       continue;
     }
@@ -217,41 +214,31 @@ void si_vector_mem_mem(struct si_vector_mem_unit_t *vector_mem)
       access_kind = mod_access_store;
     else if (uop->vector_mem_read)
       access_kind = mod_access_load;
-    else 
+    else
       fatal("%s: invalid access kind", __FUNCTION__);
 
     /* Access global memory */
     assert(!uop->global_mem_witness);
-    SI_FOREACH_WORK_ITEM_IN_WAVEFRONT(uop->wavefront, work_item_id)
-    {
+    SI_FOREACH_WORK_ITEM_IN_WAVEFRONT(uop->wavefront, work_item_id) {
       work_item = uop->wavefront->work_items[work_item_id];
-      work_item_uop = 
-        &uop->work_item_uop[work_item->id_in_wavefront];
+      work_item_uop = &uop->work_item_uop[work_item->id_in_wavefront];
 
-      mod_access(vector_mem->compute_unit->vector_cache, 
-        access_kind, 
-        work_item_uop->global_mem_access_addr,
-        &uop->global_mem_witness, NULL, NULL, NULL);
+      mod_access(vector_mem->compute_unit->vector_cache, access_kind,
+                 work_item_uop->global_mem_access_addr,
+                 &uop->global_mem_witness, NULL, NULL, NULL);
       uop->global_mem_witness--;
     }
 
-    if(si_spatial_report_active)
-    {
-      if (uop->vector_mem_write)
-      {
-        uop->num_global_mem_write += 
-          uop->global_mem_witness;
+    if (si_spatial_report_active) {
+      if (uop->vector_mem_write) {
+        uop->num_global_mem_write += uop->global_mem_witness;
         si_report_global_mem_inflight(uop->compute_unit,
-            uop->num_global_mem_write);
-      }
-      else if (uop->vector_mem_read)
-      {
-        uop->num_global_mem_read += 
-          uop->global_mem_witness;
+                                      uop->num_global_mem_write);
+      } else if (uop->vector_mem_read) {
+        uop->num_global_mem_read += uop->global_mem_witness;
         si_report_global_mem_inflight(uop->compute_unit,
-            uop->num_global_mem_read);
-      }
-      else
+                                      uop->num_global_mem_read);
+      } else
         fatal("%s: invalid access kind", __FUNCTION__);
     }
 
@@ -259,10 +246,11 @@ void si_vector_mem_mem(struct si_vector_mem_unit_t *vector_mem)
     list_remove(vector_mem->read_buffer, uop);
     list_enqueue(vector_mem->mem_buffer, uop);
 
-    si_trace("si.inst id=%lld cu=%d wf=%d uop_id=%lld "
-      "stg=\"mem-m\"\n", uop->id_in_compute_unit, 
-      vector_mem->compute_unit->id, uop->wavefront->id, 
-      uop->id_in_wavefront);
+    si_trace(
+        "si.inst id=%lld cu=%d wf=%d uop_id=%lld "
+        "stg=\"mem-m\"\n",
+        uop->id_in_compute_unit, vector_mem->compute_unit->id,
+        uop->wavefront->id, uop->id_in_wavefront);
   }
 }
 
@@ -283,7 +271,6 @@ void si_vector_mem_mem_mshr_fix(struct si_vector_mem_unit_t *vector_mem) {
   assert(list_entries <= si_gpu_vector_mem_read_buffer_size);
 
   for (i = 0; i < list_entries; i++) {
-    printf("rd_buf_idx = %d\n", list_index);
     uop = list_get(vector_mem->read_buffer, list_index);
     assert(uop);
 
@@ -291,6 +278,12 @@ void si_vector_mem_mem_mshr_fix(struct si_vector_mem_unit_t *vector_mem) {
 
     /* Uop is not ready yet */
     if (asTiming(si_gpu)->cycle < uop->read_ready) {
+      list_index++;
+      continue;
+    }
+
+    // Uop is not ready yet
+    if (uop->global_mem_witness) {
       list_index++;
       continue;
     }
@@ -332,25 +325,11 @@ void si_vector_mem_mem_mshr_fix(struct si_vector_mem_unit_t *vector_mem) {
     else
       fatal("%s: invalid access kind", __FUNCTION__);
 
-    /* Access global memory */
-    // int c_access =
-    //     mod_num_active_accesses(vector_mem->compute_unit->vector_cache);
-    // if (vector_mem->compute_unit->id == 0)
-    //   printf("%lld mem_acc_active = %d\n", asTiming(si_gpu)->cycle,
-    //   c_access);
-
     // This variable keeps track if any work items are unsuccessful
     // in making an access to the vector cache.
     int all_work_items_accessed = TRUE;
 
-    printf("rd_buf_idx[%d] uop[%lld] glb_witness = %d\n", list_index, uop->id,
-           uop->global_mem_witness);
     assert(!uop->global_mem_witness);
-    // printf("init id=%lld cu=%d wf=%d uop_id=%lld witness=%d\n",
-    //        uop->id_in_compute_unit, vector_mem->compute_unit->id,
-    //        uop->wavefront->id, uop->id_in_wavefront,
-    //        uop->global_mem_witness);
-
     SI_FOREACH_WORK_ITEM_IN_WAVEFRONT(uop->wavefront, work_item_id) {
       work_item = uop->wavefront->work_items[work_item_id];
       work_item_uop = &uop->work_item_uop[work_item->id_in_wavefront];
@@ -359,10 +338,6 @@ void si_vector_mem_mem_mshr_fix(struct si_vector_mem_unit_t *vector_mem) {
       // already made a successful vector cache
       // access. If so, move on to the next work item.
       if (work_item_uop->accessed_cache) {
-        printf("accessed id=%lld cu=%d wf=%d uop_id=%lld witness=%d\n",
-               uop->id_in_compute_unit, vector_mem->compute_unit->id,
-               uop->wavefront->id, uop->id_in_wavefront,
-               uop->global_mem_witness);
         continue;
       }
 
@@ -370,16 +345,8 @@ void si_vector_mem_mem_mshr_fix(struct si_vector_mem_unit_t *vector_mem) {
       // so, submit the access. If we can access the
       // cache, mark the accessed flag of the work
       // item info struct.
-      printf("# access=%d\n",
-             vector_mem->compute_unit->vector_cache->access_list_count -
-                 vector_mem->compute_unit->vector_cache
-                     ->access_list_coalesced_count);
       if (mod_can_access(vector_mem->compute_unit->vector_cache,
                          work_item_uop->global_mem_access_addr)) {
-        printf("access id=%lld cu=%d wf=%d uop_id=%lld witness=%d\n",
-               uop->id_in_compute_unit, vector_mem->compute_unit->id,
-               uop->wavefront->id, uop->id_in_wavefront,
-               uop->global_mem_witness);
         work_item_uop->accessed_cache = TRUE;
         mod_access(vector_mem->compute_unit->vector_cache, access_kind,
                    work_item_uop->global_mem_access_addr,
@@ -387,10 +354,6 @@ void si_vector_mem_mem_mshr_fix(struct si_vector_mem_unit_t *vector_mem) {
         uop->global_mem_witness--;
       } else {
         all_work_items_accessed = FALSE;
-        printf("no access id=%lld cu=%d wf=%d uop_id=%lld witness=%d\n",
-               uop->id_in_compute_unit, vector_mem->compute_unit->id,
-               uop->wavefront->id, uop->id_in_wavefront,
-               uop->global_mem_witness);
       }
     }
 
