@@ -577,7 +577,7 @@ static struct mod_t *mem_config_read_cache(struct config_t *config,
   latency = config_read_int(config, buf, "Latency", 1);
   dir_latency = config_read_int(config, buf, "DirectoryLatency", 1);
   policy_str = config_read_string(config, buf, "Policy", "LRU");
-  mshr_size = config_read_int(config, buf, "MSHR", 16);
+  mshr_size = config_read_int(config, buf, "MSHR", 128);
   num_ports = config_read_int(config, buf, "Ports", 2);
   enable_prefetcher = config_read_bool(config, buf, "EnablePrefetcher", 0);
   prefetcher_type_str =
