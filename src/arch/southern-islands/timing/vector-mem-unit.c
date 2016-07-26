@@ -523,7 +523,7 @@ void si_vector_mem_decode(struct si_vector_mem_unit_t *vector_mem) {
 
 void si_vector_mem_run(struct si_vector_mem_unit_t *vector_mem) {
   char *mshr_fix = getenv("M2S_MSHR_FIX");
-  int mshr_fix_val = 0;
+  int mshr_fix_val = 1;
   if (mshr_fix) mshr_fix_val = atoi(mshr_fix);
 
   /* Local Data Share stages */

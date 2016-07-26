@@ -1152,6 +1152,20 @@ void si_compute_unit_run(struct si_compute_unit_t *compute_unit) {
   active_fetch_buffer = (asTiming(si_gpu)->cycle / stride_val) %
                         compute_unit->num_wavefront_pools;
 
+  /* Dump mshr info */
+  int num_mshr = mod_num_mshr_in_use(compute_unit->vector_cache);
+  int num_locked_ports = compute_unit->vector_cache->num_locked_ports;
+  int num_ports = compute_unit->vector_cache->num_ports;
+  if (num_locked_ports != num_ports) {
+    si_trace("si.mshr_a cu=%d, mshr=%d/%d, ports=%d/%d\n", compute_unit->id,
+             num_mshr, compute_unit->vector_cache->mshr_size, num_locked_ports,
+             num_ports);
+  } else {
+    si_trace("si.mshr_s cu=%d, mshr=%d/%d, ports=%d/%d\n", compute_unit->id,
+             num_mshr, compute_unit->vector_cache->mshr_size, num_locked_ports,
+             num_ports);
+  }
+
   assert(active_fetch_buffer >= 0 &&
          active_fetch_buffer < compute_unit->num_wavefront_pools);
 

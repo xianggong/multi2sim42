@@ -272,4 +272,5 @@ struct mod_client_info_t *mod_client_info_create(struct mod_t *mod);
 void mod_client_info_free(struct mod_t *mod,
                           struct mod_client_info_t *client_info);
 
+int mod_num_mshr_in_use(struct mod_t *mod);
 #endif

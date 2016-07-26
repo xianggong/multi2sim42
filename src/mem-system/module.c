@@ -609,3 +609,8 @@ void mod_client_info_free(struct mod_t *mod,
                           struct mod_client_info_t *client_info) {
   repos_free_object(mod->client_info_repos, client_info);
 }
+
+int mod_num_mshr_in_use(struct mod_t *mod) {
+  /* Number of MSHR in use*/
+  return mod->access_list_count - mod->access_list_coalesced_count;
+}
