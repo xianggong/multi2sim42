@@ -1152,10 +1152,6 @@ void si_compute_unit_run(struct si_compute_unit_t *compute_unit) {
   active_fetch_buffer = (asTiming(si_gpu)->cycle / stride_val) %
                         compute_unit->num_wavefront_pools;
 
-  // if (compute_unit->id == 0)
-  //   printf("%lld: active_fb %d\n", asTiming(si_gpu)->cycle,
-  //   active_fetch_buffer);
-
   assert(active_fetch_buffer >= 0 &&
          active_fetch_buffer < compute_unit->num_wavefront_pools);
 

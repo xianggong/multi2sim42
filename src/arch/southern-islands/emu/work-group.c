@@ -209,6 +209,17 @@ struct si_work_group_t *si_work_group_create(unsigned int work_group_id,
           wavefront->pc = pc;
         }
       } break;
+      case 3: {
+        /* Get # of CU */
+        int num_cu_val = 32;
+        char *num_cu = getenv("M2S_NUM_CU");
+        if (num_cu) num_cu_val = atoi(num_cu);
+        if ((wavefront->work_group->id / num_cu_val) % 2) {
+          unsigned pc = si_ndrange_get_second_pc(ndrange);
+          wavefront->pc = pc;
+        }
+        break;
+      }
       // Default to greater than
       default:
         if (wavefront->work_group->id >
