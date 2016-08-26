@@ -115,5 +115,6 @@ void si_wavefront_pool_map_wavefronts(
 void si_wavefront_pool_unmap_wavefronts(
     struct si_wavefront_pool_t *wavefront_pool,
     struct si_work_group_t *work_group);
-
+void si_set_init_pc(struct si_compute_unit_t *compute_unit,
+                    struct si_work_group_t *work_group);
 #endif

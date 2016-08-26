@@ -223,6 +223,162 @@ void si_compute_unit_free(struct si_compute_unit_t *compute_unit) {
   free(compute_unit);
 }
 
+/* Declaration */
+static int uniform_distribution(int rangeLow, int rangeHigh);
+
+static int uniform_distribution(int rangeLow, int rangeHigh) {
+  int range =
+      rangeHigh - rangeLow + 1;  //+1 makes it [rangeLow, rangeHigh], inclusive.
+  int copies =
+      RAND_MAX / range;  // we can fit n-copies of [0...range-1] into RAND_MAX
+  // Use rejection sampling to avoid distribution errors
+  int limit = range * copies;
+  int myRand = -1;
+  while (myRand < 0 || myRand >= limit) {
+    myRand = rand();
+  }
+  return myRand / copies + rangeLow;  // note that this involves the high-bits
+}
+
+void si_set_init_pc(struct si_compute_unit_t *compute_unit,
+                    struct si_work_group_t *work_group) {
+  struct si_ndrange_t *ndrange;
+  struct si_wavefront_t *wavefront;
+  int wavefront_id;
+  // int num_wf;
+  // int num_wg;
+  int low;
+  int high;
+
+  /* Get mix granularity */
+  int granularity_val = 0;
+  char *granularity = getenv("M2S_MIX_LEVEL");
+  if (granularity) granularity_val = atoi(granularity);
+
+  /* Get mix ratio */
+  float ratio_val = 0.5f;
+  char *ratio = getenv("M2S_MIX_RATIO");
+  if (ratio) ratio_val = atof(ratio);
+
+  /* Get mix pattern */
+  int pattern_val = 0;
+  char *pattern = getenv("M2S_MIX_PATTERN");
+  if (pattern) pattern_val = atoi(pattern);
+
+  ndrange = work_group->ndrange;
+  /* Intialize wavefront state */
+  SI_FOREACH_WAVEFRONT_IN_WORK_GROUP(work_group, wavefront_id) {
+    wavefront = work_group->wavefronts[wavefront_id];
+
+    wavefront->pc = 0;
+
+    // Default at work-group granularity
+    if (granularity_val == 0) {
+      /* Set PC */
+      switch (pattern_val) {
+        // Default pattern: greater than
+        case 0:
+          if (work_group->id > (int)(ndrange->group_count * ratio_val)) {
+            unsigned pc = si_ndrange_get_second_pc(ndrange);
+            wavefront->pc = pc;
+          }
+          break;
+        // Reverse pattern: less than
+        case 1:
+          if (work_group->id < (int)(ndrange->group_count * ratio_val)) {
+            unsigned pc = si_ndrange_get_second_pc(ndrange);
+            wavefront->pc = pc;
+          }
+          break;
+        // Random pattern: random
+        case 2:
+          low = 0;
+          high = 100;
+          int threshold = (int)((high - low) * ratio_val);
+          int r_val = uniform_distribution(low, high);
+          if (r_val <= threshold) {
+            unsigned pc = si_ndrange_get_second_pc(ndrange);
+            wavefront->pc = pc;
+          }
+          break;
+        // Round-robin
+        case 3:
+          // num_wg = (int)(ndrange->group_count * ratio_val);
+          // printf("num_wg = %d\n", num_wg);
+          if (work_group->id_in_compute_unit % 2) {
+            unsigned pc = si_ndrange_get_second_pc(ndrange);
+            wavefront->pc = pc;
+          }
+
+          break;
+        // Default to greater than
+        default:
+          if (wavefront->work_group->id >
+              (int)(ndrange->group_count * ratio_val)) {
+            unsigned pc = si_ndrange_get_second_pc(ndrange);
+            wavefront->pc = pc;
+          }
+          break;
+      }
+    } else {
+      /* Set PC */
+      switch (pattern_val) {
+        // Default pattern: greater than
+        case 0:
+          if (wavefront->id >
+              (int)(compute_unit->wavefront_count * ratio_val)) {
+            unsigned pc = si_ndrange_get_second_pc(ndrange);
+            wavefront->pc = pc;
+          }
+          break;
+        // Reverse pattern: less than
+        case 1:
+          if (wavefront->id <
+              (int)(compute_unit->wavefront_count * ratio_val)) {
+            unsigned pc = si_ndrange_get_second_pc(ndrange);
+            wavefront->pc = pc;
+          }
+          break;
+        // Random pattern: random
+        case 2:
+          low = 0;
+          high = 100;
+          int threshold = (int)((high - low) * ratio_val);
+          int r_val = uniform_distribution(low, high);
+          if (r_val <= threshold) {
+            unsigned pc = si_ndrange_get_second_pc(ndrange);
+            wavefront->pc = pc;
+          }
+          break;
+        // Round-Robin
+        case 3: {
+          // printf("num_wf = %d\n",
+          //        ndrange->group_count * ndrange->local_size / 64);
+          // num_wf = ndrange->global_size / 64;
+          // if (wavefront->id < (int)(num_wf * ratio_val)) {
+          if (wavefront->id_in_compute_unit % 2) {
+            unsigned pc = si_ndrange_get_second_pc(ndrange);
+            wavefront->pc = pc;
+          }
+          // }
+          break;
+        }
+        // Default to greater than
+        default:
+          if (wavefront->id >=
+              (int)(wavefront->work_group->wavefront_count * ratio_val)) {
+            unsigned pc = si_ndrange_get_second_pc(ndrange);
+            wavefront->pc = pc;
+          }
+          break;
+      }
+    }
+
+    printf("cu[%d] wg[%d] wf[%d] pc = %d\n", compute_unit->id,
+           wavefront->work_group->id, wavefront->id, wavefront->pc);
+  }
+}
+
 void si_compute_unit_map_work_group(struct si_compute_unit_t *compute_unit,
                                     struct si_work_group_t *work_group) {
   struct si_wavefront_t *wavefront;
@@ -270,6 +426,9 @@ void si_compute_unit_map_work_group(struct si_compute_unit_t *compute_unit,
       compute_unit->id, work_group->id, work_group->work_items[0]->id,
       work_group->work_item_count, work_group->wavefronts[0]->id,
       work_group->wavefront_count);
+
+  /* Set PC */
+  si_set_init_pc(compute_unit, work_group);
 
   /* Stats */
   compute_unit->mapped_work_groups++;
