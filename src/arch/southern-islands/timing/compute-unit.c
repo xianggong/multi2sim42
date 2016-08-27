@@ -245,8 +245,10 @@ void si_set_init_pc(struct si_compute_unit_t *compute_unit,
   struct si_ndrange_t *ndrange;
   struct si_wavefront_t *wavefront;
   int wavefront_id;
-  // int num_wf;
-  // int num_wg;
+  int wf_count_per_cu;
+  int wf_stride;
+  int wg_count_per_cu;
+  int wg_stride;
   int low;
   int high;
 
@@ -266,6 +268,13 @@ void si_set_init_pc(struct si_compute_unit_t *compute_unit,
   if (pattern) pattern_val = atoi(pattern);
 
   ndrange = work_group->ndrange;
+
+  /* Calculate number of wavefront per CU */
+  wf_count_per_cu =
+      (int)(ndrange->global_size / (64 * si_gpu_num_compute_units));
+  wg_count_per_cu = (int)(ndrange->group_count / si_gpu_num_compute_units);
+  printf("%d wg/cu, %d wf/cu\n", wg_count_per_cu, wf_count_per_cu);
+
   /* Intialize wavefront state */
   SI_FOREACH_WAVEFRONT_IN_WORK_GROUP(work_group, wavefront_id) {
     wavefront = work_group->wavefronts[wavefront_id];
@@ -303,9 +312,9 @@ void si_set_init_pc(struct si_compute_unit_t *compute_unit,
           break;
         // Round-robin
         case 3:
-          // num_wg = (int)(ndrange->group_count * ratio_val);
-          // printf("num_wg = %d\n", num_wg);
-          if (work_group->id_in_compute_unit % 2) {
+          wg_stride = (int)(wg_count_per_cu * ratio_val / 2);
+          wg_stride = wg_stride < 1 ? 1 : wg_stride;
+          if ((work_group->id_in_compute_unit / wg_stride) % 2) {
             unsigned pc = si_ndrange_get_second_pc(ndrange);
             wavefront->pc = pc;
           }
@@ -325,16 +334,16 @@ void si_set_init_pc(struct si_compute_unit_t *compute_unit,
       switch (pattern_val) {
         // Default pattern: greater than
         case 0:
-          if (wavefront->id >
-              (int)(compute_unit->wavefront_count * ratio_val)) {
+          if (wavefront->id_in_compute_unit >
+              (int)(wf_count_per_cu * ratio_val)) {
             unsigned pc = si_ndrange_get_second_pc(ndrange);
             wavefront->pc = pc;
           }
           break;
         // Reverse pattern: less than
         case 1:
-          if (wavefront->id <
-              (int)(compute_unit->wavefront_count * ratio_val)) {
+          if (wavefront->id_in_compute_unit <
+              (int)(wf_count_per_cu * ratio_val)) {
             unsigned pc = si_ndrange_get_second_pc(ndrange);
             wavefront->pc = pc;
           }
@@ -352,11 +361,10 @@ void si_set_init_pc(struct si_compute_unit_t *compute_unit,
           break;
         // Round-Robin
         case 3: {
-          // printf("num_wf = %d\n",
-          //        ndrange->group_count * ndrange->local_size / 64);
-          // num_wf = ndrange->global_size / 64;
-          // if (wavefront->id < (int)(num_wf * ratio_val)) {
-          if (wavefront->id_in_compute_unit % 2) {
+          wf_stride = (int)(wf_count_per_cu * ratio_val / 2);
+          wf_stride = wf_stride < 1 ? 1 : wf_stride;
+          printf("wf_stride = %d\n", wf_stride);
+          if ((wavefront->id_in_compute_unit / wf_stride) % 2) {
             unsigned pc = si_ndrange_get_second_pc(ndrange);
             wavefront->pc = pc;
           }
@@ -422,7 +430,7 @@ void si_compute_unit_map_work_group(struct si_compute_unit_t *compute_unit,
 
   si_trace(
       "si.map_wg cu=%d wg=%d wi_first=%d wi_count=%d wf_first=%d "
-      "wf_count=%d\n",
+      "wf_count_per_cu=%d\n",
       compute_unit->id, work_group->id, work_group->work_items[0]->id,
       work_group->work_item_count, work_group->wavefronts[0]->id,
       work_group->wavefront_count);
