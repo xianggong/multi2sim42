@@ -556,6 +556,14 @@ DEFINST(V_MAX_F32,
 	0
 )
 
+DEFINST(V_MIN_I32,
+	" v_min_i32     %VDST, %SRC0, %VSRC1",
+	VOP2,
+	17,
+	4,
+	0
+)
+
 DEFINST(V_MAX_I32,
 	" v_max_i32     %VDST, %SRC0, %VSRC1",
 	VOP2,
@@ -653,10 +661,10 @@ DEFINST(V_MAC_F32,
 )
 
 DEFINST(V_MADMK_F32,
-	" v_madmk_f32   %VDST, %SRC0, %VOP2_LIT, %VSRC1",
+	" v_madmk_f32   %VDST, %SRC0, %VSRC1, %VOP2_LIT",
 	VOP2,
 	32,
-	8,
+	4,
 	0
 )
 
