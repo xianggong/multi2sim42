@@ -31,6 +31,8 @@ enum si2bin_token_type_t {
   si2bin_token_64_src2,
   si2bin_token_64_svdst,
   si2bin_token_64_vdst,
+  si2bin_token_vopc_64_src0,
+  si2bin_token_64_vsrc1,
   si2bin_token_label,
   si2bin_token_mt_maddr,
   si2bin_token_mt_series_vdata,

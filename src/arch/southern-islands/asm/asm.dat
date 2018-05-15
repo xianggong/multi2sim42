@@ -972,7 +972,7 @@ DEFINST(V_CMP_NEQ_F32,
 )
 
 DEFINST(V_CMP_LT_F64,
-	" v_cmp_lt_f64  vcc, %64_SRC0, %64_VSRC1",
+	" v_cmp_lt_f64  vcc, %VOPC_64_SRC0, %64_VSRC1",
 	VOPC,
 	33,
 	4,
@@ -980,7 +980,7 @@ DEFINST(V_CMP_LT_F64,
 )
 
 DEFINST(V_CMP_EQ_F64,
-	" v_cmp_eq_f64  vcc, %64_SRC0, %64_VSRC1",
+	" v_cmp_eq_f64  vcc, %VOPC_64_SRC0, %64_VSRC1",
 	VOPC,
 	34,
 	4,
@@ -988,7 +988,7 @@ DEFINST(V_CMP_EQ_F64,
 )
 
 DEFINST(V_CMP_LE_F64,
-	" v_cmp_le_f64  vcc, %64_SRC0, %64_VSRC1",
+	" v_cmp_le_f64  vcc, %VOPC_64_SRC0, %64_VSRC1",
 	VOPC,
 	35,
 	4,
@@ -996,7 +996,7 @@ DEFINST(V_CMP_LE_F64,
 )
 
 DEFINST(V_CMP_GT_F64,
-	" v_cmp_gt_f64  vcc, %64_SRC0, %64_VSRC1",
+	" v_cmp_gt_f64  vcc, %VOPC_64_SRC0, %64_VSRC1",
 	VOPC,
 	36,
 	4,
@@ -1004,7 +1004,7 @@ DEFINST(V_CMP_GT_F64,
 )
 
 DEFINST(V_CMP_NGE_F64,
-	" v_cmp_nge_f64  vcc, %64_SRC0, %64_VSRC1",
+	" v_cmp_nge_f64  vcc, %VOPC_64_SRC0, %64_VSRC1",
 	VOPC,
 	41,
 	4,
@@ -1012,7 +1012,7 @@ DEFINST(V_CMP_NGE_F64,
 )
 
 DEFINST(V_CMP_NEQ_F64,
-	" v_cmp_neq_f64  vcc, %64_SRC0, %64_VSRC1",
+	" v_cmp_neq_f64  vcc, %VOPC_64_SRC0, %64_VSRC1",
 	VOPC,
 	45,
 	4,
@@ -1068,7 +1068,7 @@ DEFINST(V_CMP_GE_I32,
 )
 
 DEFINST(V_CMP_CLASS_F64,
-	" v_cmp_class_f64  vcc, %64_SRC0, %64_VSRC1",
+	" v_cmp_class_f64  vcc, %VOPC_64_SRC0, %64_VSRC1",
 	VOPC,
 	168,
 	4,
@@ -1128,6 +1128,7 @@ DEFINST(V_CMP_GE_U32,
 /*
  * VOP3a 
  */
+
 
 DEFINST(V_CNDMASK_B32_VOP3a,
 	" v_cndmask_b32  %VOP3_VDST, %VOP3_SRC0, %VOP3_SRC1, %VOP3_64_SRC2",
@@ -1386,6 +1387,14 @@ DEFINST(V_CMP_OP16_F64_VOP3a,
 	SI_INST_FLAG_OP16
 )
 
+DEFINST(V_CMP_EQ_F64_VOP3a,
+	" v_cmp_eq_f64  %VOP3_64_SVDST, %VOP3_64_SRC0, %VOP3_64_SRC1",
+	VOP3a,
+	34,
+	8,
+	0
+)
+
 DEFINST(V_CMP_LT_I32_VOP3a,
 	" v_cmp_lt_i32  %VOP3_64_SVDST, %VOP3_SRC0, %VOP3_SRC1",
 	VOP3a,
@@ -1551,7 +1560,7 @@ DEFINST(V_ADDC_U32_VOP3b,
 )
 
 DEFINST(V_DIV_SCALE_F64,
-	" v_div_scale_f64  %VOP3_64_VDST, %VOP3_64_SDST, %VOP3_64_SRC0, %VOP3_64_SRC1, %VOP3_64_SRC2",
+	" v_div_scale_f64  %VOP3_64_VDST, %VOP3_64_SVDST, %VOP3_64_SRC0, %VOP3_64_SRC1, %VOP3_64_SRC2",
 	VOP3b,
 	366,
 	8,

@@ -78,7 +78,6 @@ struct si2bin_inst_t *si2bin_inst_create(int opcode, struct list_t *arg_list) {
 
 struct si2bin_inst_t *si2bin_inst_create_with_name(char *name,
                                                    struct list_t *arg_list) {
-  printf("%s\n", name);
   struct si2bin_inst_t *inst;
   struct si2bin_inst_info_t *info;
 
@@ -100,6 +99,7 @@ struct si2bin_inst_t *si2bin_inst_create_with_name(char *name,
   snprintf(err_str, sizeof err_str, "invalid instruction: %s", name);
   for (info = hash_table_get(si2bin_inst_info_table, name); info;
        info = info->next) {
+    printf("%s\n", name);
     /* Check number of arguments */
     if (arg_list->count != info->token_list->count) {
       snprintf(err_str, sizeof err_str,
@@ -118,7 +118,8 @@ struct si2bin_inst_t *si2bin_inst_create_with_name(char *name,
       token = list_get(info->token_list, index);
       assert(token);
 
-      printf("\t%s\n", str_map_value(&si2bin_token_map, token->type));
+      printf("\t%s %s\n", str_map_value(&si2bin_token_map, token->type),
+             str_map_value(&si2bin_arg_type_map, arg->type));
 
       /* Check that actual argument type is acceptable for token */
       if (!si2bin_token_is_arg_allowed(token, arg)) {
@@ -837,6 +838,46 @@ void si2bin_inst_gen(struct si2bin_inst_t *inst) {
 
         /* Encode */
         inst_bytes->vop1.vdst = arg->value.vector_register_series.low;
+        break;
+      }
+      case si2bin_token_vopc_64_src0: {
+        int low;
+        int high;
+        int value;
+
+        /* Check argument type */
+        if (arg->type == si2bin_arg_scalar_register_series) {
+          low = arg->value.scalar_register_series.low;
+          high = arg->value.scalar_register_series.high;
+          if (high != low + 1)
+            si2bin_yyerror("register series must be s[low:low+1]");
+          inst_bytes->vopc.src0 = arg->value.vector_register_series.low;
+        } else if (arg->type == si2bin_arg_vector_register_series) {
+          low = arg->value.vector_register_series.low;
+          high = arg->value.vector_register_series.high;
+          if (high != low + 1)
+            si2bin_yyerror("register series must be v[low:low+1]");
+          inst_bytes->vopc.src0 = arg->value.vector_register_series.low;
+        } else {
+          value = si2bin_arg_encode_operand(arg);
+          inst_bytes->vopc.src0 = value;
+        }
+        break;
+      }
+      case si2bin_token_64_vsrc1: {
+        int low;
+        int high;
+
+        /* Check argument type */
+        if (arg->type == si2bin_arg_vector_register_series) {
+          low = arg->value.vector_register_series.low;
+          high = arg->value.vector_register_series.high;
+          if (high != low + 1)
+            si2bin_yyerror("register series must be v[low:low+1]");
+        }
+
+        /* Encode */
+        inst_bytes->vopc.vsrc1 = arg->value.vector_register_series.low;
         break;
       }
       case si2bin_token_vop3_64_svdst: {
